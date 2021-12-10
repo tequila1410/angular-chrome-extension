@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import {Router} from "@angular/router";
+import {UserService} from "./core/store/user.service";
+import {Observable} from "rxjs";
+import {User} from "./core/models/user.model";
 
 @Component({
   selector: 'app-root',
@@ -7,4 +11,22 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'angular-chrome-extension';
+
+  public color: string = '#fc7f03';
+  user: Observable<User | null>;
+
+  constructor(private router: Router,
+              private userStore: UserService) {
+    this.user = this.userStore.getUser();
+  }
+
+  public colorize() {
+    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+      console.log('work')
+      chrome.tabs.executeScript(
+        tabs[0].id!,
+        {code: `document.body.style.backgroundColor = '${this.color}'`}
+      )
+    })
+  }
 }

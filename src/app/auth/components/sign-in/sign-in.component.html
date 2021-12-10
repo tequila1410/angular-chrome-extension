@@ -1,0 +1,36 @@
+<div class="sign-in">
+  <div class="row">
+    <div class="title col-xl-12">
+      <h1>Login to Your Account</h1>
+      <!-- <p>Let's start to use VPN on any of your device</p> -->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="login-form col-12">
+      <form class="login-form_mail" [formGroup]="form">
+          <input type="email"
+                 placeholder="Ex. pat@example.com" class="input-text">
+
+
+          <input type="password" class="input-text">
+          <!--        <mat-error *ngIf="password?.hasError('required')">-->
+          <!--          Password is <strong>required</strong>-->
+          <!--        </mat-error>-->
+        <button (click)="loginUser()">Login to Your Account</button>
+        <div class="signup-container">
+          <div class="text-signup">Don't have a ZoogVPN account yet? <a routerLink="/sign-up">Sign Up</a></div>
+
+        </div>
+      </form>
+
+      <div class="login-form_third-party"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="forgot-link col-xl-12">
+      <a (click)="goToForgot()">Forgot Password?</a>
+    </div>
+  </div>
+</div>

@@ -5,18 +5,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {AuthModule} from "./auth/auth.module";
 import {CommonModule} from "@angular/common";
-import { DashboardComponent } from './products/dashboard/dashboard.component';
 import {AuthApi} from "./auth/api/auth.api";
 import {HttpClientModule} from "@angular/common/http";
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    DashboardComponent
+    AppComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +25,8 @@ import { EffectsModule } from '@ngrx/effects';
     AuthModule,
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([]),
+    BrowserAnimationsModule
   ],
   providers: [
     AuthApi

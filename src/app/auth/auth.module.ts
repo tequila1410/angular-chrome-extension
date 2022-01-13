@@ -3,8 +3,8 @@ import {CommonModule} from "@angular/common";
 
 import {containers} from "./containers";
 import {components} from "./components";
-import {RouterModule} from "@angular/router";
 import {ReactiveFormsModule} from "@angular/forms";
+import {AuthRoutingModule} from "./auth-routing.module";
 
 @NgModule({
   declarations: [
@@ -13,7 +13,7 @@ import {ReactiveFormsModule} from "@angular/forms";
   ],
   imports: [
     CommonModule,
-    RouterModule,
+    AuthRoutingModule,
     ReactiveFormsModule
   ],
 })

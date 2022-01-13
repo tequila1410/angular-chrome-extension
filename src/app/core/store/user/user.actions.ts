@@ -1,6 +1,5 @@
 import {createAction, props} from '@ngrx/store';
 import {User} from "../../models/user.model";
-import {ResetPass} from "../../../auth/models/reset-pass.model"
 import {LoginForm} from "../../../auth/models/login-form.model";
 
 // for test
@@ -40,10 +39,10 @@ export const signUpError = createAction(
   props<{message: string}>()
 );
 
-export const sendNewPassAction = createAction(
-  '[User send new password]',
-  props<{newPassData: ResetPass}>()
-);
+// export const sendNewPassAction = createAction(
+//   '[User send new password]',
+//   props<{newPassData: ResetPass}>()
+// );
 
 export const sendNewPassActionSuccess = createAction(
   '[User send new password success]',

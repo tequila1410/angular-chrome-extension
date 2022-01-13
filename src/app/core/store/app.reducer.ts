@@ -1,10 +1,8 @@
 import {ActionReducer, ActionReducerMap, MetaReducer} from "@ngrx/store/src/models";
 import {userReducer, UserState} from "./user/user.reducer";
-import {viewReducer, ViewState} from "./view/view.reducer";
 
 export interface AppState {
-  user: UserState,
-  view: ViewState
+  user: UserState
 }
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -19,6 +17,5 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
 export const metaReducers: MetaReducer<any>[] = [debug];
 
 export const reducers: ActionReducerMap<AppState> = {
-  user: userReducer,
-  view: viewReducer
+  user: userReducer
 }

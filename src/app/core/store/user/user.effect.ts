@@ -8,7 +8,7 @@ import {
   signUp,
   signUpError,
   signUpSuccess,
-  sendNewPassAction,
+  // sendNewPassAction,
   sendNewPassActionSuccess,
   sendNewPassActionError,
   verifyUserAction,
@@ -23,6 +23,7 @@ import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {transformHttpError} from "../../utils/util";
 import {AppState} from "../app.reducer";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable()
 export class UserEffects {
@@ -43,7 +44,6 @@ export class UserEffects {
     this.actions$.pipe(
       ofType(authenticate),
       exhaustMap((actions) => {
-        const gaCid = this.gaService.getGaCid();
         return this.authApi.userLogin(actions.email, actions.password, actions.token)
           .pipe(
             map(userData => {

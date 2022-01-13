@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {AuthComponent} from "./auth/containers";
-import {components, SignInComponent} from "./auth/components";
+import {SignInComponent} from "./auth/components";
 import {DashboardComponent} from "./products/dashboard/dashboard.component";
 
 const routes: Routes = [{
@@ -24,4 +24,5 @@ const routes: Routes = [{
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

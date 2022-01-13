@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {Router} from "@angular/router";
-import {UserService} from "./core/store/user.service";
 import {Observable} from "rxjs";
 import {User} from "./core/models/user.model";
 
@@ -13,11 +12,9 @@ export class AppComponent {
   title = 'angular-chrome-extension';
 
   public color: string = '#fc7f03';
-  user: Observable<User | null>;
+  user!: Observable<User | null>;
 
-  constructor(private router: Router,
-              private userStore: UserService) {
-    this.user = this.userStore.getUser();
+  constructor(private router: Router) {
   }
 
   public colorize() {

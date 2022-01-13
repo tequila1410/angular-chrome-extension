@@ -12,7 +12,7 @@ export class AuthApi {
   constructor(private httpClient: HttpClient) {
   }
 
-  userLogin(email: string, password: string) {
+  userLogin(email: string, password: string, token?: string) {
     const postData = {
       email,
       password

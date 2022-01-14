@@ -5,11 +5,13 @@ import {containers} from "./containers";
 import {components} from "./components";
 import {ReactiveFormsModule} from "@angular/forms";
 import {AuthRoutingModule} from "./auth-routing.module";
+import { SignInComponent } from './containers/sign-in/sign-in.component';
 
 @NgModule({
   declarations: [
     ...containers,
-    ...components
+    ...components,
+    SignInComponent
   ],
   imports: [
     CommonModule,

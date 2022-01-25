@@ -1,5 +1,18 @@
 <section class="dashboard">
-  <button (click)="connectToVpn()">Connect</button>
+  <div class="header">
+  </div>
+  {{isConnected}}
+  <br>
+  <span class="connect-btn" [class]="isConnected ? '' : 'active'"
+        (click)="vpnConnectToggle()">{{isConnected ? 'Stop' : 'Connect'}}</span>
+  <br>
+
+  <form [formGroup]="form">
+    <select name="proxies" id="proxy-select">
+      <option *ngFor="let proxy of (proxyData | async)" [value]="proxy.id">{{proxy.locationName}}</option>
+    </select>
+  </form>
+
   <button (click)="checkProxy()">Check</button>
   <button (click)="clearProxy()">Clear</button>
 </section>

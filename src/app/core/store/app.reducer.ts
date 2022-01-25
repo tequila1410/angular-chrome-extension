@@ -1,8 +1,10 @@
 import {ActionReducer, ActionReducerMap, MetaReducer} from "@ngrx/store/src/models";
 import {userReducer, UserState} from "./user/user.reducer";
+import {vpnReducer, VPNState} from "./vpn/vpn.reducer";
 
 export interface AppState {
-  user: UserState
+  user: UserState,
+  vpn: VPNState
 }
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -17,5 +19,6 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
 export const metaReducers: MetaReducer<any>[] = [debug];
 
 export const reducers: ActionReducerMap<AppState> = {
-  user: userReducer
+  user: userReducer,
+  vpn: vpnReducer
 }

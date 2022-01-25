@@ -12,21 +12,30 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {reducers} from "./core/store/app.reducer";
+import {UserEffects} from "./core/store/user/user.effect";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {DashboardComponent} from "./products/dashboard/dashboard.component";
+import {ReactiveFormsModule} from "@angular/forms";
+import {VpnEffect} from "./core/store/vpn/vpn.effect";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    ReactiveFormsModule,
     AuthModule,
-    StoreModule.forRoot({}, {}),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([]),
-    BrowserAnimationsModule
+    MatSnackBarModule,
+    StoreModule.forRoot(reducers),
+    StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
+    EffectsModule.forRoot([UserEffects, VpnEffect]),
+    BrowserAnimationsModule,
   ],
   providers: [
     AuthApi

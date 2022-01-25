@@ -4,18 +4,16 @@ import {CommonModule} from "@angular/common";
 import {containers} from "./containers";
 import {components} from "./components";
 import {ReactiveFormsModule} from "@angular/forms";
-import {AuthRoutingModule} from "./auth-routing.module";
-import { SignInComponent } from './containers/sign-in/sign-in.component';
+import {RouterModule} from "@angular/router";
 
 @NgModule({
   declarations: [
     ...containers,
     ...components,
-    SignInComponent
   ],
   imports: [
     CommonModule,
-    AuthRoutingModule,
+    RouterModule,
     ReactiveFormsModule
   ],
 })

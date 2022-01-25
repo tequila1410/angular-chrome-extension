@@ -1,0 +1,42 @@
+.dashboard {
+  padding: 16px;
+}
+
+.dashboard .header {
+  height: 64px;
+}
+
+.dashboard {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.connect-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #EC5A50;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 4px 4px 8px 0 rgb(34 60 80);
+  transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.connect-btn.active {
+  background-color: #79aa00;
+}
+
+.connect-btn:hover {
+  background-color: #EC5A50;
+  box-shadow: 4px 8px 8px 0 rgb(34 60 80);
+  transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.connect-btn.active:hover {
+  background-color: #5f8600;
+}

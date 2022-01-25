@@ -15,6 +15,7 @@ export class AppComponent {
   user!: Observable<User | null>;
 
   constructor(private router: Router) {
+    console.log('App init:', new Date())
   }
 
   public colorize() {

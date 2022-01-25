@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {UserService} from "../../../core/store/user.service";
 import {Router} from "@angular/router";
 import {AuthApi} from "../../api/auth.api";
 
@@ -13,7 +12,7 @@ export class SignInComponent implements OnInit {
 
   form: FormGroup;
 
-  constructor(private userStore: UserService) {
+  constructor() {
     this.form = new FormGroup({})
   }
 
@@ -25,7 +24,7 @@ export class SignInComponent implements OnInit {
       email: 'vlad.zubko@rankactive.com',
       password: '123123'
     }
-    this.userStore.userLogin(testData.email, testData.password);
+    // this.userStore.userLogin(testData.email, testData.password);
   }
 
   goToForgot() {

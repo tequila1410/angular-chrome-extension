@@ -4,9 +4,16 @@
   "description": "Build an Extension with Angular",
   "manifest_version": 2,
   "permissions": [
-    "activeTab",
-    "webNavigation",
-    "proxy"
+    "<all_urls>",
+    "contextMenus",
+    "management",
+    "notifications",
+    "privacy",
+    "proxy",
+    "storage",
+    "unlimitedStorage",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "background": {
     "scripts": [

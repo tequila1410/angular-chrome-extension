@@ -1,7 +1,6 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ProxyModel} from "../../auth/models/proxy.model";
 import {ProxyService} from "../../core/services/proxy.service";
-import {ServerApi} from "../../core/api/server.api";
 import {Observable, Subject} from "rxjs";
 import {MockDataApi} from "../../core/api/mock-data.api";
 import {map, takeUntil, tap} from "rxjs/operators";
@@ -15,7 +14,8 @@ import {onAuthRequiredHandler, onProxyErrorHandler} from "../../core/utils/chrom
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -44,15 +44,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               private cdr: ChangeDetectorRef,
               private store: Store<AppState>) {
 
+
+
     this.form = new FormGroup({
       proxy: new FormControl()
-    });
-
-    this.store.select(isVPNConnected)
-      .pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(isVPNConnected => {
-      this.isConnected = isVPNConnected;
     });
   }
 
@@ -66,12 +61,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         map(res => res.data)
       );
 
+    this.store.select(isVPNConnected)
+      .pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(isVPNConnected => {
+      this.isConnected = isVPNConnected;
+      this.cdr.detectChanges();
+    });
+
     chrome.proxy.settings.get(
       {'incognito': false},
       (config) => {
         const proxy: ProxyModel = config?.value?.rules?.singleProxy;
-        if (proxy)
+        if (proxy) {
           this.store.dispatch(connectingSuccess(proxy));
+        }
       }
     );
   }

@@ -18,6 +18,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {DashboardComponent} from "./products/dashboard/dashboard.component";
 import {ReactiveFormsModule} from "@angular/forms";
 import {VpnEffect} from "./core/store/vpn/vpn.effect";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import {VpnEffect} from "./core/store/vpn/vpn.effect";
     ReactiveFormsModule,
     AuthModule,
     MatSnackBarModule,
+    MatSelectModule,
     StoreModule.forRoot(reducers),
     StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
     EffectsModule.forRoot([UserEffects, VpnEffect]),

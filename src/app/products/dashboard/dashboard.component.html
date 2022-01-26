@@ -1,11 +1,19 @@
 <section class="dashboard">
   <div class="header">
   </div>
-  {{isConnected}}
   <br>
   <span class="connect-btn" [class]="isConnected ? '' : 'active'"
         (click)="vpnConnectToggle()">{{isConnected ? 'Stop' : 'Connect'}}</span>
   <br>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Favorite food</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let proxy of (proxyData | async)" [value]="proxy.id">
+        {{proxy.locationName}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <form [formGroup]="form">
     <select name="proxies" id="proxy-select">

@@ -1,64 +1,54 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
-import {closeConnection, closeConnectionSuccess, connecting, connectingProcess, connectingSuccess} from "./vpn.actions";
-import {map, mergeMap, tap} from "rxjs/operators";
-import {ProxyModel} from "../../../auth/models/proxy.model";
-import {from, of} from "rxjs";
+import {
+  closeConnection,
+  closeConnectionSuccess,
+  connecting,
+  connectingSuccess,
+  setServers,
+  setServersSuccess
+} from "./vpn.actions";
+import {exhaustMap, map, mergeMap} from "rxjs/operators";
+import {from} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
+import {clearProxy, setProxy} from "../../utils/chrome-backgroud";
+import {ServerApi} from "../../api/server.api";
 
 @Injectable()
 export class VpnEffect {
 
-  constructor(private actions$: Actions) {
+  constructor(private actions$: Actions,
+              private api: ServerApi) {
   }
 
   $connecting = createEffect(() =>
     this.actions$.pipe(
       ofType(connecting),
       mergeMap(proxy => {
-        return from(this.testPromise(proxy));
+        return from(setProxy(proxy));
       }),
       map(proxy => {
         return connectingSuccess(proxy);
-        // return this.testPromise(proxy).then(data => {
-        //   console.log('that is okaaay: ', data);
-        //   return connectingSuccess(proxy);
-        // })
-        // return connectingProcess();
       })
     )
   )
-
-  testPromise(proxy: ProxyModel): Promise<ProxyModel> {
-    return new Promise((resolve, reject) => {
-      let config = {
-        mode: "fixed_servers",
-        rules: {
-          singleProxy: {
-            scheme: proxy.scheme,
-            host: proxy.host,
-            port: proxy.port
-          },
-          bypassList: ["foobar.com"] // there are list of executed sites could be
-        }
-      };
-
-      chrome.proxy.settings.set(
-        {value: config, scope: 'regular'},
-        (details: any) => {
-          console.log('details: ', details);
-          resolve(proxy);
-        }
-      );
-    })
-  }
 
   $connectionClose = createEffect(() =>
     this.actions$.pipe(
       ofType(closeConnection),
       map(() => {
-        chrome.proxy.settings.clear({});
+        clearProxy();
         return closeConnectionSuccess();
+      })
+    )
+  )
+
+  $setServers = createEffect(() =>
+    this.actions$.pipe(
+      ofType(setServers),
+      exhaustMap(() => this.api.getServersData()),
+      map(response => {
+        return setServersSuccess({serverList: response.data.serverList})
       })
     )
   )

@@ -1,0 +1,22 @@
+<section class="dashboard">
+  <div style="width: 100%">
+    <app-dashboard-header></app-dashboard-header>
+  </div>
+
+  <div>
+    <app-server-selector
+      [selectedServer]="selectedServer"
+      (openVpnList)="openVpnList()">
+    </app-server-selector>
+  </div>
+
+  <div class="content">
+    <span class="connect-btn" [class]="isConnected ? '' : 'active'"
+          (click)="vpnConnectToggle()">{{isConnected ? 'Stop' : 'Connect'}}</span>
+    <br>
+  </div>
+
+  <div class="footer">
+
+  </div>
+</section>

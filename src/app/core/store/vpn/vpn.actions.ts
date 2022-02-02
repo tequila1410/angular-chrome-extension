@@ -16,10 +16,6 @@ export const connectingError = createAction(
   props<{ message: string }>()
 )
 
-export const connectingProcess = createAction(
-  '[VPN Connection process]'
-)
-
 export const closeConnection = createAction(
   '[VPN Connection close]'
 )
@@ -30,4 +26,13 @@ export const closeConnectionSuccess = createAction(
 
 export const closeConnectionError = createAction(
   '[VPN Connection close error]'
+)
+
+export const setServers = createAction(
+  '[VPN set list of servers]'
+)
+
+export const setServersSuccess = createAction(
+  '[VPN set list of servers success]',
+  props<{serverList: ProxyModel[]}>()
 )

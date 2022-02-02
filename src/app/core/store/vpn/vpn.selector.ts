@@ -8,3 +8,13 @@ export const isVPNConnected = createSelector(
   selectVPN,
   (state: VPNState) => state.connected
 )
+
+export const getSelectedVpnServer = createSelector(
+  selectVPN,
+  (state: VPNState) => state.selectedServer
+)
+
+export const getServerList = createSelector(
+  selectVPN,
+  (state: VPNState) => state.serverList
+)

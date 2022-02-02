@@ -3,6 +3,7 @@ export interface ProxyModel {
   scheme: string;
   host: string;
   port: number
-  id: number;
+  id: string;
   locationName: string;
+  image: string;
 }

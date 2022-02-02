@@ -1,15 +1,16 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {ProxyModel} from "../../auth/models/proxy.model";
-import {ProxyService} from "../../core/services/proxy.service";
+import {ProxyModel} from "../../../../auth/models/proxy.model";
+import {ProxyService} from "../../../../core/services/proxy.service";
 import {Observable, Subject} from "rxjs";
-import {MockDataApi} from "../../core/api/mock-data.api";
+import {MockDataApi} from "../../../../core/api/mock-data.api";
 import {map, takeUntil, tap} from "rxjs/operators";
 import {FormControl, FormGroup} from "@angular/forms";
 import {Store} from "@ngrx/store";
-import {AppState} from "../../core/store/app.reducer";
-import {closeConnection, connecting, connectingSuccess} from "../../core/store/vpn/vpn.actions";
-import {isVPNConnected} from "../../core/store/vpn/vpn.selector";
-import {onAuthRequiredHandler, onProxyErrorHandler} from "../../core/utils/chrome-backgroud";
+import {AppState} from "../../../../core/store/app.reducer";
+import {closeConnection, connecting, connectingSuccess} from "../../../../core/store/vpn/vpn.actions";
+import {getSelectedVpnServer, isVPNConnected} from "../../../../core/store/vpn/vpn.selector";
+import {onAuthRequiredHandler, onProxyErrorHandler} from "../../../../core/utils/chrome-backgroud";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard',
@@ -17,21 +18,13 @@ import {onAuthRequiredHandler, onProxyErrorHandler} from "../../core/utils/chrom
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  testProxy: ProxyModel = {
-    id: 1,
-    locationName: 'Moldova',
-    scheme: "http",
-    host: "176.116.234.35",
-    port: 12323
-  };
-
-  proxyData!: Observable<ProxyModel[]>;
+export class DashboardComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
 
   isConnected: boolean = false;
+
+  selectedServer: ProxyModel | undefined;
 
   /**
    * Subject to destroy all subscriptions on component destroy
@@ -42,24 +35,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private proxyService: ProxyService,
               private serverService: MockDataApi,
               private cdr: ChangeDetectorRef,
+              private router: Router,
               private store: Store<AppState>) {
-
-
 
     this.form = new FormGroup({
       proxy: new FormControl()
     });
+
   }
 
   ngOnInit(): void {
 
-    onAuthRequiredHandler('7a0dbc61784a', '04b6fa638a');
+    onAuthRequiredHandler('vlad.zubko@rankactive.com', 'pass2zoog');
     onProxyErrorHandler();
-
-    this.proxyData = this.serverService.getServersData()
-      .pipe(
-        map(res => res.data)
-      );
 
     this.store.select(isVPNConnected)
       .pipe(
@@ -67,20 +55,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       ).subscribe(isVPNConnected => {
       this.isConnected = isVPNConnected;
       this.cdr.detectChanges();
+      console.log('isVPNConnected: ', isVPNConnected);
     });
 
-    chrome.proxy.settings.get(
-      {'incognito': false},
-      (config) => {
-        const proxy: ProxyModel = config?.value?.rules?.singleProxy;
-        if (proxy) {
-          this.store.dispatch(connectingSuccess(proxy));
-        }
-      }
-    );
-  }
-
-  ngAfterViewInit() {
+    this.store.select(getSelectedVpnServer)
+      .pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(selectedServer => {
+      this.selectedServer = selectedServer;
+      this.cdr.detectChanges();
+      console.log('selectedServer: ', selectedServer);
+    })
 
   }
 
@@ -88,18 +73,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.isConnected) {
       this.store.dispatch(closeConnection())
-    } else {
-      this.store.dispatch(connecting(this.testProxy));
+    } else if (this.selectedServer) {
+      this.store.dispatch(connecting(this.selectedServer));
 
     }
   }
 
-  checkProxy() {
-    this.proxyService.checkProxy();
-  }
-
-  clearProxy() {
-    this.proxyService.clearProxy();
+  openVpnList() {
+    this.router.navigate(['vpn-list'])
   }
 
   ngOnDestroy() {

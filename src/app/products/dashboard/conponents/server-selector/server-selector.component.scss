@@ -1,0 +1,40 @@
+.current-vpn {
+  padding: 16px;
+  cursor: pointer;
+  background-color: #202428;
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+
+    .label {
+      display: flex;
+      align-items: center;
+      color: white;
+
+      .server-icon {
+        img {
+          width: 28px;
+          margin-right: 8px;
+        }
+      }
+
+      p {
+        font-size: 16px;
+        margin: 0;
+      }
+    }
+
+    .icon-arrow {
+      img {
+        width: 24px;
+      }
+    }
+  }
+
+  .ip {
+    margin: 0;
+    color: #808080;
+    padding: 0 36px;
+  }
+}

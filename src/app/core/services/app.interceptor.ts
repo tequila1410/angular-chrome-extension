@@ -6,13 +6,11 @@ import {throwError} from "rxjs";
 import {Store} from "@ngrx/store";
 import {AppState} from "../store/app.reducer";
 import {signOut} from "../store/user/user.actions";
-import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable()
 export class RequestInterceptorService implements HttpInterceptor {
 
-  constructor(private store: Store<AppState>,
-              private snackBar: MatSnackBar) {
+  constructor(private store: Store<AppState>) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {

@@ -1,7 +1,12 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {Router} from "@angular/router";
 import {Observable} from "rxjs";
 import {User} from "./core/models/user.model";
+import {connectingSuccess, setServers} from "./core/store/vpn/vpn.actions";
+import {Store} from "@ngrx/store";
+import {AppState} from "./core/store/app.reducer";
+import {getProxy} from "./core/utils/chrome-backgroud";
+import {ServerApi} from "./core/api/server.api";
 
 @Component({
   selector: 'app-root',
@@ -9,22 +14,21 @@ import {User} from "./core/models/user.model";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'angular-chrome-extension';
 
-  public color: string = '#fc7f03';
+  /**
+   * Current user data
+   * @type {Observable<User>}
+   */
   user!: Observable<User | null>;
 
-  constructor(private router: Router) {
-    console.log('App init:', new Date())
-  }
-
-  public colorize() {
-    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-      console.log('work')
-      chrome.tabs.executeScript(
-        tabs[0].id!,
-        {code: `document.body.style.backgroundColor = '${this.color}'`}
-      )
-    })
+  constructor(private router: Router,
+              private store: Store<AppState>,
+              private api: ServerApi) {
+    getProxy().then((proxy) => {
+      if (proxy) {
+        this.store.dispatch(connectingSuccess(proxy));
+      }
+    });
+    this.store.dispatch(setServers())
   }
 }

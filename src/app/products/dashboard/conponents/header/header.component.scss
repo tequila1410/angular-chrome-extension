@@ -1,0 +1,22 @@
+.dashboard__header {
+  background-color: #3c4246;
+  text-align: center;
+  padding: 16px 0;
+  color: white;
+
+  .burger {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 26px;
+    border: 1px solid red;
+  }
+
+  h3 {
+    font-weight: 100;
+    font-size: 18px;
+    margin: 0;
+  }
+}

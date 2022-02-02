@@ -5,25 +5,14 @@ import {
   authenticateError,
   authenticateSuccess,
   signOut, signOutSuccess,
-  signUp,
-  signUpError,
-  signUpSuccess,
-  // sendNewPassAction,
-  sendNewPassActionSuccess,
-  sendNewPassActionError,
-  verifyUserAction,
-  verifyUserActionSuccess,
-  verifyUserActionError, updateUserData, updateUserDataSuccess
 } from "./user.actions";
-import {catchError, exhaustMap, map, takeUntil} from "rxjs/operators";
+import {catchError, exhaustMap, map} from "rxjs/operators";
 import {of} from "rxjs";
 import {User} from "../../models/user.model";
 import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
-import {transformHttpError} from "../../utils/util";
 import {AppState} from "../app.reducer";
-import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable()
 export class UserEffects {
@@ -110,15 +99,15 @@ export class UserEffects {
     private actions$: Actions,
     private authApi: AuthApi,
     private router: Router,
-    private _snackBar: MatSnackBar,
     private store: Store<AppState>,
   ) {
   }
 
   private showSnackBarError(message: string) {
-    this._snackBar.open(message, 'Close', {
-      duration: 2000,
-      panelClass: ['snack-bar-error']
-    });
+    console.error(message);
+    // this._snackBar.open(message, 'Close', {
+    //   duration: 2000,
+    //   panelClass: ['snack-bar-error']
+    // });
   }
 }

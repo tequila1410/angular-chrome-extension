@@ -1,6 +1,7 @@
 .vpn-toggle {
   background-color: #3c4246;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -18,7 +19,9 @@
     border-radius: 50%;
     cursor: pointer;
 
-    &.active {
+    &.connected {
+      color: #EC5A50;
+      border-color: #EC5A50;
 
       &:hover {
 
@@ -28,5 +31,11 @@
     &:hover {
 
     }
+  }
+
+  .label {
+    color: #7b7c7c;
+    padding-top: 10px;
+    font-size: 14px;
   }
 }

@@ -8,12 +8,12 @@ export function onAuthRequiredHandler(username: string, password: string): void 
   }, {urls: ['<all_urls>']}, ['blocking']);
 }
 
-export function onProxyErrorHandler(): void {
-  chrome.proxy.onProxyError.addListener((details) => {
-    console.log("fatal: ", details.fatal);
-    console.log("error: ", details.error);
-    console.log("details: ", details.details)
-  });
+export function onProxyErrorHandler(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    chrome.proxy.onProxyError.addListener((details) => {
+      resolve(details);
+    });
+  })
 }
 
 export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {

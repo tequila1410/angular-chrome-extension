@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-vpn-toggle',
@@ -6,6 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./vpn-toggle.component.scss']
 })
 export class VpnToggleComponent implements OnInit {
+
+  @Input() isConnected!: boolean;
+
+  @Output() vpnConnectToggle: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 

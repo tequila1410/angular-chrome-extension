@@ -1,0 +1,49 @@
+.plan-info {
+  padding: 16px;
+  background-color: #202428;
+  border-top: 1px solid #373a3e;
+  color: white;
+
+  .plan-name {
+    background-color: #1e2226;
+    color: #d2d3d4;
+    padding: 4px;
+    text-align: center;
+    border-left: 5px solid #739d00;
+    border-top: 3px solid #1d2125;
+    border-bottom: 3px solid #1d2125;
+    border-radius: 5px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .expiration {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+
+    .date-title {
+      color: #808080;
+    }
+
+    .btn {
+      color: #85a832;
+      border: 1px solid #85a832;
+      padding: 6px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+      &:hover {
+        color: #9fcf2d;
+        border-color: #9fcf2d;
+        -webkit-box-shadow: 2px 2px 17px 2px rgb(0 0 0 / 50%);
+        box-shadow: 2px 2px 17px 2px rgb(0 0 0 / 50%);
+        transition: box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+      }
+    }
+  }
+}

@@ -1,1 +1,5 @@
-<p>vpn-toggle works!</p>
+<div class="vpn-toggle">
+    <span class="toggle-btn" [class]="isConnected ? '' : 'active'"
+          (click)="vpnConnectToggle.emit()">{{isConnected ? 'Stop' : 'Connect'}}</span>
+  <br>
+</div>

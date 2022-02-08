@@ -1,0 +1,111 @@
+@import "src/assets/styles/variables";
+
+.sign-in {
+  //border: 1px solid red;
+  input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
+  textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus,
+  select:-webkit-autofill, select:-webkit-autofill:hover, select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 50px #19313D inset;
+    border-radius: 0;
+  }
+
+  .title {
+    text-align: center;
+  }
+
+  .login-form_mail {
+    display: flex;
+    flex-direction: column;
+    padding: 2em;
+  }
+
+  .forgot-link {
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      color: #93c710;
+    }
+  }
+
+  .input-text {
+    color: white !important;
+  }
+
+  .input-text::placeholder {
+    color: white;
+  }
+
+  h1, .h1 {
+    font-size: 28px !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.04em !important;
+    color: $accent-color !important;
+  }
+
+  .label-stl {
+    margin: .25em 0;
+    background: #233e4da3;
+    border-radius: 5px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0 !important;
+  }
+
+  .color-lbl {
+    color: #ffffff;
+  }
+
+  .mat-flat-button.mat-primary,
+  .mat-raised-button.mat-primary,
+  .mat-fab.mat-primary,
+  .mat-mini-fab.mat-primary,
+  .mat-raised-button.mat-accent {
+    //background-color: $accent-color;
+    //color: #ffffff;
+    //
+    //&:hover {
+    //  background-color: #93c710;
+    //}
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: transparent;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: #526484;
+  }
+
+  .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: $accent-color;
+  }
+
+  .mat-input-element {
+    caret-color: $accent-color;
+  }
+
+  .signup-container {
+    margin-top: 20px;
+  }
+
+  .text-signup {
+    text-align: center;
+    color: #fff;
+    margin: 15px 5px 10px;
+
+    a {
+      transition: 0.3s;
+
+      &:hover {
+        color: #93c710;
+      }
+    }
+  }
+}
+
+// .mat-form-field-appearance-outline .mat-form-field-outline {
+//   color: rgba(0, 0, 0, 0.12)!important;
+// }

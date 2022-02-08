@@ -15,7 +15,7 @@ export class ServerApi implements ServerApiModel {
 
   getServersData(): Observable<{data: {serverList: ProxyModel[], tariffName: string}}> {
 
-    return this.httpClient.get<{data: {serverList: {ipv4: string, locationName: string, image: string}[], tariffName: string}}>('zoog_api/api/server/locations/overview')
+    return this.httpClient.get<{data: {serverList: {ipv4: string, locationName: string, image: string, ping: number}[], tariffName: string}}>('zoog_api/api/server/locations/overview')
       .pipe(
         map(response => {
           const newServers: ProxyModel[] = response.data.serverList.map(item => {
@@ -25,7 +25,8 @@ export class ServerApi implements ServerApiModel {
               locationName: item.locationName,
               image: item.image,
               port: 80,
-              scheme: 'http'
+              scheme: 'http',
+              ping: item.ping
             }
           });
           return {

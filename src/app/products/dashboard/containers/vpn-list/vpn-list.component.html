@@ -1,25 +1,25 @@
 <div class="vpn-list">
   <div class="header">
     <div class="navigation">
-      <span class="arrow-back"></span>
+      <span class="material-icons arrow-back" (click)="goToDashboard()">arrow_back</span>
       <p>Locations</p>
     </div>
     <div class="search">
-      <input type="text" placeholder="Search location">
+      <input [formControl]="formControl" type="text" placeholder="Search location">
     </div>
   </div>
 
   <div *ngIf="proxyData$ | async as proxyData" class="list">
     <div class="location-section">
       <h3 class="label">
-        All locations (2)
+        All locations ({{proxyData.length}})
       </h3>
       <div *ngFor="let proxy of proxyData" class="location" (click)="selectLocation(proxy)">
         <div class="label">
-          <div class="vpn-logo">L</div>
+          <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
         </div>
-        <div class="ping">12 ms</div>
+        <div class="ping">{{proxy.ping}} ms</div>
       </div>
     </div>
   </div>

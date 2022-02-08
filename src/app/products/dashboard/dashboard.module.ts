@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import {containers} from "./containers";
 import {components} from "./conponents";
 import {DashboardRoutingModule} from "./dashboard-routing.module";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -14,7 +15,8 @@ import {DashboardRoutingModule} from "./dashboard-routing.module";
   ],
   imports: [
     CommonModule,
-    DashboardRoutingModule
+    DashboardRoutingModule,
+    ReactiveFormsModule
   ]
 })
 export class DashboardModule { }

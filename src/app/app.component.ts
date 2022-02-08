@@ -7,6 +7,7 @@ import {Store} from "@ngrx/store";
 import {AppState} from "./core/store/app.reducer";
 import {getProxy} from "./core/utils/chrome-backgroud";
 import {ServerApi} from "./core/api/server.api";
+import {authenticateSuccess} from "./core/store/user/user.actions";
 
 @Component({
   selector: 'app-root',
@@ -24,11 +25,17 @@ export class AppComponent {
   constructor(private router: Router,
               private store: Store<AppState>,
               private api: ServerApi) {
-    getProxy().then((proxy) => {
-      if (proxy) {
-        this.store.dispatch(connectingSuccess(proxy));
-      }
-    });
-    this.store.dispatch(setServers())
+
+    const user = localStorage.getItem('user');
+    const token = localStorage.getItem('token') || '';
+    if (user)
+      this.store.dispatch(authenticateSuccess({token, user: JSON.parse(user)}))
+
+    // getProxy().then((proxy) => {
+    //   if (proxy) {
+    //     this.store.dispatch(connectingSuccess(proxy));
+    //   }
+    // });
+    // this.store.dispatch(setServers())
   }
 }

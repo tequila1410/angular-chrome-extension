@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {SubscriptionData} from "../../../../core/models/user.model";
 
 @Component({
   selector: 'app-plan-info',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./plan-info.component.scss']
 })
 export class PlanInfoComponent implements OnInit {
+
+  @Input() subscriptionData!: SubscriptionData | undefined;
 
   constructor() { }
 

@@ -34,7 +34,7 @@ export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {
       {value: config, scope: 'regular'},
       (details: any) => {
         console.log('set proxy details: ', details);
-        chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/enabled-19.png')}`});
+        chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-green.png')}`});
         resolve(proxy);
       }
     );
@@ -55,5 +55,5 @@ export function getProxy(): Promise<ProxyModel> {
 
 export function clearProxy(): void {
   chrome.proxy.settings.clear({});
-  chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/disabled-19.png')}`});
+  chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-grey.png')}`});
 }

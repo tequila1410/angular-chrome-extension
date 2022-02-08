@@ -1,11 +1,11 @@
 <div class="plan-info">
   <div class="plan-name">
-    <p>12 Month Global VPN</p>
+    <p>{{subscriptionData?.tariffName}}</p>
   </div>
   <div class="expiration">
     <div>
       <span class="date-title">VPN plan ends: </span>
-      <span class="date">Jan 24, 2023</span>
+      <span class="date">{{subscriptionData?.expiresDate | date:"longDate"}}</span>
     </div>
     <div>
       <div class="btn">Extend</div>

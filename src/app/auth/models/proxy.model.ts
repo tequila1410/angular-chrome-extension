@@ -6,4 +6,5 @@ export interface ProxyModel {
   id: string;
   locationName: string;
   image: string;
+  ping: number;
 }

@@ -1,4 +1,9 @@
 <div class="dashboard__header">
-  <span class="material-icons burger">menu</span>
+  <span class="material-icons burger" id="burger">menu</span>
+  <div *ngIf="isMenuVisible" [class.show]="isMenuVisible" class="menu-content" id="menu-content">
+    <ul>
+      <li (click)="signOut.emit()">Sign out</li>
+    </ul>
+  </div>
   <h3>ZoogVPN</h3>
 </div>

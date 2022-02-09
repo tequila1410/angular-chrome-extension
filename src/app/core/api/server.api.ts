@@ -18,6 +18,7 @@ export class ServerApi implements ServerApiModel {
     return this.httpClient.get<{data: {serverList: {ipv4: string, locationName: string, image: string, ping: number}[], tariffName: string}}>('zoog_api/api/server/locations/overview')
       .pipe(
         map(response => {
+          console.log(response);
           const newServers: ProxyModel[] = response.data.serverList.map(item => {
             return {
               host: item.ipv4,

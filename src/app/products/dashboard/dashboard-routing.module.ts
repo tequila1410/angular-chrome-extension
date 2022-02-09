@@ -3,11 +3,12 @@ import {Route, RouterModule} from "@angular/router";
 import {DashboardComponent, VpnListComponent} from "./containers";
 
 const routes: Route[] = [{
-  path: 'dashboard',
-  component: DashboardComponent
-}, {
-  path: 'vpn-list',
-  component: VpnListComponent
+  path: '',
+  component: DashboardComponent,
+  children: [{
+    path: 'vpn-list',
+    component: VpnListComponent
+  }]
 }];
 
 @NgModule({

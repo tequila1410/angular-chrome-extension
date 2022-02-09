@@ -19,14 +19,16 @@ export class MockDataApi implements ServerApiModel {
           scheme: "http",
           host: "176.116.234.35",
           port: 12323,
-          image: ''
+          image: '',
+          ping: 101
         }, {
           id: "2",
           locationName: 'test loc',
           scheme: "socks5",
           host: "keywordfox.com",
           port: 1080,
-          image: ''
+          image: '',
+          ping: 101
         }],
         tariffName: '1 year global vpn'
       }

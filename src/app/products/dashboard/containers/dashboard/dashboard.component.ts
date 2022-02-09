@@ -11,6 +11,8 @@ import {closeConnection, connecting, connectingSuccess} from "../../../../core/s
 import {getSelectedVpnServer, isVPNConnected} from "../../../../core/store/vpn/vpn.selector";
 import {onAuthRequiredHandler, onProxyErrorHandler} from "../../../../core/utils/chrome-backgroud";
 import {Router} from "@angular/router";
+import {User} from "../../../../core/models/user.model";
+import {getUserData} from "../../../../core/store/user/user.selector";
 
 @Component({
   selector: 'app-dashboard',
@@ -20,11 +22,29 @@ import {Router} from "@angular/router";
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  /**
+   * Form group for proxy selector
+   * @type {FormGroup}
+   */
   form: FormGroup;
 
+  /**
+   * Check if proxy is connected
+   * @type {boolean}
+   */
   isConnected: boolean = false;
 
+  /**
+   * Selected proxy server
+   * @type {ProxyModel}
+   */
   selectedServer: ProxyModel | undefined;
+
+  /**
+   * Current user data
+   * @type {User}
+   */
+  currentUser!: User | undefined;
 
   /**
    * Subject to destroy all subscriptions on component destroy
@@ -41,6 +61,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.form = new FormGroup({
       proxy: new FormControl()
     });
+
+    this.store.select(getUserData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => this.currentUser = user)
 
   }
 
@@ -72,7 +96,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  vpnConnectToggle() {
+  /**
+   * Toggle to connect and disconnect proxy
+   * @return {void}
+   */
+  vpnConnectToggle(): void {
 
     if (this.isConnected) {
       this.store.dispatch(closeConnection())
@@ -82,11 +110,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Redirect to page with proxy list
+   * @return {void}
+   */
   openVpnList() {
     this.router.navigate(['vpn-list'])
   }
 
-  ngOnDestroy() {
+  /**
+   * Call on component destroy
+   * @return {void}
+   */
+  ngOnDestroy(): void {
     this.destroy$.next();
   }
 

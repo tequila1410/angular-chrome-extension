@@ -6,7 +6,8 @@
     (openVpnList)="openVpnList()">
   </app-server-selector>
 
-  <app-plan-info>
+  <app-plan-info
+    [subscriptionData]="currentUser?.subscriptionData">
   </app-plan-info>
 
 <!--  <app-timer>-->

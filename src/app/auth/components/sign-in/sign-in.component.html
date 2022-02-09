@@ -9,11 +9,11 @@
   <div class="row">
     <div class="login-form col-12">
       <form class="login-form_mail" [formGroup]="form">
-          <input type="email"
+          <input type="email" formControlName="email"
                  placeholder="Ex. pat@example.com" class="input-text">
 
 
-          <input type="password" class="input-text">
+          <input type="password" class="input-text" formControlName="password">
           <!--        <mat-error *ngIf="password?.hasError('required')">-->
           <!--          Password is <strong>required</strong>-->
           <!--        </mat-error>-->

@@ -1,8 +1,8 @@
 {
   "name": "ZoogVPN",
-  "version": "0.1",
-  "description": "ZoogVPN official extension",
-  "manifest_version": 2,
+  "version": "0.0.1",
+  "description": "ZoogVPN test extension",
+  "manifest_version": 3,
   "permissions": [
     "<all_urls>",
     "contextMenus",
@@ -15,7 +15,7 @@
     "webRequest",
     "webRequestBlocking"
   ],
-  "browser_action": {
+  "action": {
     "default_popup": "index.html",
     "default_icon": {
       "19": "assets/images/icons/19x19-grey.png"

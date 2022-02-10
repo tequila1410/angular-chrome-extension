@@ -31,11 +31,11 @@ export class AppComponent {
     if (user)
       this.store.dispatch(authenticateSuccess({token, user: JSON.parse(user)}))
 
-    // getProxy().then((proxy) => {
-    //   if (proxy) {
-    //     this.store.dispatch(connectingSuccess(proxy));
-    //   }
-    // });
-    // this.store.dispatch(setServers())
+    getProxy().then((proxy) => {
+      if (proxy) {
+        this.store.dispatch(connectingSuccess(proxy));
+      }
+    });
+    this.store.dispatch(setServers())
   }
 }

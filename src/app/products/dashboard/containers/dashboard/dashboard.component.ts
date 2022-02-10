@@ -13,6 +13,7 @@ import {onAuthRequiredHandler, onProxyErrorHandler} from "../../../../core/utils
 import {Router} from "@angular/router";
 import {User} from "../../../../core/models/user.model";
 import {getUserData} from "../../../../core/store/user/user.selector";
+import {signOut} from "../../../../core/store/user/user.actions";
 
 @Component({
   selector: 'app-dashboard',
@@ -115,7 +116,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @return {void}
    */
   openVpnList() {
-    this.router.navigate(['vpn-list'])
+    console.log('nav!')
+    this.router.navigate(['/dashboard/vpn-list'])
+  }
+
+  /**
+   * Sign out user
+   * @return {void}
+   */
+  signOut(): void {
+    this.store.dispatch(signOut())
   }
 
   /**

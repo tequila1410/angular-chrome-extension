@@ -1,5 +1,7 @@
 <section class="dashboard">
-  <app-dashboard-header></app-dashboard-header>
+  <app-dashboard-header
+    (signOut)="signOut()">
+  </app-dashboard-header>
 
   <app-server-selector
     [selectedServer]="selectedServer"

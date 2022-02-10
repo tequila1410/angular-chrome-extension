@@ -36,6 +36,6 @@ export class AppComponent {
         this.store.dispatch(connectingSuccess(proxy));
       }
     });
-    this.store.dispatch(setServers())
+    this.store.dispatch(setServers());
   }
 }

@@ -16,4 +16,31 @@
     font-size: 18px;
     margin: 0;
   }
+
+  .menu-content {
+    position: absolute;
+    will-change: transform;
+    top: 0;
+    left: 0;
+    transform: translate3d(20px, 43px, 0px);
+    background-color: #2a2a2a;
+    padding: 16px;
+    border-radius: 5px;
+    width: 200px;
+    text-align: left;
+
+    ul {
+      margin: 0;
+      padding: 0;
+
+      li {
+        list-style-type: none;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }

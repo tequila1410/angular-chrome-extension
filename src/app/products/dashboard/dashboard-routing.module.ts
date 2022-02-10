@@ -5,10 +5,9 @@ import {DashboardComponent, VpnListComponent} from "./containers";
 const routes: Route[] = [{
   path: '',
   component: DashboardComponent,
-  children: [{
-    path: 'vpn-list',
-    component: VpnListComponent
-  }]
+}, {
+  path: 'vpn-list',
+  component: VpnListComponent
 }];
 
 @NgModule({

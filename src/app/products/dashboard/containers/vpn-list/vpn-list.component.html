@@ -9,12 +9,12 @@
     </div>
   </div>
 
-  <div *ngIf="proxyData$ | async as proxyData" class="list">
+  <div *ngIf="proxyDataFilter; else noData" class="list">
     <div class="location-section">
       <h3 class="label">
-        All locations ({{proxyData.length}})
+        All locations ({{proxyDataFilter.length}})
       </h3>
-      <div *ngFor="let proxy of proxyData" class="location" (click)="selectLocation(proxy)">
+      <div *ngFor="let proxy of proxyDataFilter" class="location" (click)="selectLocation(proxy)">
         <div class="label">
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
@@ -23,4 +23,8 @@
       </div>
     </div>
   </div>
+
+  <ng-template #noData>
+    <p>No data</p>
+  </ng-template>
 </div>

@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {Observable} from "rxjs";
+import { Subject} from "rxjs";
 import {ProxyModel} from "../../../../auth/models/proxy.model";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../../core/store/app.reducer";
 import {connecting} from "../../../../core/store/vpn/vpn.actions";
 import {ServerApi} from "../../../../core/api/server.api";
 import {getServerList} from "../../../../core/store/vpn/vpn.selector";
-import {tap} from "rxjs/operators";
+import {takeUntil, tap} from "rxjs/operators";
 import {FormControl} from "@angular/forms";
 
 @Component({
@@ -15,35 +15,42 @@ import {FormControl} from "@angular/forms";
   templateUrl: './vpn-list.component.html',
   styleUrls: ['./vpn-list.component.scss']
 })
-export class VpnListComponent implements OnInit {
+export class VpnListComponent implements OnInit, OnDestroy {
 
-  proxyData$!: Observable<ProxyModel[]>;
+  proxyData!: ProxyModel[];
 
   proxyDataFilter!: ProxyModel[];
 
-  formControl: FormControl = new FormControl([])
+  formControl: FormControl = new FormControl([]);
+
+  destroy$: Subject<void> = new Subject<void>();
 
   constructor(private router: Router,
               private serverService: ServerApi,
               private store: Store<AppState>) { }
 
   ngOnInit(): void {
-    this.proxyData$ = this.store.select(getServerList)
+    this.store.select(getServerList)
       .pipe(
+        takeUntil(this.destroy$),
         tap(data => {
+          this.proxyData = data;
           this.proxyDataFilter = data;
         })
-      );
+      ).subscribe();
 
     this.formControl.valueChanges.subscribe(res => {
-      console.log(res)
+      this.proxyDataFilter = this.proxyData.filter(proxy => proxy.locationName.toLowerCase().includes(res));
     })
   }
 
   selectLocation(proxy: ProxyModel) {
-    console.log('selectLocation: ', proxy)
     this.store.dispatch(connecting(proxy));
     this.router.navigate(['dashboard']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 
   goToDashboard() {

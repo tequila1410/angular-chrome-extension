@@ -13,10 +13,13 @@ export class AuthApi {
   }
 
   userLogin(email: string, password: string, token?: string) {
-    const postData = {
+    const postData: any = {
       email,
       password
     };
+
+    if (token)
+      postData["g-recaptcha-response"] = token;
 
     return this.httpClient.post<{data: {token: string, user: User}}>(`${this.API_URL}/api/users/login`, postData);
   }

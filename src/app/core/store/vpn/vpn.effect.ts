@@ -13,12 +13,13 @@ import {from} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
 import {clearProxy, setProxy} from "../../utils/chrome-backgroud";
 import {ServerApi} from "../../api/server.api";
+import {MockDataApi} from "../../api/mock-data.api";
 
 @Injectable()
 export class VpnEffect {
 
   constructor(private actions$: Actions,
-              private api: ServerApi) {
+              private api: MockDataApi) {
   }
 
   $connecting = createEffect(() =>

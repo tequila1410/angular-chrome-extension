@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    onAuthRequiredHandler('vlad.zubko@rankactive.com', 'pass2zoog');
+    onAuthRequiredHandler('7a908c6f490e', 'ffff3d116e');
     onProxyErrorHandler().then(details => {
       this.store.dispatch(closeConnection());
       console.error(details.error);
@@ -116,7 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @return {void}
    */
   openVpnList() {
-    console.log('nav!')
     this.router.navigate(['/dashboard/vpn-list'])
   }
 

@@ -1,111 +1,84 @@
 @import "src/assets/styles/variables";
 
 .sign-in {
-  //border: 1px solid red;
-  input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
-  textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus,
-  select:-webkit-autofill, select:-webkit-autofill:hover, select:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0 50px #19313D inset;
-    border-radius: 0;
-  }
+  background-image: url('../../../../assets/images/bg-images/auth-bg.png');
+  height: 100%;
 
-  .title {
-    text-align: center;
-  }
+  .gradient {
+    height: 100%;
+    background: linear-gradient(89.39deg, rgba(0, 194, 230, 0.61) 0.58%, rgba(0, 84, 90, 0.61) 45.42%, rgba(20, 29, 0, 0.61) 99.52%, rgba(20, 29, 0, 0.61) 99.53%);
 
-  .login-form_mail {
-    display: flex;
-    flex-direction: column;
-    padding: 2em;
-  }
-
-  .forgot-link {
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-
-    &:hover {
-      color: #93c710;
+    .zoog-logo {
+      display: block;
+      margin: 0 auto;
+      padding-top: 20px;
     }
   }
 
-  .input-text {
-    color: white !important;
-  }
+  &-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    margin-top: 83.5px;
+    width: 255px;
+    height: 275px;
+    border-radius: 10px;
+    background-color: rgba(8, 23, 33, 0.85);
+    box-shadow: 0px 0px 13px -3px $accent-color;
+    padding: 14px 13px 10px 13px;
 
-  .input-text::placeholder {
-    color: white;
-  }
+    &-title {
+      color: $accent-color;
+      text-align: center;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
 
-  h1, .h1 {
-    font-size: 28px !important;
-    font-weight: 500 !important;
-    letter-spacing: -0.04em !important;
-    color: $accent-color !important;
-  }
+    &-input {
+      background: rgba(35, 62, 77, 0.75);
+      border-radius: 4px;
+      width: 230px;
+      height: 30px;
+      border: none;
+      padding-left: 10px;
+      color: #fff;
+      margin-bottom: 10px;
 
-  .label-stl {
-    margin: .25em 0;
-    background: #233e4da3;
-    border-radius: 5px;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-wrapper {
-    margin: 0 !important;
-  }
-
-  .color-lbl {
-    color: #ffffff;
-  }
-
-  .mat-flat-button.mat-primary,
-  .mat-raised-button.mat-primary,
-  .mat-fab.mat-primary,
-  .mat-mini-fab.mat-primary,
-  .mat-raised-button.mat-accent {
-    //background-color: $accent-color;
-    //color: #ffffff;
-    //
-    //&:hover {
-    //  background-color: #93c710;
-    //}
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    color: transparent;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-    color: #526484;
-  }
-
-  .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
-    color: $accent-color;
-  }
-
-  .mat-input-element {
-    caret-color: $accent-color;
-  }
-
-  .signup-container {
-    margin-top: 20px;
-  }
-
-  .text-signup {
-    text-align: center;
-    color: #fff;
-    margin: 15px 5px 10px;
-
-    a {
-      transition: 0.3s;
-
-      &:hover {
-        color: #93c710;
+      &::placeholder {
+        color: #fff;
       }
+    }
+
+    &-btn {
+      margin-top: 5px;
+      background-color: $accent-color;
+      width: 230px;
+      height: 30px;
+      border: none;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+
+  &-register {
+    margin-top: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+
+    &-text {
+      line-height: 19px;
+      color: #fff;
+    }
+
+    &-link {
+      color: $accent-color;
+      text-decoration: none;
     }
   }
 }
-
-// .mat-form-field-appearance-outline .mat-form-field-outline {
-//   color: rgba(0, 0, 0, 0.12)!important;
-// }

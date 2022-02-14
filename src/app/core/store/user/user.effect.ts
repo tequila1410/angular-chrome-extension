@@ -13,6 +13,7 @@ import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
+import { SnackbarService } from "../../snackbar/snackbar.service";
 
 @Injectable()
 export class UserEffects {
@@ -100,11 +101,13 @@ export class UserEffects {
     private authApi: AuthApi,
     private router: Router,
     private store: Store<AppState>,
+    private snackbarService: SnackbarService
   ) {
   }
 
   private showSnackBarError(message: string) {
     console.error(message);
+    this.snackbarService.show('This is test');
     // this._snackBar.open(message, 'Close', {
     //   duration: 2000,
     //   panelClass: ['snack-bar-error']

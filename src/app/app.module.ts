@@ -18,10 +18,12 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {VpnEffect} from "./core/store/vpn/vpn.effect";
 import {RequestInterceptorService} from "./core/services/app.interceptor";
 import {DashboardModule} from "./products/dashboard/dashboard.module";
+import { SnackbarComponent } from './core/snackbar/snackbar.conmonent';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SnackbarComponent
   ],
   imports: [
     CommonModule,

@@ -5,19 +5,20 @@
     <form class="sign-in-form" [formGroup]="form">
       <h1 class="sign-in-form-title">Login to Your Account</h1>
       <input type="email" formControlName="email"
-            placeholder="Ex. pat@example.com" class="sign-in-form-input">
+            placeholder="Email" class="sign-in-form-input">
 
-
-      <input type="password" formControlName="password" class="sign-in-form-input">
+      <input type="password" formControlName="password"
+            placeholder="Password" class="sign-in-form-input">
 
       <button (click)="loginUser()" class="sign-in-form-btn">Login to Your Account</button>
     
       <div class="sign-in-register">
         <div class="sign-in-register-text">Don't have a ZoogVPN account yet?</div>
-        <a href="https://zoogvpn.com" class="sign-in-register-link">Sign Up</a>
+        <a href="https://app.zoogvpn.com/sign-up" target="_blank" class="sign-in-register-link">Sign Up</a>
       </div>
 
     </form>
 
+    <a href="https://zoogvpn.com/privacy" target="_blank" class="policy">Privacy Policy</a>
   </div>
 </div>

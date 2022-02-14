@@ -28,15 +28,17 @@ export class SignInComponent implements OnInit {
 
   loginUser() {
 
+    console.log(this.recaptchaV3Service);
     this.recaptchaV3Service.execute('signInAction')
       .pipe(
         take(1),
         tap(token => {
+          // console.log(token);
           const {email, password} = this.form.value;
           this.store.dispatch(authenticate({email, password, token}));
         }),
         catchError((err) => {
-
+          // console.log(err)
           this.form.enable();
           return err;
         })

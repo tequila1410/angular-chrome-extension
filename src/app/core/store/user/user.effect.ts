@@ -14,6 +14,7 @@ import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { SnackbarService } from "../../snackbar/snackbar.service";
+import { Respose } from "../../models/response.model";
 
 @Injectable()
 export class UserEffects {
@@ -46,7 +47,7 @@ export class UserEffects {
               return authenticateSuccess({...userData.data});
             }),
             catchError((error) => {
-              this.showSnackBarError(error.error.message);
+              this.showSnackBar(error.error);
               return of(authenticateError(error));
             })
           )
@@ -105,12 +106,7 @@ export class UserEffects {
   ) {
   }
 
-  private showSnackBarError(message: string) {
-    console.error(message);
-    this.snackbarService.show('This is test');
-    // this._snackBar.open(message, 'Close', {
-    //   duration: 2000,
-    //   panelClass: ['snack-bar-error']
-    // });
+  private showSnackBar(responseContent: Respose) {
+    this.snackbarService.show(responseContent);
   }
 }

@@ -1,4 +1,5 @@
 <div *ngIf="show"
+      [@fadeIn]="'in'"
       [ngClass]="['snackbar-wrap', type]">
   <p class="snackbar-text">
     {{message}}

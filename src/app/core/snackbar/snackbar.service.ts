@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import { Subject } from "rxjs";
+import { Respose } from "../models/response.model";
 
 @Injectable({
   providedIn: "root"
@@ -13,12 +14,11 @@ export class SnackbarService {
   constructor() {
   }
 
-  show(message: string, type?: string) {
-    console.log(1)
+  show(responseContent: Respose) {
+
     this.snackbarSubject.next({
       show: true,
-      message,
-      type
+      responseContent,
     });
   }
 }

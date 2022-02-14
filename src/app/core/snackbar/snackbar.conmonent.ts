@@ -1,6 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SnackbarService } from './snackbar.service';
 
 @Component({
@@ -20,20 +21,39 @@ import { SnackbarService } from './snackbar.service';
   ]
 })
 
-export class SnackbarComponent implements OnInit {
+export class SnackbarComponent implements OnInit, OnDestroy {
 
-  show = false;
+  /**
+   * Variable for snackbar visibility
+   * @type {boolean}
+   */
+  show: boolean = false;
 
+  /**
+   * Message to display
+   * @type {string}
+   */
   message: string = '';
   
+  /**
+   * Variable for type of response
+   * @type {string}
+   */
   type: string = '';
 
-  snackbarSubscription!: Subscription;
+  /**
+   * Subject for unsubscribing
+   * @type {Subject<void>}
+   */
+  destroy$: Subject<void>;
 
-  constructor(private snackbarService: SnackbarService) {}
+  constructor(private snackbarService: SnackbarService) {
+    this.destroy$ = new Subject<void>();
+  }
 
   ngOnInit(): void {
-    this.snackbarSubscription = this.snackbarService.snackbarState
+    this.snackbarService.snackbarState
+      .pipe(takeUntil(this.destroy$))
       .subscribe(state => {
         if (state.responseContent.errors) {
           this.type = 'danger';
@@ -57,4 +77,7 @@ export class SnackbarComponent implements OnInit {
       })
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
 }

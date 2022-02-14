@@ -14,8 +14,7 @@ export class SnackbarService {
   constructor() {
   }
 
-  show(responseContent: Respose) {
-
+  show(responseContent: Respose): void {
     this.snackbarSubject.next({
       show: true,
       responseContent,

@@ -9,11 +9,21 @@ import {ServerApi} from "../../../../core/api/server.api";
 import {getServerList} from "../../../../core/store/vpn/vpn.selector";
 import {takeUntil, tap} from "rxjs/operators";
 import {FormControl} from "@angular/forms";
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-vpn-list',
   templateUrl: './vpn-list.component.html',
-  styleUrls: ['./vpn-list.component.scss']
+  styleUrls: ['./vpn-list.component.scss'],
+  animations: [
+    trigger('fadeIn', [
+      state('in', style({opacity: 1})),
+      transition(':enter', [
+        style({opacity: 0}),
+        animate(300)
+      ]),
+    ])
+  ]
 })
 export class VpnListComponent implements OnInit, OnDestroy {
 

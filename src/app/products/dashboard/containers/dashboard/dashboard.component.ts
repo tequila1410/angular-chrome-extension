@@ -14,11 +14,21 @@ import {Router} from "@angular/router";
 import {User} from "../../../../core/models/user.model";
 import {getUserData} from "../../../../core/store/user/user.selector";
 import {signOut} from "../../../../core/store/user/user.actions";
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
+  animations: [
+    trigger('fadeIn', [
+      state('in', style({opacity: 1})),
+      transition(':enter', [
+        style({opacity: 0}),
+        animate(300)
+      ]),
+    ])
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit, OnDestroy {

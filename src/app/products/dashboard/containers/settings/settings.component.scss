@@ -1,0 +1,153 @@
+@import "src/assets/styles/variables";
+
+.settings {
+  background-color: #131313;
+  color: #d8d8d8;
+  height: 563px;
+
+  p {
+    margin: 0;
+  }
+
+  &-header {
+    padding: 16px;
+  }
+
+  &-navigation {
+    text-align: center;
+    padding-bottom: 10px;
+    font-size: 16px;
+    position: relative;
+
+    .arrow-back {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      cursor: pointer;
+    }
+  }
+
+  &-content {
+    display: flex;
+    
+    &-left {
+      width: 20%;
+      height: 480px;
+      margin: 6px 0 0 0;
+      padding: 0 8px;
+      border-right: 1px solid #4d4d4d;
+
+      li {
+        padding: 6px 0;
+        font-size: 14px;
+        list-style-type: none;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &-main {
+      width: 80%;
+      height: 480px;
+      padding: 12px;
+
+      .exclusions {
+        &-title {
+          margin-top: 0;
+        }
+
+        &-modes {
+          &-item {
+            margin-bottom: 12px;
+
+            input {
+              margin: 0;
+              cursor: pointer;
+            }
+
+            label {
+              font-size: 14px;
+              font-weight: bold;
+              margin-left: 8px;
+            }
+
+            p {
+              margin-top: 8px;
+              font-size: 14px;
+            }
+          }
+        }
+
+        &-controls {
+          div {
+            display: flex;
+            justify-content: space-between;
+            margin: 16px 0 12px 0;
+
+            button {
+              color: #d8d8d8;
+              transition: 0.3s;
+
+              &:hover {
+                color: #fff;
+              }
+            }
+          }
+
+          button {
+            background-color: transparent;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            color: $accent-color;
+            transition: 0.3s;
+
+            &:hover {
+              color: #9bd802;
+            }
+          }
+
+          &-list {
+            padding-inline-start: 0;
+            list-style-type: none;
+
+            &-input {
+              input {
+                width: 90%;
+                height: 24px;
+                padding-left: 8px;
+                background-color: transparent;
+                border: 1px solid $accent-color;
+                border-radius: 4px;
+                color: #d8d8d8;
+                outline: none;
+              }
+            }
+
+            &-item {
+              border: 1px solid transparent;
+              
+              &:hover {
+                border: 1px solid $accent-color;
+                border-radius: 4px;
+              }
+
+              span {
+                display: flex;
+                justify-content: space-between;
+
+                span {
+                  display: flex;
+                  align-items: center;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

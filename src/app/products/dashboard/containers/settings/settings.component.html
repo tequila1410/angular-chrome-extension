@@ -1,0 +1,61 @@
+<div class="settings">
+  <div class="settings-header">
+    <div class="settings-navigation">
+      <span class="material-icons arrow-back" (click)="goToDashboard()">arrow_back</span>
+      <p>Settings</p>
+    </div>
+  </div>
+
+  <div class="settings-content">
+    <ul class="settings-content-left">
+      <li>Exclusions</li>
+    </ul>
+
+    <div class="settings-content-main">
+      <div class="exclusions">
+        <h2 class="exclusions-title">Exclusions</h2>
+        <form class="exclusions-modes" [formGroup]="modeForm" (change)="modeChange($event)">
+          <h3>Operating Mode</h3>
+          <div class="exclusions-modes-item">
+            <input type="radio" id="regularMode" value="regularMode" formControlName="mode">
+            <label for="regularMode">Regular mode</label>
+            <p>ZoogVPN won't work on websites from the list below</p>
+          </div>
+          <div class="exclusions-modes-item">
+            <input type="radio" id="selectiveMode" value="selectiveMode" formControlName="mode">
+            <label for="selectiveMode">Selective mode</label>
+            <p>ZoogVPN will only work on websites from the list below</p>
+          </div>
+        </form>
+
+        <div class="exclusions-controls">
+          <div>
+            <button>IMPORT</button>
+            <button>EXPORT</button>
+            <button (click)="clearChosenList()">DELETE ALL</button>
+          </div>
+
+          <button (click)="addWebsite()">+ ADD A WEBSITE</button>
+
+          <ul class="exclusions-controls-list">
+            <li *ngIf="inputVisible" class="exclusions-controls-list-input">
+              <input type="text" (change)="pushWebsite($event)" (click)="pushWebsite($event)">
+            </li>
+            <li *ngFor="let website of websiteList; let itemIndex = index" class="exclusions-controls-list-item">
+              <span>
+                <span>
+                  <input type="checkbox" checked>
+                  <span>{{website}}</span>
+                </span> 
+                
+                <button (click)="deleteWebsite(itemIndex)">
+                  <span class="material-icons close">close</span>
+                </button>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

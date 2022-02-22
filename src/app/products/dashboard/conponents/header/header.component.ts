@@ -14,6 +14,7 @@ export class HeaderComponent implements OnInit {
   isMenuVisible: boolean = false;
 
   @Output() signOut: EventEmitter<void> = new EventEmitter<void>();
+  @Output() goToSettings: EventEmitter<void> = new EventEmitter<void>();
 
   constructor() { }
 

@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
 import {Route, RouterModule} from "@angular/router";
-import {DashboardComponent, VpnListComponent} from "./containers";
+import {DashboardComponent, SettingsComponent, VpnListComponent} from "./containers";
 
 const routes: Route[] = [{
   path: '',
@@ -8,6 +8,9 @@ const routes: Route[] = [{
 }, {
   path: 'vpn-list',
   component: VpnListComponent
+}, {
+  path: 'settings',
+  component: SettingsComponent
 }];
 
 @NgModule({

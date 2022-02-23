@@ -22,9 +22,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   destroy$: Subject<void> = new Subject<void>();
 
   constructor(private router: Router, private fb: FormBuilder) {
-    // this.modeForm = new FormGroup({
-    //   mode: new FormControl(),
-    // });
     this.modeForm = this.fb.group({
       mode: ['regularMode'],
     });
@@ -74,6 +71,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   deleteWebsite(itemIndex: any) {
     this.websiteList.splice(itemIndex, 1);
+  }
+
+  exportWebsiteList() {
+    const list = this.websiteList.join('\n');
+
+    const file = new window.Blob([list], { type: 'text/plain' });
+
+    const downloadAncher = document.createElement('a');
+    downloadAncher.style.display = 'none';
+
+    const fileURL = URL.createObjectURL(file);
+    downloadAncher.href = fileURL;
+    downloadAncher.download = `${this.modeForm.value.mode}Websites.txt`;
+    downloadAncher.click();
   }
 
   clearChosenList() {

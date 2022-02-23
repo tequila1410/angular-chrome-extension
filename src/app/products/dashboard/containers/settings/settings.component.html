@@ -29,13 +29,17 @@
         </form>
 
         <div class="exclusions-controls">
-          <div>
-            <button>IMPORT</button>
-            <button>EXPORT</button>
-            <button (click)="clearChosenList()">DELETE ALL</button>
+          <div class="exclusions-controls-wrapper">
+            <!-- ПОРАБОТАТЬ СО СТИЛЯМИ -->
+            <div class="exclusions-controls-wrapper-btn">
+              <input type="file" id="file">
+              <label for="file">IMPORT</label>
+            </div>
+            <button (click)="exportWebsiteList()" class="exclusions-controls-wrapper-btn">EXPORT</button>
+            <button (click)="clearChosenList()" class="exclusions-controls-wrapper-btn">DELETE ALL</button>
           </div>
 
-          <button (click)="addWebsite()">+ ADD A WEBSITE</button>
+          <button (click)="addWebsite()" class="exclusions-controls-add">+ ADD A WEBSITE</button>
 
           <ul class="exclusions-controls-list">
             <li *ngIf="inputVisible" class="exclusions-controls-list-input">

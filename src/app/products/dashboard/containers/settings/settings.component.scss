@@ -82,24 +82,34 @@
         }
 
         &-controls {
-          div {
+          &-wrapper {
             display: flex;
             justify-content: space-between;
             margin: 16px 0 12px 0;
-
-            button {
+            
+            &-btn {
+              border: none;
+              background-color: transparent;
+              margin: 0;
+              cursor: pointer;
+              font-size: 14px;
+              font-weight: 600;
               color: #d8d8d8;
               transition: 0.3s;
 
               &:hover {
                 color: #fff;
               }
+
+              input {
+                display: none;
+              }
             }
           }
 
-          button {
+          &-add {
             background-color: transparent;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             border: none;
             color: $accent-color;

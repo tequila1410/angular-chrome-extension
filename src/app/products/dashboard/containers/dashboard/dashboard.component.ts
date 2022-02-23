@@ -142,6 +142,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard/vpn-list'])
   }
 
+  goToSettings() {
+    this.router.navigate(['/dashboard/settings'])
+  }
+
   /**
    * Sign out user
    * @return {void}

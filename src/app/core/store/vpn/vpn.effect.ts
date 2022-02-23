@@ -3,15 +3,15 @@ import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {
   closeConnection,
   closeConnectionSuccess,
-  connecting,
+  connecting, connectingError,
   connectingSuccess,
   setServers,
   setServersSuccess
 } from "./vpn.actions";
-import {exhaustMap, map, mergeMap} from "rxjs/operators";
-import {from} from "rxjs";
+import {catchError, exhaustMap, map, mergeMap} from "rxjs/operators";
+import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
-import {clearProxy, setProxy} from "../../utils/chrome-backgroud";
+import {clearProxy, sendMessage, setProxy} from "../../utils/chrome-backgroud";
 import {ServerApi} from "../../api/server.api";
 import {MockDataApi} from "../../api/mock-data.api";
 
@@ -28,8 +28,16 @@ export class VpnEffect {
       mergeMap(proxy => {
         return from(setProxy(proxy));
       }),
+      mergeMap((proxy) => {
+        return this.api.testNetwork(proxy);
+      }),
       map(proxy => {
         return connectingSuccess(proxy);
+      }),
+      catchError(error => {
+        console.log(error)
+        return of(connectingError({message: 'sasi error'}))
+        // return of();
       })
     )
   )

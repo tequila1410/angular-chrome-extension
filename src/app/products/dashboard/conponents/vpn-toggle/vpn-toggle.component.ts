@@ -9,6 +9,8 @@ export class VpnToggleComponent implements OnInit {
 
   @Input() isConnected!: boolean;
 
+  @Input() isConnecting!: boolean;
+
   @Output() vpnConnectToggle: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }

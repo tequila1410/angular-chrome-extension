@@ -12,7 +12,7 @@ export const connectingSuccess = createAction(
 )
 
 export const connectingError = createAction(
-  '[VPN Connecting success]',
+  '[VPN Connecting error]',
   props<{ message: string }>()
 )
 

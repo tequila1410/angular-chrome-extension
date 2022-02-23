@@ -8,8 +8,11 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../../core/store/app.reducer";
 import {closeConnection, connecting, connectingSuccess} from "../../../../core/store/vpn/vpn.actions";
-import {getSelectedVpnServer, isVPNConnected} from "../../../../core/store/vpn/vpn.selector";
-import {onAuthRequiredHandler, onProxyErrorHandler} from "../../../../core/utils/chrome-backgroud";
+import {getSelectedVpnServer, isConnecting, isVPNConnected} from "../../../../core/store/vpn/vpn.selector";
+import {
+  onAuthRequiredHandler,
+  onProxyErrorHandler,
+} from "../../../../core/utils/chrome-backgroud";
 import {Router} from "@angular/router";
 import {User} from "../../../../core/models/user.model";
 import {getUserData} from "../../../../core/store/user/user.selector";
@@ -34,6 +37,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @type {boolean}
    */
   isConnected: boolean = false;
+
+  isConnecting: boolean = false;
 
   /**
    * Selected proxy server
@@ -70,8 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
-    onAuthRequiredHandler('7a908c6f490e', 'ffff3d116e');
+    onAuthRequiredHandler('7a0fd1f827c2', '5bab907302');
     onProxyErrorHandler().then(details => {
       this.store.dispatch(closeConnection());
       console.error(details.error);
@@ -85,6 +89,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.cdr.detectChanges();
       console.log('isVPNConnected: ', isVPNConnected);
     });
+
+    this.store.select(isConnecting)
+      .pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(isConnecting => {
+      console.log('isConnecting: ', isConnecting)
+      this.isConnecting = isConnecting;
+      this.cdr.detectChanges();
+    })
 
     this.store.select(getSelectedVpnServer)
       .pipe(

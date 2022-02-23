@@ -57,3 +57,9 @@ export function clearProxy(): void {
   chrome.proxy.settings.clear({});
   chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-grey.png')}`});
 }
+
+export function sendMessage(type: string = 'enable.proxy', data: {force: boolean} = {force: true}) {
+ chrome.runtime.sendMessage({ type, data }, (response) => {
+    console.log('Response data: ', response)
+  });
+}

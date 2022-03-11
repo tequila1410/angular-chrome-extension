@@ -7,12 +7,12 @@ const routes: Routes = [{
   path: 'auth',
   loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
   // canLoad: [OnlyGuestGuard],
-  canActivate: [OnlyGuestGuard]
+  // canActivate: [OnlyGuestGuard]
 }, {
   path: 'dashboard',
   loadChildren: () => import('./products/dashboard/dashboard.module').then(m => m.DashboardModule),
   // canLoad: [AuthGuard],
-  canActivate: [AuthGuard]
+  // canActivate: [AuthGuard]
 }, {
   path: '',
   redirectTo: 'dashboard',

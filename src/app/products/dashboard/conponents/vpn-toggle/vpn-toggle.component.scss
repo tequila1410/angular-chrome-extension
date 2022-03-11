@@ -20,8 +20,9 @@
     cursor: pointer;
 
     &.connected {
-      color: #EC5A50;
-      border-color: #EC5A50;
+      color: white;
+      background-color: #85a832;
+      //border-color: #EC5A50;
 
       &:hover {
 

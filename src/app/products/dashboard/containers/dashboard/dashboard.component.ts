@@ -1,23 +1,45 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {ProxyModel} from "../../../../auth/models/proxy.model";
-import {ProxyService} from "../../../../core/services/proxy.service";
-import {Observable, Subject} from "rxjs";
-import {MockDataApi} from "../../../../core/api/mock-data.api";
-import {map, takeUntil, tap} from "rxjs/operators";
-import {FormControl, FormGroup} from "@angular/forms";
-import {Store} from "@ngrx/store";
-import {AppState} from "../../../../core/store/app.reducer";
-import {closeConnection, connecting, connectingSuccess} from "../../../../core/store/vpn/vpn.actions";
-import {getSelectedVpnServer, isConnecting, isVPNConnected} from "../../../../core/store/vpn/vpn.selector";
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { ProxyModel } from '../../../../auth/models/proxy.model';
+import { ProxyService } from '../../../../core/services/proxy.service';
+import { Observable, Subject } from 'rxjs';
+import { MockDataApi } from '../../../../core/api/mock-data.api';
+import { map, takeUntil, tap } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../../../core/store/app.reducer';
+import {
+  closeConnection,
+  connecting,
+  connectingSuccess,
+} from '../../../../core/store/vpn/vpn.actions';
+import {
+  getSelectedVpnServer,
+  isConnecting,
+  isVPNConnected,
+  isConnectionError,
+} from '../../../../core/store/vpn/vpn.selector';
 import {
   onAuthRequiredHandler,
   onProxyErrorHandler,
-} from "../../../../core/utils/chrome-backgroud";
-import {Router} from "@angular/router";
-import {User} from "../../../../core/models/user.model";
-import {getUserData} from "../../../../core/store/user/user.selector";
-import {signOut} from "../../../../core/store/user/user.actions";
-import { animate, state, style, transition, trigger } from '@angular/animations';
+} from '../../../../core/utils/chrome-backgroud';
+import { Router } from '@angular/router';
+import { User } from '../../../../core/models/user.model';
+import { getUserData } from '../../../../core/store/user/user.selector';
+import { signOut } from '../../../../core/store/user/user.actions';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,17 +47,13 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   styleUrls: ['./dashboard.component.scss'],
   animations: [
     trigger('fadeIn', [
-      state('in', style({opacity: 1})),
-      transition(':enter', [
-        style({opacity: 0}),
-        animate(300)
-      ]),
-    ])
+      state('in', style({ opacity: 1 })),
+      transition(':enter', [style({ opacity: 0 }), animate(300)]),
+    ]),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-
   /**
    * Form group for proxy selector
    * @type {FormGroup}
@@ -49,6 +67,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isConnected: boolean = false;
 
   isConnecting: boolean = false;
+
+  isConnectionError: boolean = false;
 
   /**
    * Selected proxy server
@@ -68,56 +88,66 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   destroy$: Subject<void> = new Subject<void>();
 
-  constructor(private proxyService: ProxyService,
-              private serverService: MockDataApi,
-              private cdr: ChangeDetectorRef,
-              private router: Router,
-              private store: Store<AppState>) {
-
+  constructor(
+    private proxyService: ProxyService,
+    private serverService: MockDataApi,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private store: Store<AppState>
+  ) {
     this.form = new FormGroup({
-      proxy: new FormControl()
+      proxy: new FormControl(),
     });
 
-    this.store.select(getUserData)
+    this.store
+      .select(getUserData)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(user => this.currentUser = user)
-
+      .subscribe((user) => (this.currentUser = user));
   }
 
   ngOnInit(): void {
     onAuthRequiredHandler('7a0fd1f827c2', '5bab907302');
-    onProxyErrorHandler().then(details => {
+    onProxyErrorHandler().then((details) => {
       this.store.dispatch(closeConnection());
       console.error(details.error);
     });
 
-    this.store.select(isVPNConnected)
-      .pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(isVPNConnected => {
-      this.isConnected = isVPNConnected;
-      this.cdr.detectChanges();
-      console.log('isVPNConnected: ', isVPNConnected);
-    });
+    this.store
+      .select(isVPNConnected)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isVPNConnected) => {
+        this.isConnected = isVPNConnected;
+        this.cdr.detectChanges();
+        console.log('isVPNConnected: ', isVPNConnected);
+      });
 
-    this.store.select(isConnecting)
-      .pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(isConnecting => {
-      console.log('isConnecting: ', isConnecting)
-      this.isConnecting = isConnecting;
-      this.cdr.detectChanges();
-    })
+    this.store
+      .select(isConnecting)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isConnecting) => {
+        console.log('isConnecting: ', isConnecting);
+        this.isConnecting = isConnecting;
+        this.cdr.detectChanges();
+      });
 
-    this.store.select(getSelectedVpnServer)
-      .pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(selectedServer => {
-      this.selectedServer = selectedServer;
-      this.cdr.detectChanges();
-      console.log('selectedServer: ', selectedServer);
-    })
+    this.store
+      .select(isConnectionError)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((connectionError) => {
+        if (connectionError) {
+          this.isConnectionError = true;
+          this.cdr.detectChanges();
+        } 
+      });
 
+    this.store
+      .select(getSelectedVpnServer)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((selectedServer) => {
+        this.selectedServer = selectedServer;
+        this.cdr.detectChanges();
+        console.log('selectedServer: ', selectedServer);
+      });
   }
 
   /**
@@ -125,12 +155,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @return {void}
    */
   vpnConnectToggle(): void {
-
     if (this.isConnected) {
-      this.store.dispatch(closeConnection())
+      this.store.dispatch(closeConnection());
     } else if (this.selectedServer) {
       this.store.dispatch(connecting(this.selectedServer));
-
     }
   }
 
@@ -139,7 +167,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @return {void}
    */
   openVpnList() {
-    this.router.navigate(['/dashboard/vpn-list'])
+    this.router.navigate(['/dashboard/vpn-list']);
   }
 
   /**
@@ -147,7 +175,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @return {void}
    */
   signOut(): void {
-    this.store.dispatch(signOut())
+    this.store.dispatch(signOut());
   }
 
   /**
@@ -157,5 +185,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
   }
-
 }

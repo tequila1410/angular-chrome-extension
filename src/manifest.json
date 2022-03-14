@@ -13,8 +13,17 @@
     "storage",
     "unlimitedStorage",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+
+    "activeTab",
+    "webNavigation"
   ],
+  "background": {
+    "scripts": [
+      "background.js",
+      "runtime.js"
+    ]
+  },
   "browser_action": {
     "default_popup": "index.html",
     "default_icon": {

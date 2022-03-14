@@ -24,7 +24,9 @@
     "@ngrx/store": "^13.0.2",
     "@ngrx/store-devtools": "^13.0.2",
     "ipaddr.js": "^2.0.1",
+    "ng-circle-progress": "^1.6.0",
     "ng-recaptcha": "^9.0.0",
+    "ngx-color-picker": "^12.0.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

@@ -1,10 +1,11 @@
 <div class="vpn-toggle">
-    <span class="toggle-btn" [class]="isConnected ? 'connected' : isConnectionError ? 'connectionError' : isConnecting ? 'connecting' : ''"
+    <span class="toggle-btn" [class]="isConnected ? 'connected' : isConnecting ? 'connecting' : isConnectionError ? 'connectionError' : ''"
           (click)="vpnConnectToggle.emit()">
       <span class="material-icons">power_settings_new</span>
     </span>
-    <span class="lds-dual-ring" [class]="isConnected ? 'connected': isConnectionError ? 'connectionError' : isConnecting ? 'connecting' : ''"></span>
+    <span class="lds-dual-ring" [class]="isConnected ? 'connected' : isConnecting ? 'connecting' : isConnectionError ? 'connectionError' : ''"></span>
   <div class="label">
-    <span>{{isConnected ? 'Connected' : isConnecting ? 'Connecting' : 'Disconnected'}}</span>
+    <span>{{isConnected ? 'Connected' : isConnecting ? 'Connecting' : isConnectionError ? 'Connection Error' : 'Disconnected'}}</span>
+    <span>{{isConnecting ? '' : isConnectionError ? 'Try another server' : ''}}</span>
   </div>
 </div>

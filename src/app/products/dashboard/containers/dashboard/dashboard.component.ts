@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   isConnecting: boolean = false;
 
-  isConnectionError: boolean = false;
+  isConnectionError!: boolean;
 
   /**
    * Selected proxy server
@@ -137,7 +137,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (connectionError) {
           this.isConnectionError = true;
           this.cdr.detectChanges();
-        } 
+        } else {
+          this.isConnectionError = false;
+          this.cdr.detectChanges();
+        }
       });
 
     this.store
@@ -159,6 +162,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.store.dispatch(closeConnection());
     } else if (this.selectedServer) {
       this.store.dispatch(connecting(this.selectedServer));
+    }
+
+    if  (this.isConnecting && this.isConnectionError) {
+      setTimeout(() => {
+        this.store.dispatch(closeConnection());
+      }, 5000)
     }
   }
 

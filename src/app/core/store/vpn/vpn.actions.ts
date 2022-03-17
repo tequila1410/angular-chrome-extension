@@ -36,3 +36,8 @@ export const setServersSuccess = createAction(
   '[VPN set list of servers success]',
   props<{serverList: ProxyModel[]}>()
 )
+
+export const bestServerSelect = createAction(
+  '[VPN auto finding best server]',
+  props<{bestServerSelected: boolean}>()
+)

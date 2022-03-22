@@ -34,7 +34,7 @@ const _vpnReducer = createReducer(
   on(closeConnection, (state,) => state = {...state, connecting: true}),
   on(closeConnectionSuccess, (state,) => state = {...state, connecting: false, connected: false}),
   on(closeConnectionError, (state,) => state = {...state, connecting: false}),
-  on(setServers, state => state = {...state, bestServerSelected: true}),
+  on(setServers, state => state = {...state, bestServerSelected: !!localStorage.getItem('isBestServerSelected')}),
   on(setServersSuccess, (state, data) => {
     if (!state.bestServerSelected) {
       state = {

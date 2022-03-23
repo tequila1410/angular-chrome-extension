@@ -14,18 +14,11 @@ export class MockDataApi implements ServerApiModel {
 
   getServersData(): Observable<{data: {serverList: ProxyModel[], tariffName: string}}> {
     const testServers = [
-      '188.244.121.242',
-    '188.244.121.34',
-    '188.244.121.1',
-    '188.244.121.0',
-    '188.244.121.142',
-    '188.244.121.5',
-    '188.244.121.33',
-    '188.244.121.175',
-    '188.244.121.72',
-    '188.244.121.114',
-    '188.244.121.188',
-    '188.244.121.236',
+      '45.90.249.65',
+      '45.90.251.10',
+      '188.244.121.188',
+      '188.244.121.236',
+      '188.244.121.89',
     ];
     let result: ProxyModel[] = [];
     testServers.forEach(ip => result.push({

@@ -6,7 +6,7 @@ import {
   closeConnectionSuccess,
   connecting,
   connectingError,
-  connectingSuccess, setServers, setServersSuccess
+  connectingSuccess, setRecentlyUsed, setServers, setServersSuccess
 } from "./vpn.actions";
 
 export interface VPNState {
@@ -14,13 +14,15 @@ export interface VPNState {
   connecting: boolean;
   selectedServer?: ProxyModel;
   serverList: ProxyModel[];
+  recentlyUsed: ProxyModel[];
   error?: string;
 }
 
 const initialState: VPNState = {
   connected: false,
   connecting: false,
-  serverList: []
+  serverList: [],
+  recentlyUsed: []
 }
 
 const _vpnReducer = createReducer(
@@ -36,8 +38,26 @@ const _vpnReducer = createReducer(
     ...state,
     serverList: data.serverList,
     selectedServer: data.serverList[0]
+  }),
+  on(setRecentlyUsed, (state, proxyData) => {
+    if (state.recentlyUsed.length < 5) {
+      state = {
+        ...state,
+        recentlyUsed: [...state.recentlyUsed, proxyData]
+      }
+    }
+    else {
+      state.recentlyUsed.shift();
+      state.recentlyUsed.push(proxyData);
+    }
+    renewRecentlyUsed(state.recentlyUsed);
+    return state
   })
 )
+
+function renewRecentlyUsed(recentlyUsed: ProxyModel[]) {
+  localStorage.setItem('recentlyUsed', JSON.stringify(recentlyUsed));
+}
 
 export function vpnReducer(state: VPNState | undefined, action: Action) {
   return _vpnReducer(state, action);

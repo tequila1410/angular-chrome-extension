@@ -106,7 +106,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    onAuthRequiredHandler('7a0fd1f827c2', '5bab907302');
+    onAuthRequiredHandler('7a9e9ebb1a0f', 'eb8c940eb5');
     onProxyErrorHandler().then((details) => {
       this.store.dispatch(closeConnection());
       console.error(details.error);

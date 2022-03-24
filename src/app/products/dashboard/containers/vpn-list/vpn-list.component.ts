@@ -61,13 +61,6 @@ export class VpnListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(isBestServerSelected => {
         this.bestPingCheckbox.setValue(isBestServerSelected);
-        if (isBestServerSelected) {
-          localStorage.setItem('isBestServerSelected', JSON.stringify(isBestServerSelected))
-        }
-        else {
-          localStorage.setItem('isBestServerSelected', '')
-        }
-        this.cdr.detectChanges();
       });
 
     this.bestPingCheckbox.valueChanges.subscribe((bestServerSelected: boolean) => {

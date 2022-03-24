@@ -23,7 +23,7 @@ const initialState: VPNState = {
   connected: false,
   connecting: false,
   serverList: [],
-  bestServerSelected: false
+  bestServerSelected: true
 }
 
 const _vpnReducer = createReducer(
@@ -36,38 +36,46 @@ const _vpnReducer = createReducer(
   on(closeConnectionError, (state,) => state = {...state, connecting: false}),
   on(setServers, state => state = {...state, bestServerSelected: !!localStorage.getItem('isBestServerSelected')}),
   on(setServersSuccess, (state, data) => {
+    state.serverList = data.serverList;
     if (!state.bestServerSelected) {
       state = {
         ...state,
-        serverList: data.serverList,
         selectedServer: data.serverList[0]
       }
     } else if (state.bestServerSelected) {
       state = {
         ...state,
-        serverList: data.serverList,
         selectedServer: data.serverList.reduce((a, b) => (a.ping < b.ping ? a : b))
       }
     }
     return state;
   }),
   on(bestServerSelect, (state, data) => {
+    state.bestServerSelected = data.bestServerSelected;
     if (!data.bestServerSelected) {
       state = {
         ...state,
-        selectedServer: state.serverList[0],
-        bestServerSelected: false
+        selectedServer: state.serverList[0]
       }
     } else if (data.bestServerSelected) {
       state = {
         ...state,
-        selectedServer: state.serverList.reduce((a, b) => (a.ping < b.ping ? a : b)),
-        bestServerSelected: true
+        selectedServer: state.serverList.reduce((a, b) => (a.ping < b.ping ? a : b))
       }
     }
+    renewBestServerSelect(data.bestServerSelected);
     return state;
   }),
 )
+
+function renewBestServerSelect(bestServerSelected: boolean) {
+  if (bestServerSelected) {
+    localStorage.setItem('isBestServerSelected', JSON.stringify(bestServerSelect));
+  }
+  else {
+    localStorage.setItem('isBestServerSelected', '');
+  }
+}
 
 export function vpnReducer(state: VPNState | undefined, action: Action) {
   return _vpnReducer(state, action);

@@ -5,13 +5,18 @@ import {containers} from "./containers";
 import {components} from "./conponents";
 import {DashboardRoutingModule} from "./dashboard-routing.module";
 import {ReactiveFormsModule} from "@angular/forms";
+import { BytesPipe } from 'src/app/core/pipes/bites.pipe';
 
 
 
 @NgModule({
   declarations: [
     ...containers,
-    ...components
+    ...components,
+    BytesPipe
+  ],
+  exports: [
+    BytesPipe
   ],
   imports: [
     CommonModule,

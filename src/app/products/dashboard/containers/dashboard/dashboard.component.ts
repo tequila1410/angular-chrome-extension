@@ -40,6 +40,8 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { DashboardApi } from 'src/app/core/api/dashboard.api';
+import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -82,6 +84,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   currentUser!: User | undefined;
 
+  overviewData$!: Observable<DashboardOverview>;
+
   /**
    * Subject to destroy all subscriptions on component destroy
    * @type {Subject<void>}
@@ -91,6 +95,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private proxyService: ProxyService,
     private serverService: MockDataApi,
+    private dashboardApi: DashboardApi,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private store: Store<AppState>
@@ -103,6 +108,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .select(getUserData)
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => (this.currentUser = user));
+
+    this.overviewData$ = this.dashboardApi.getOverViewData()
+      .pipe(
+        map(res => {
+          return res.data;
+        })
+      )
   }
 
   ngOnInit(): void {

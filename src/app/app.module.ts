@@ -19,6 +19,7 @@ import {VpnEffect} from "./core/store/vpn/vpn.effect";
 import {RequestInterceptorService} from "./core/services/app.interceptor";
 import {DashboardModule} from "./products/dashboard/dashboard.module";
 import { SnackbarComponent } from './core/snackbar/snackbar.conmonent';
+import { DashboardApi } from './core/api/dashboard.api';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { SnackbarComponent } from './core/snackbar/snackbar.conmonent';
   ],
   providers: [
     AuthApi,
+    DashboardApi,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptorService,

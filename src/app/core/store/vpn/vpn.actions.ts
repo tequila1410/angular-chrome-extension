@@ -36,3 +36,8 @@ export const setServersSuccess = createAction(
   '[VPN set list of servers success]',
   props<{serverList: ProxyModel[]}>()
 )
+
+export const setRecentlyUsed = createAction(
+  '[VPN set recently used server]',
+  props<ProxyModel>()
+)

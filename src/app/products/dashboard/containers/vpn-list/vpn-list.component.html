@@ -10,6 +10,20 @@
   </div>
 
   <div *ngIf="proxyDataFilter; else noData" class="list">
+    <div class="location-section" *ngIf="proxyDataUsed">
+      <h3 class="label">
+        Recently Used
+      </h3>
+      <div *ngFor="let proxy of proxyDataUsed" class="location" (click)="selectLocation(proxy)">
+        <div class="label">
+          <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
+          <div class="vpn-name">{{proxy.locationName}}</div>
+        </div>
+        <div>{{proxy.id}}</div>
+        <div class="ping">{{proxy.ping}} ms</div>
+      </div>
+    </div>
+
     <div class="location-section">
       <h3 class="label">
         All locations ({{proxyDataFilter.length}})
@@ -19,6 +33,7 @@
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
         </div>
+        <div>{{proxy.id}}</div>
         <div class="ping">{{proxy.ping}} ms</div>
       </div>
     </div>

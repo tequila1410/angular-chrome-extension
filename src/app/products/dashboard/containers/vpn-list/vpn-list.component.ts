@@ -4,7 +4,7 @@ import { Subject} from "rxjs";
 import {ProxyModel} from "../../../../auth/models/proxy.model";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../../core/store/app.reducer";
-import {connecting} from "../../../../core/store/vpn/vpn.actions";
+import {connecting, setRecentlyUsed} from "../../../../core/store/vpn/vpn.actions";
 import {ServerApi} from "../../../../core/api/server.api";
 import {getServerList} from "../../../../core/store/vpn/vpn.selector";
 import {takeUntil, tap} from "rxjs/operators";
@@ -31,13 +31,20 @@ export class VpnListComponent implements OnInit, OnDestroy {
 
   proxyDataFilter!: ProxyModel[];
 
+  proxyDataUsed!: ProxyModel[];
+
   formControl: FormControl = new FormControl([]);
 
   destroy$: Subject<void> = new Subject<void>();
 
   constructor(private router: Router,
               private serverService: ServerApi,
-              private store: Store<AppState>) { }
+              private store: Store<AppState>) {
+    const proxyDataUsed = localStorage.getItem('recentlyUsed');
+    if (proxyDataUsed) {
+      this.proxyDataUsed = JSON.parse(proxyDataUsed);
+    }
+  }
 
   ngOnInit(): void {
     this.store.select(getServerList)
@@ -56,6 +63,8 @@ export class VpnListComponent implements OnInit, OnDestroy {
 
   selectLocation(proxy: ProxyModel) {
     this.store.dispatch(connecting(proxy));
+    this.store.dispatch(setRecentlyUsed(proxy))
+
     this.router.navigate(['dashboard']);
   }
 

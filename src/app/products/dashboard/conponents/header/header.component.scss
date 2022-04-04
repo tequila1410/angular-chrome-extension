@@ -39,6 +39,16 @@
         list-style-type: none;
         cursor: pointer;
 
+        a {
+          text-decoration: none;
+          color: #fff;
+          display: flex;
+
+          span {
+            font-size: 14px;
+          }
+        }
+
         &:hover {
           text-decoration: underline;
         }

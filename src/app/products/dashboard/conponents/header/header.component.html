@@ -3,6 +3,24 @@
   <div *ngIf="isMenuVisible" [@fadeIn]="'in'" [class.show]="isMenuVisible" class="menu-content" id="menu-content">
     <ul>
       <li (click)="goToSettings.emit()">Settings</li>
+      <li>
+        <a href="https://zoogvpn.com/privacy/" target="_blank">
+          <span>Privacy</span>&nbsp;
+          <span class="material-icons">output</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://zoogvpn.com/contact/" target="_blank">
+          <span>Contact Support</span>&nbsp;
+          <span class="material-icons">output</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://app.zoogvpn.com/plans" target="_blank">
+          <span>Pricing</span>&nbsp;
+          <span class="material-icons">output</span>
+        </a>
+      </li>
       <li (click)="signOut.emit()">Sign out</li>
     </ul>
   </div>

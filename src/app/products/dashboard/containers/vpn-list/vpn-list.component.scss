@@ -65,6 +65,16 @@
     overflow-y: scroll;
 
     .location-section {
+      &-best {
+        display: flex;
+        align-items: center;
+        padding-left: 16px;
+
+        input {
+          margin-left: 0;
+        }
+      }
+
       h3 {
         color: white;
         padding: 16px;

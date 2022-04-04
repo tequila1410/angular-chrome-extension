@@ -41,3 +41,7 @@ export const setRecentlyUsed = createAction(
   '[VPN set recently used server]',
   props<ProxyModel>()
 )
+export const bestServerSelect = createAction(
+  '[VPN auto finding best server]',
+  props<{bestServerSelected: boolean}>()
+)

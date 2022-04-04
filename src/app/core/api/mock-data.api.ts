@@ -18,7 +18,7 @@ export class MockDataApi implements ServerApiModel {
       '45.90.251.10',
       '188.244.121.188',
       '188.244.121.236',
-      '188.244.121.89',
+      '188.244.121.89'
     ];
     let result: ProxyModel[] = [];
     testServers.forEach(ip => result.push({

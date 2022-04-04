@@ -25,6 +25,10 @@
     </div>
 
     <div class="location-section">
+      <div class="location-section-best">
+        <input type="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
+        <label for="Best Location">Autoselect server with the best Ping</label>
+      </div>
       <h3 class="label">
         All locations ({{proxyDataFilter.length}})
       </h3>
@@ -33,7 +37,7 @@
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
         </div>
-        <div>{{proxy.id}}</div>
+        <span>{{proxy.host}}</span>
         <div class="ping">{{proxy.ping}} ms</div>
       </div>
     </div>

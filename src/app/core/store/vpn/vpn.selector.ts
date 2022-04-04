@@ -28,3 +28,8 @@ export const isConnectionError = createSelector(
   selectVPN,
   (state: VPNState) => state.error
 );
+
+export const isBestServerSelected = createSelector(
+  selectVPN,
+  (state: VPNState) => state.bestServerSelected
+)

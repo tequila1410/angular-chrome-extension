@@ -24,6 +24,8 @@ export class UserEffects {
     localStorage.removeItem('token');
     localStorage.removeItem('tariffName');
     localStorage.removeItem('vrfshwn');
+    localStorage.removeItem('isBestServerSelected');
+    localStorage.removeItem('recentlyUsed');
   }
 
   private setUserToLocalStorage(token: string, user: User): void {

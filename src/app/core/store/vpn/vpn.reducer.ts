@@ -1,6 +1,7 @@
 import {ProxyModel} from "../../../auth/models/proxy.model";
 import {Action, createReducer, on} from "@ngrx/store";
 import {
+  bestServerSelect,
   closeConnection,
   closeConnectionError,
   closeConnectionSuccess,
@@ -13,6 +14,7 @@ export interface VPNState {
   connected: boolean;
   connecting: boolean;
   selectedServer?: ProxyModel;
+  bestServerSelected: boolean;
   serverList: ProxyModel[];
   recentlyUsed: ProxyModel[];
   error?: string;
@@ -21,8 +23,9 @@ export interface VPNState {
 const initialState: VPNState = {
   connected: false,
   connecting: false,
-  serverList: [],
   recentlyUsed: []
+  serverList: [],
+  bestServerSelected: true
 }
 
 const _vpnReducer = createReducer(
@@ -33,7 +36,7 @@ const _vpnReducer = createReducer(
   on(closeConnection, (state,) => state = {...state, connecting: true}),
   on(closeConnectionSuccess, (state,) => state = {...state, connecting: false, connected: false}),
   on(closeConnectionError, (state,) => state = {...state, connecting: false}),
-  on(setServers, state => state = {...state}),
+  on(setServers, state => state = {...state, bestServerSelected: !!localStorage.getItem('isBestServerSelected')}),
   on(setServersSuccess, (state, data) => state = {
     ...state,
     serverList: data.serverList,
@@ -54,6 +57,15 @@ const _vpnReducer = createReducer(
     return state
   })
 )
+
+function renewBestServerSelect(bestServerSelected: boolean) {
+  if (bestServerSelected) {
+    localStorage.setItem('isBestServerSelected', JSON.stringify(bestServerSelect));
+  }
+  else {
+    localStorage.setItem('isBestServerSelected', '');
+  }
+}
 
 function renewRecentlyUsed(recentlyUsed: ProxyModel[]) {
   localStorage.setItem('recentlyUsed', JSON.stringify(recentlyUsed));

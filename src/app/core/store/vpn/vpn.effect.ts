@@ -36,7 +36,7 @@ export class VpnEffect {
       }),
       catchError(error => {
         console.log(error)
-        return of(connectingError({message: 'sasi error'}))
+        return of(connectingError({message: 'sam sasi error'}))
         // return of();
       })
     )

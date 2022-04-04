@@ -104,3 +104,45 @@
     }
   }
 }
+
+@font-face {
+  font-family: 'zoogvpn-font';
+  src: url('../../../../../assets/images/icons/fonts/zoogvpn-font.eot?7colr');
+  src: url('../../../../../assets/images/icons/fonts/zoogvpn-font.eot?7colr#iefix') format('embedded-opentype'),
+  url('../../../../../assets/images/icons/fonts/zoogvpn-font.ttf?7colr') format('truetype'),
+  url('../../../../../assets/images/icons/fonts/zoogvpn-font.woff?7colr') format('woff'),
+  url('../../../../../assets/images/icons/fonts/zoogvpn-font.svg?7colr#zoogvpn-font') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'zoogvpn-font' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  font-size: 20px;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-p2p:before {
+  content: "\e90e";
+}
+.icon-play:before {
+  content: "\e905";
+}
+
+.icon-green {
+  color: #79aa00;
+}
+
+.icon-gray {
+  color: #8094ae;
+}

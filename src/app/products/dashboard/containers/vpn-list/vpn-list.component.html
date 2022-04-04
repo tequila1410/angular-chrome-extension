@@ -37,7 +37,8 @@
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
         </div>
-        <span>{{proxy.host}}</span>
+        <span class="icon icon-play" [class]="availableFeature ? 'icon-green' : 'icon-gray'"></span>
+        <span class="icon icon-p2p" [class]="availableFeature ? 'icon-green' : 'icon-gray'"></span>
         <div class="ping">{{proxy.ping}} ms</div>
       </div>
     </div>

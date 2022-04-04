@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model';
 import {SubscriptionData} from "../../../../core/models/user.model";
 
 @Component({
@@ -9,6 +10,8 @@ import {SubscriptionData} from "../../../../core/models/user.model";
 export class PlanInfoComponent implements OnInit {
 
   @Input() subscriptionData!: SubscriptionData | undefined;
+
+  @Input() overviewData!: DashboardOverview | undefined | null;
 
   constructor() { }
 

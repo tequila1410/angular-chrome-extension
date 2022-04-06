@@ -23,7 +23,7 @@ export interface VPNState {
 const initialState: VPNState = {
   connected: false,
   connecting: false,
-  recentlyUsed: []
+  recentlyUsed: [],
   serverList: [],
   bestServerSelected: true
 }

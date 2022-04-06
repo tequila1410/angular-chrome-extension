@@ -10,7 +10,8 @@
   </app-server-selector>
 
   <app-plan-info
-    [subscriptionData]="currentUser?.subscriptionData">
+    [subscriptionData]="currentUser?.subscriptionData"
+    [overviewData]="overviewData$ | async">
   </app-plan-info>
 
 <!--  <app-timer>-->

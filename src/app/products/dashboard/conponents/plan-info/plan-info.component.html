@@ -11,4 +11,7 @@
       <div class="btn">Extend</div>
     </div>
   </div>
+  <div *ngIf="overviewData?.accountDetails as det" class="bandwidth">
+    Bandwidth: {{det.monthlyBandwidthAllowance === 0 ? 'Unlimited' : (det.monthlyUsedBandwidth | bytes:1:'B':'GB':false) + '/' + (det.monthlyBandwidthAllowance | bytes)}}
+  </div>
 </div>

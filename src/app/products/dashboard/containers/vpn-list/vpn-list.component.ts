@@ -48,9 +48,6 @@ export class VpnListComponent implements OnInit, OnDestroy {
     if (proxyDataUsed) {
       this.proxyDataUsed = JSON.parse(proxyDataUsed);
     }
-
-    // const bestServerSelected = !!localStorage.getItem('isBestServerSelected');
-    // this.bestPingCheckbox.setValue(bestServerSelected)
   }
 
   ngOnInit(): void {
@@ -77,7 +74,7 @@ export class VpnListComponent implements OnInit, OnDestroy {
     this.bestPingCheckbox.valueChanges.subscribe((bestServerSelected: boolean) => {
       if (bestServerSelected !== undefined) {
         this.store.dispatch(bestServerSelect({bestServerSelected}));
-      }  
+      }
     })
   }
 

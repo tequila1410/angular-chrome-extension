@@ -28,7 +28,6 @@ export class SignInComponent implements OnInit {
 
   loginUser() {
 
-    console.log(this.recaptchaV3Service);
     this.recaptchaV3Service.execute('signInAction')
       .pipe(
         take(1),

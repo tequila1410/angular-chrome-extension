@@ -15,6 +15,7 @@ import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { SnackbarService } from "../../snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
+import { bestServerSelect } from "../vpn/vpn.actions";
 
 @Injectable()
 export class UserEffects {
@@ -44,7 +45,7 @@ export class UserEffects {
               // maybe routing somewhere
 
               this.setUserToLocalStorage(userData.data.token, userData.data.user);
-
+              this.store.dispatch(bestServerSelect({ bestServerSelected: true }));
               this.router.navigate(['/dashboard'])
               return authenticateSuccess({...userData.data});
             }),

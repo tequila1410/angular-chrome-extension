@@ -14,18 +14,17 @@ export interface VPNState {
   connected: boolean;
   connecting: boolean;
   selectedServer?: ProxyModel;
-  bestServerSelected: boolean;
   serverList: ProxyModel[];
   recentlyUsed: ProxyModel[];
+  bestServerSelected?: boolean;
   error?: string;
 }
 
 const initialState: VPNState = {
   connected: false,
   connecting: false,
-  recentlyUsed: [],
   serverList: [],
-  bestServerSelected: true
+  recentlyUsed: []
 }
 
 const _vpnReducer = createReducer(
@@ -37,10 +36,36 @@ const _vpnReducer = createReducer(
   on(closeConnectionSuccess, (state,) => state = {...state, connecting: false, connected: false}),
   on(closeConnectionError, (state,) => state = {...state, connecting: false}),
   on(setServers, state => state = {...state, bestServerSelected: !!localStorage.getItem('isBestServerSelected')}),
-  on(setServersSuccess, (state, data) => state = {
-    ...state,
-    serverList: data.serverList,
-    selectedServer: data.serverList[0]
+  on(setServersSuccess, (state, data) => {
+    state.serverList = data.serverList;
+    if (!state.bestServerSelected) {
+      state = {
+        ...state,
+        selectedServer: data.serverList[0]
+      }
+    } else if (state.bestServerSelected) {
+      state = {
+        ...state,
+        selectedServer: data.serverList.reduce((a, b) => (a.ping < b.ping ? a : b))
+      }
+    }
+    return state;
+  }),
+  on(bestServerSelect, (state, data) => {
+    state.bestServerSelected = data.bestServerSelected;
+    if (!data.bestServerSelected) {
+      state = {
+        ...state,
+        selectedServer: state.serverList[0]
+      }
+    } else if (data.bestServerSelected) {
+      state = {
+        ...state,
+        selectedServer: state.serverList.reduce((a, b) => (a.ping < b.ping ? a : b))
+      }
+    }
+    renewBestServerSelect(data.bestServerSelected);
+    return state;
   }),
   on(setRecentlyUsed, (state, proxyData) => {
     if (state.recentlyUsed.length < 5) {
@@ -60,7 +85,7 @@ const _vpnReducer = createReducer(
 
 function renewBestServerSelect(bestServerSelected: boolean) {
   if (bestServerSelected) {
-    localStorage.setItem('isBestServerSelected', JSON.stringify(bestServerSelect));
+    localStorage.setItem('isBestServerSelected', JSON.stringify(bestServerSelected));
   }
   else {
     localStorage.setItem('isBestServerSelected', '');

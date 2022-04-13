@@ -80,17 +80,17 @@ export class VpnListComponent implements OnInit, OnDestroy {
 
   selectLocation(proxy: ProxyModel) {
     this.store.dispatch(connecting(proxy));
-    this.store.dispatch(setRecentlyUsed(proxy))
+    this.store.dispatch(setRecentlyUsed(proxy));
 
     this.router.navigate(['dashboard']);
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-  }
-
   goToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 
 }

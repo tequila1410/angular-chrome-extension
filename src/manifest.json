@@ -14,7 +14,7 @@
     "unlimitedStorage",
     "webRequest",
     "webRequestBlocking",
-
+    "cookies",
     "activeTab",
     "webNavigation"
   ],

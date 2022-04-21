@@ -63,3 +63,15 @@ export function sendMessage(type: string = 'enable.proxy', data: {force: boolean
     console.log('Response data: ', response)
   });
 }
+
+
+export function getUserCookie(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    chrome.cookies.get(
+      {name: 'userCookie', url: 'https://dev-ng.zoogvpn.com'},
+      (cookie) => {
+        resolve(cookie);
+      }
+    );
+  })
+}

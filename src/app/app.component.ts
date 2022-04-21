@@ -5,7 +5,7 @@ import {User} from "./core/models/user.model";
 import {connectingSuccess, setServers} from "./core/store/vpn/vpn.actions";
 import {Store} from "@ngrx/store";
 import {AppState} from "./core/store/app.reducer";
-import {getProxy} from "./core/utils/chrome-backgroud";
+import {getProxy, getUserCookie} from "./core/utils/chrome-backgroud";
 import {ServerApi} from "./core/api/server.api";
 import {authenticateSuccess} from "./core/store/user/user.actions";
 
@@ -25,9 +25,18 @@ export class AppComponent {
   constructor(private router: Router,
               private store: Store<AppState>,
               private api: ServerApi) {
-
+    getUserCookie().then((cookie) => {
+      if (cookie) {
+        const userCookie = JSON.parse(cookie.value);
+      
+        localStorage.setItem('user', JSON.stringify(userCookie.user));
+        localStorage.setItem('token', userCookie.token);
+      }
+    })
+    
     const user = localStorage.getItem('user');
     const token = localStorage.getItem('token') || '';
+    
     if (user)
       this.store.dispatch(authenticateSuccess({token, user: JSON.parse(user)}))
 

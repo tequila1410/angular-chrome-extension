@@ -2,10 +2,12 @@
 --
 
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
+--
 
 const fpPromise = FingerprintJS.load();
 
 export async function getFingerPrint(): Promise&lt;string&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>310</x><y>73</y><w>70</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>50;80;50;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>130</x><y>153</y><w>460</w><h>410</h></coordinates><panel_attributes>app.component.ts
+class AppComponent
 --
 
 import {Component} from '@angular/core';
@@ -20,20 +22,17 @@ import {ServerApi} from "./core/api/server.api";
 import {authenticateSuccess} from "./core/store/user/user.actions";
 import { getFingerPrint } from './core/utils/fingerprint';
 --
-class AppComponent {
 
-  user!: Observable&lt;User | null&gt;;
+user!: Observable&lt;User | null&gt;;
 
-  constructor(private router: Router,
-                     private store: Store&lt;AppState&gt;,
-                     private api: ServerApi) {
+--
 
+constructor(private router: Router,
+                   private store: Store&lt;AppState&gt;,
+                   private api: ServerApi) {
     getFingerPrint(): string;
-    const user: string;
-    const token: string;
-  }
-}</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>575</x><y>261</y><w>240</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.
-ask user data</panel_attributes><additional_attributes>150;10;150;190;10;190</additional_attributes></element><element><id>UMLClass</id><coordinates><x>615</x><y>11</y><w>470</w><h>260</h></coordinates><panel_attributes>mock-data.api.ts
+}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>615</x><y>11</y><w>470</w><h>300</h></coordinates><panel_attributes>mock-data.api.ts
+class MockDataApi
 --
 import {Injectable} from "@angular/core";
 import {ServerApiModel} from "./server-api.model";
@@ -42,14 +41,13 @@ import {ProxyModel} from "../../auth/models/proxy.model";
 import {HttpClient} from "@angular/common/http";
 import {catchError, map} from "rxjs/operators";
 --
-export class MockDataApi implements ServerApiModel {
 
-  constructor(private httpClient: HttpClient) {}
+constructor(private httpClient: HttpClient): void;
 
-  getServersData(): Observable&lt;{data: {serverList: ProxyModel[], tariffName: string}}&gt;
-  testNetwork(proxy: any): any; 
+getServersData(): Observable&lt;{data: {serverList: ProxyModel[], tariffName: string}}&gt;;
 
-  getTestUserData(): Observable&lt;any&gt; 
-}
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>580</x><y>260</y><w>300</w><h>250</h></coordinates><panel_attributes>lt=&lt;&lt;.
-give user data</panel_attributes><additional_attributes>10;230;280;230;280;10</additional_attributes></element></diagram>
+testNetwork(proxy: any): any; 
+
+getTestUserData(): Observable&lt;any&gt;;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>580</x><y>300</y><w>300</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.
+</panel_attributes><additional_attributes>10;190;280;190;280;10</additional_attributes></element></diagram>

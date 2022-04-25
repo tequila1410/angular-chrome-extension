@@ -8,6 +8,7 @@ import {AppState} from "./core/store/app.reducer";
 import {getProxy} from "./core/utils/chrome-backgroud";
 import {ServerApi} from "./core/api/server.api";
 import {authenticateSuccess} from "./core/store/user/user.actions";
+import { getFingerPrint } from './core/utils/fingerprint';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,7 @@ export class AppComponent {
   constructor(private router: Router,
               private store: Store<AppState>,
               private api: ServerApi) {
-
+                // getFingerPrint().then(res => console.log(res))
     const user = localStorage.getItem('user');
     const token = localStorage.getItem('token') || '';
     if (user)

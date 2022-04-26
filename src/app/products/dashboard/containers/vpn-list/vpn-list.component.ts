@@ -5,7 +5,6 @@ import {ProxyModel} from "../../../../auth/models/proxy.model";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../../core/store/app.reducer";
 import {bestServerSelect, connecting, setRecentlyUsed} from "../../../../core/store/vpn/vpn.actions";
-import {ServerApi} from "../../../../core/api/server.api";
 import {getServerList, isBestServerSelected} from "../../../../core/store/vpn/vpn.selector";
 import {takeUntil, tap} from "rxjs/operators";
 import {FormControl} from "@angular/forms";
@@ -42,7 +41,6 @@ export class VpnListComponent implements OnInit, OnDestroy {
   availableFeature: boolean = false;
 
   constructor(private router: Router,
-              private serverService: ServerApi,
               private store: Store<AppState>) {
     const proxyDataUsed = localStorage.getItem('recentlyUsed');
     if (proxyDataUsed) {

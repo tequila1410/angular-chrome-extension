@@ -63,3 +63,15 @@ export function sendMessage(type: string = 'enable.proxy', data: {force: boolean
     console.log('Response data: ', response)
   });
 }
+
+
+export function getCookie(name: string, url: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    chrome.cookies.get(
+      {name, url},
+      (cookie) => {
+        cookie ? resolve(cookie) : reject('No coolie was find.');
+      }
+    );
+  })
+}

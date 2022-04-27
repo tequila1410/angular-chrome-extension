@@ -130,14 +130,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((isVPNConnected) => {
         this.isConnected = isVPNConnected;
         this.cdr.detectChanges();
-        console.log('isVPNConnected: ', isVPNConnected);
       });
 
     this.store
       .select(isConnecting)
       .pipe(takeUntil(this.destroy$))
       .subscribe((isConnecting) => {
-        console.log('isConnecting: ', isConnecting);
         this.isConnecting = isConnecting;
         this.cdr.detectChanges();
       });
@@ -161,7 +159,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((selectedServer) => {
         this.selectedServer = selectedServer;
         this.cdr.detectChanges();
-        console.log('selectedServer: ', selectedServer);
       });
   }
 

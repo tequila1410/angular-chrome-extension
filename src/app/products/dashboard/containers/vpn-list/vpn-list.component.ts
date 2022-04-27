@@ -1,13 +1,13 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import { Subject} from "rxjs";
 import {ProxyModel} from "../../../../auth/models/proxy.model";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../../core/store/app.reducer";
-import {bestServerSelect, connecting, setRecentlyUsed} from "../../../../core/store/vpn/vpn.actions";
+import {bestServerSelect, connecting, setRecentlyUsed, setSelectedServer} from "../../../../core/store/vpn/vpn.actions";
 import {ServerApi} from "../../../../core/api/server.api";
 import {getServerList, isBestServerSelected} from "../../../../core/store/vpn/vpn.selector";
-import {takeUntil, tap} from "rxjs/operators";
+import {take, takeUntil, tap} from "rxjs/operators";
 import {FormControl} from "@angular/forms";
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
@@ -37,12 +37,11 @@ export class VpnListComponent implements OnInit, OnDestroy {
 
   bestPingCheckbox: FormControl = new FormControl();
 
-  destroy$: Subject<void> = new Subject<void>();
-
   availableFeature: boolean = false;
 
+  destroy$: Subject<void> = new Subject<void>();
+
   constructor(private router: Router,
-              private serverService: ServerApi,
               private store: Store<AppState>) {
     const proxyDataUsed = localStorage.getItem('recentlyUsed');
     if (proxyDataUsed) {
@@ -60,27 +59,33 @@ export class VpnListComponent implements OnInit, OnDestroy {
         })
       ).subscribe();
 
-    this.formControl.valueChanges.subscribe(res => {
-      this.proxyDataFilter = this.proxyData.filter(proxy => proxy.locationName.toLowerCase().includes(res));
-    })
-
     this.store
       .select(isBestServerSelected)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(take(1))
       .subscribe(isBestServerSelected => {
-        this.bestPingCheckbox.setValue(isBestServerSelected)
+        this.bestPingCheckbox.setValue(isBestServerSelected);
       });
+
+    this.formControl.valueChanges.subscribe(res => {
+      this.proxyDataFilter = this.proxyData.filter(proxy => proxy.locationName.toLowerCase().includes(res));
+    });
 
     this.bestPingCheckbox.valueChanges.subscribe((bestServerSelected: boolean) => {
       if (bestServerSelected !== undefined) {
         this.store.dispatch(bestServerSelect({bestServerSelected}));
+        const selectedServer = bestServerSelected ?
+          this.proxyData.reduce((a, b) => (a.ping < b.ping ? a : b))
+          :
+          this.proxyData[0];
+        this.store.dispatch(setSelectedServer({selectedServer}));
+        this.goToDashboard();
       }
-    })
+    });
   }
 
   selectLocation(proxy: ProxyModel) {
     this.store.dispatch(connecting(proxy));
-    this.store.dispatch(setRecentlyUsed(proxy));
+    this.store.dispatch(setRecentlyUsed({recentlyUsedProxy: proxy}));
 
     this.router.navigate(['dashboard']);
   }

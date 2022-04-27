@@ -21,14 +21,14 @@ export class MockDataApi implements ServerApiModel {
       '188.244.121.89'
     ];
     let result: ProxyModel[] = [];
-    testServers.forEach(ip => result.push({
+    testServers.forEach((ip, index) => result.push({
       id: ip,
       locationName: 'United Kingdom',
       scheme: 'http',
       host: ip,
       port: 12323,
       image: '',
-      ping: 12
+      ping: Math.floor(Math.random() * 150)
     }))
     return of({
       data: {

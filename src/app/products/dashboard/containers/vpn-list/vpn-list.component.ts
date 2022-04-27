@@ -42,7 +42,6 @@ export class VpnListComponent implements OnInit, OnDestroy {
   destroy$: Subject<void> = new Subject<void>();
 
   constructor(private router: Router,
-              private serverService: ServerApi,
               private store: Store<AppState>) {
     const proxyDataUsed = localStorage.getItem('recentlyUsed');
     if (proxyDataUsed) {

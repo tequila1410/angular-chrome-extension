@@ -6,7 +6,7 @@ import {
   authenticateSuccess,
   signOut, signOutSuccess,
 } from "./user.actions";
-import {catchError, exhaustMap, map} from "rxjs/operators";
+import {catchError, exhaustMap, map, tap} from "rxjs/operators";
 import {of} from "rxjs";
 import {User} from "../../models/user.model";
 import {AuthApi} from "../../../auth/api/auth.api";
@@ -41,12 +41,6 @@ export class UserEffects {
         return this.authApi.userLogin(actions.email, actions.password, actions.token)
           .pipe(
             map(userData => {
-              // update user "limits"
-              // maybe routing somewhere
-
-              this.setUserToLocalStorage(userData.data.token, userData.data.user);
-              this.store.dispatch(bestServerSelect({ bestServerSelected: true }));
-              this.router.navigate(['/dashboard'])
               return authenticateSuccess({...userData.data});
             }),
             catchError((error) => {
@@ -56,6 +50,16 @@ export class UserEffects {
           )
       })
     )
+  );
+
+  loginSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(authenticateSuccess),
+      tap(userData => {
+        this.setUserToLocalStorage(userData.token, userData.user);
+        this.router.navigate(['/dashboard']);
+      })
+    ), {dispatch: false}
   );
 
   logOut$ = createEffect(() =>

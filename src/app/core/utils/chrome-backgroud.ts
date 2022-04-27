@@ -65,12 +65,12 @@ export function sendMessage(type: string = 'enable.proxy', data: {force: boolean
 }
 
 
-export function getUserCookie(): Promise<any> {
+export function getCookie(name: string, url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     chrome.cookies.get(
-      {name: 'userCookie', url: 'https://dev-ng.zoogvpn.com'},
+      {name, url},
       (cookie) => {
-        resolve(cookie);
+        cookie ? resolve(cookie) : reject('No coolie was find.');
       }
     );
   })

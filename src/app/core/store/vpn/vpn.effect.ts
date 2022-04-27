@@ -1,24 +1,28 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {
+  bestServerSelect, bestServerSelectSuccess,
   closeConnection,
   closeConnectionSuccess,
   connecting, connectingError,
-  connectingSuccess,
+  connectingSuccess, setRecentlyUsed, setRecentlyUsedSuccess,
   setServers,
   setServersSuccess
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, tap, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
 import {clearProxy, sendMessage, setProxy} from "../../utils/chrome-backgroud";
 import {ServerApi} from "../../api/server.api";
 import {MockDataApi} from "../../api/mock-data.api";
+import {Store} from "@ngrx/store";
+import {AppState} from "../app.reducer";
 
 @Injectable()
 export class VpnEffect {
 
   constructor(private actions$: Actions,
+              private store$: Store<AppState>,
               private api: MockDataApi) {
   }
 
@@ -56,8 +60,44 @@ export class VpnEffect {
     this.actions$.pipe(
       ofType(setServers),
       exhaustMap(() => this.api.getServersData()),
-      map(response => {
-        return setServersSuccess({serverList: response.data.serverList})
+      withLatestFrom(this.store$),
+      map(([response, storeState]) => {
+        const selectedServer = storeState.vpn.bestServerSelected ?
+          response.data.serverList.reduce((a, b) => (a.ping < b.ping ? a : b))
+          :
+          response.data.serverList[0];
+        return setServersSuccess({serverList: response.data.serverList, selectedServer})
+      })
+    )
+  )
+
+  $bestServerSelect = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bestServerSelect),
+      map((action) => {
+        localStorage.setItem('isBestServerSelected', JSON.stringify(action.bestServerSelected));
+        return bestServerSelectSuccess({bestServerSelected: action.bestServerSelected})
+      })
+    )
+  )
+
+  $setRecentlyUsed = createEffect(() =>
+    this.actions$.pipe(
+      ofType(setRecentlyUsed),
+      withLatestFrom(this.store$),
+      map(([action, stateStore]) => {
+        const recentlyUsed = stateStore.vpn.recentlyUsed;
+        let newRecentlyUsed = recentlyUsed;
+
+        if (recentlyUsed.length < 5) {
+          newRecentlyUsed = [...recentlyUsed, action.recentlyUsedProxy];
+        } else {
+          newRecentlyUsed.shift();
+          newRecentlyUsed.push(action.recentlyUsedProxy);
+        }
+        localStorage.setItem('recentlyUsed', JSON.stringify(newRecentlyUsed));
+
+        return setRecentlyUsedSuccess({recentlyUsedProxies: newRecentlyUsed});
       })
     )
   )

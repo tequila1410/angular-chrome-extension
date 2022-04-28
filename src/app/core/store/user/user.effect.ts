@@ -16,6 +16,7 @@ import {AppState} from "../app.reducer";
 import { SnackbarService } from "../../snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
 import { bestServerSelect } from "../vpn/vpn.actions";
+import {clearProxy} from "../../utils/chrome-backgroud";
 
 @Injectable()
 export class UserEffects {
@@ -68,6 +69,7 @@ export class UserEffects {
       map(() => {
         // update client limits
         // maybe routing somewhere
+        clearProxy();
         this.clearLocalStorage();
         this.router.navigate(['/auth']);
         return signOutSuccess();

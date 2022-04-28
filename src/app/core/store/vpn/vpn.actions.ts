@@ -34,14 +34,30 @@ export const setServers = createAction(
 
 export const setServersSuccess = createAction(
   '[VPN set list of servers success]',
-  props<{serverList: ProxyModel[]}>()
+  props<{serverList: ProxyModel[], selectedServer: ProxyModel}>()
+)
+
+export const setSelectedServer = createAction(
+  '[VPN set selected server]',
+  props<{selectedServer: ProxyModel}>()
 )
 
 export const setRecentlyUsed = createAction(
   '[VPN set recently used server]',
-  props<ProxyModel>()
+  props<{recentlyUsedProxy: ProxyModel}>()
 )
+
+export const setRecentlyUsedSuccess = createAction(
+  '[VPN set recently used server success]',
+  props<{recentlyUsedProxies: ProxyModel[]}>()
+)
+
 export const bestServerSelect = createAction(
   '[VPN auto finding best server]',
+  props<{bestServerSelected: boolean}>()
+)
+
+export const bestServerSelectSuccess = createAction(
+  '[VPN auto finding best server success]',
   props<{bestServerSelected: boolean}>()
 )

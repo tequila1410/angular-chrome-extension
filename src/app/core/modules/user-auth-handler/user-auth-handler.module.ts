@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthUserHandlerRoutingModule } from './user-auth-handler.routing-module';
+import { AuthUserHandlerRoutingModule } from './user-auth-handler-routing.module';
 import { AuthUserHandlerComponent } from './user-auth-handler.component';
 import {RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module} from "ng-recaptcha";
 

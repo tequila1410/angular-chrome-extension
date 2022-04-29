@@ -13,7 +13,7 @@ import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
-import { SnackbarService } from "../../snackbar/snackbar.service";
+import { SnackbarService } from "../../components/snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
 import { MockDataApi } from "../../api/mock-data.api";
 

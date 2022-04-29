@@ -1,13 +1,11 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
-import {Observable} from "rxjs";
 import {Store} from "@ngrx/store";
-import {User} from '../models/user.model';
-import {AppState} from '../store/app.reducer';
-import {getCookie, getProxy} from '../utils/chrome-backgroud';
-import {connectingSuccess, setServers} from '../store/vpn/vpn.actions';
-import {authenticateSuccess, signUpFP} from '../store/user/user.actions';
-import {getFingerPrint} from '../utils/fingerprint';
+import {AppState} from '../../store/app.reducer';
+import {getCookie, getProxy} from '../../utils/chrome-backgroud';
+import {connectingSuccess, setServers} from '../../store/vpn/vpn.actions';
+import {authenticateSuccess, signUpFP} from '../../store/user/user.actions';
+import {getFingerPrint} from '../../utils/fingerprint';
 import {ReCaptchaV3Service} from 'ng-recaptcha';
 import { catchError, take, tap } from 'rxjs/operators';
 
@@ -17,12 +15,6 @@ import { catchError, take, tap } from 'rxjs/operators';
   styleUrls: ['./user-auth-handler.component.scss']
 })
 export class AuthUserHandlerComponent {
-
-  /**
-   * Current user data
-   * @type {Observable<User>}
-   */
-  user!: Observable<User | null>;
 
   constructor(private router: Router,
               private store: Store<AppState>,

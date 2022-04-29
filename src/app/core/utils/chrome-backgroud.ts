@@ -70,7 +70,7 @@ export function getCookie(name: string, url: string): Promise<any> {
     chrome.cookies.get(
       {name, url},
       (cookie) => {
-        cookie ? resolve(cookie) : reject('No coolie was find.');
+        cookie ? resolve(cookie) : reject('No cookie was find.');
       }
     );
   })

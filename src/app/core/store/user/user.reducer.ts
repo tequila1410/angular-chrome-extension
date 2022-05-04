@@ -5,7 +5,7 @@ import {
   authenticate,
   authenticateError,
   authenticateSuccess, setNewName, setUserSubscriptionStatus,
-  signOutSuccess, signUp, signUpError, signUpSuccess, updateUserDataSuccess, verifyUserActionSuccess
+  signOutSuccess, signUpFP, signUpFPSuccess, signUpFPError, updateUserDataSuccess, verifyUserActionSuccess
 } from "./user.actions";
 
 export interface UserState {
@@ -25,9 +25,9 @@ const _userReducer = createReducer(
   on(authenticateSuccess, (state, userData: {token: string, user: User}) => state = {loading: false, authenticated: true, user: userData.user}),
   on(authenticateError, (state, {message}) => state = {...state, loading: false, authenticated: false}),
   on(signOutSuccess, state => state = {...state, authenticated: false, user: undefined}),
-  on(signUp, state => state = {...state, loading: true}),
-  on(signUpSuccess, (state, userData: {token: string, user: User}) => state = {loading: false, authenticated: true, user: userData.user}),
-  on(signUpError, state => state = {...state, loading: false}),
+  on(signUpFP, state => state = {...state, loading: true}),
+  on(signUpFPSuccess, (state, userData: {token: string, user: User}) => state = {loading: false, authenticated: true, user: userData.user}),
+  on(signUpFPError, state => state = {...state, loading: false}),
   // on(verifyUserActionSuccess, state => {
   //   if (state.user)
   //     state = {...state, user: {...state.user, verified: 1}};

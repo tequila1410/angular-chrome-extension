@@ -1,0 +1,53 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><help_text>Space for diagram notes </help_text><element><id>UMLClass</id><coordinates><x>10</x><y>13</y><w>310</w><h>120</h></coordinates><panel_attributes>fingerprint.ts
+--
+
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
+--
+
+const fpPromise = FingerprintJS.load();
+
+export async function getFingerPrint(): Promise&lt;string&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>310</x><y>73</y><w>70</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>50;80;50;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>130</x><y>153</y><w>460</w><h>410</h></coordinates><panel_attributes>app.component.ts
+class AppComponent
+--
+
+import {Component} from '@angular/core';
+import {Router} from "@angular/router";
+import {Observable} from "rxjs";
+import {User} from "./core/models/user.model";
+import {connectingSuccess, setServers} from "./core/store/vpn/vpn.actions";
+import {Store} from "@ngrx/store";
+import {AppState} from "./core/store/app.reducer";
+import {getProxy} from "./core/utils/chrome-backgroud";
+import {ServerApi} from "./core/api/server.api";
+import {authenticateSuccess} from "./core/store/user/user.actions";
+import { getFingerPrint } from './core/utils/fingerprint';
+--
+
+user!: Observable&lt;User | null&gt;;
+
+--
+
+constructor(private router: Router,
+                   private store: Store&lt;AppState&gt;,
+                   private api: ServerApi) {
+    getFingerPrint(): string;
+}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>615</x><y>11</y><w>470</w><h>300</h></coordinates><panel_attributes>mock-data.api.ts
+class MockDataApi
+--
+import {Injectable} from "@angular/core";
+import {ServerApiModel} from "./server-api.model";
+import {Observable, of} from "rxjs";
+import {ProxyModel} from "../../auth/models/proxy.model";
+import {HttpClient} from "@angular/common/http";
+import {catchError, map} from "rxjs/operators";
+--
+
+constructor(private httpClient: HttpClient): void;
+
+getServersData(): Observable&lt;{data: {serverList: ProxyModel[], tariffName: string}}&gt;;
+
+testNetwork(proxy: any): any; 
+
+getTestUserData(): Observable&lt;any&gt;;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>580</x><y>300</y><w>300</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.
+</panel_attributes><additional_attributes>10;190;280;190;280;10</additional_attributes></element></diagram>

@@ -14,8 +14,11 @@ const routes: Routes = [{
   // canLoad: [AuthGuard],
   // canActivate: [AuthGuard]
 }, {
+  path: 'user-auth-handler',
+  loadChildren: () => import('./core/modules/user-auth-handler/user-auth-handler.module').then(m => m.AuthUserHandlerModule),
+}, {
   path: '',
-  redirectTo: 'dashboard',
+  redirectTo: 'user-auth-handler',
   pathMatch: 'full'
 }];
 

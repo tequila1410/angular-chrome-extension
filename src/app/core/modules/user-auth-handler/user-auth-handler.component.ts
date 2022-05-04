@@ -64,8 +64,7 @@ export class AuthUserHandlerComponent {
         this.store.dispatch(connectingSuccess(proxy));
       }
     });
-    this.store.dispatch(setServers());
   }
 
-  
+
 }

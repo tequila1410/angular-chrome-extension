@@ -17,7 +17,7 @@ import { AppState } from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
-  connectingSuccess,
+  connectingSuccess, setServers,
 } from '../../../../core/store/vpn/vpn.actions';
 import {
   getSelectedVpnServer,
@@ -160,6 +160,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.selectedServer = selectedServer;
         this.cdr.detectChanges();
       });
+
+
+    this.store.dispatch(setServers());
   }
 
   /**

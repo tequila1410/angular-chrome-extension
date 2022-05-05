@@ -3,7 +3,7 @@ import {ServerApiModel} from "./server-api.model";
 import {Observable, of} from "rxjs";
 import {ProxyModel} from "../../auth/models/proxy.model";
 import {HttpClient} from "@angular/common/http";
-import {catchError, map} from "rxjs/operators";
+import {catchError, delay, map} from "rxjs/operators";
 import { User } from "../models/user.model";
 
 @Injectable({
@@ -36,7 +36,7 @@ export class MockDataApi implements ServerApiModel {
         serverList: result,
         tariffName: '1 year global vpn'
       }
-    })
+    }).pipe(delay(1000))
   }
 
   testNetwork(proxy: any) {
@@ -59,7 +59,7 @@ export class MockDataApi implements ServerApiModel {
     //Test user: setrarorto@vusra.com / password: setrarorto@vusra.com
     return of({
       data: {
-        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvZGV2LWFwaS56b29ndnBuLmNvbVwvYXBpXC91c2Vyc1wvbG9naW4iLCJpYXQiOjE2NTEyNTIyNjcsImV4cCI6MTY1MTI1NTg2NywibmJmIjoxNjUxMjUyMjY3LCJqdGkiOiJvdjJNajJmSHZrZWxyYXFyIiwic3ViIjo1NDYyNzAsInBydiI6ImNlMDUzZmY5M2M5OGUxNzk3NWNiM2Y4ZDAwMDEyMWI2OGFiOGExZTcifQ.JPXatnoy-puJZP91BPiL_V-9CUsl34y9FbDo1u3Y8y4",
+        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvZGV2LWFwaS56b29ndnBuLmNvbVwvYXBpXC91c2Vyc1wvbG9naW4iLCJpYXQiOjE2NTE2Nzk5MzcsImV4cCI6MTY1MTY4MzUzNywibmJmIjoxNjUxNjc5OTM3LCJqdGkiOiJKYnhIdXBtcGxDcHc1UzlaIiwic3ViIjo1NDYwNTgsInBydiI6ImNlMDUzZmY5M2M5OGUxNzk3NWNiM2Y4ZDAwMDEyMWI2OGFiOGExZTcifQ.zrB3yJxiNkWPjXrdh8uG431Ve0wDls3IYi6dPPewsT0",
         user: {
           accountStatus: "Expired",
           id: 546270,
@@ -77,7 +77,7 @@ export class MockDataApi implements ServerApiModel {
           }
         }
       }
-    });
+    }).pipe(delay(3000));
   }
 
 }

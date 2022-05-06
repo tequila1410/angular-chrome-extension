@@ -45,25 +45,19 @@ export class ExclusionDbService {
     })
   }
 
-  private handler(fn: Function) {
-    if (!this.openRequest?.result) {
-      return this.testIndexDBInit()
-        .pipe(map(() => {
-        return fn();
-      }));
-    }
-    return fn();
-  }
-
-  public getLinks(): Observable<{link: string}[]> {
-    // return this.handler(this.getLinksHandler)
+  private handler(fn: Function): Observable<any> {
+    fn = fn.bind(this);
     if (!this.openRequest?.result) {
       return this.testIndexDBInit()
         .pipe(exhaustMap(() => {
-          return this.getLinksHandler();
-        }));
+        return fn(...arguments);
+      }));
     }
-    return this.getLinksHandler();
+    return fn(...arguments);
+  }
+
+  public getLinks(): Observable<{link: string}[]> {
+    return this.handler(this.getLinksHandler)
   }
 
   private getLinksHandler(): Observable<{link: string}[]> {
@@ -85,7 +79,7 @@ export class ExclusionDbService {
   }
 
   public addLink(link: string) {
-    return this.handler(this.addLinkHandler);
+    return this.handler(() => this.addLinkHandler(link));
   }
 
   private addLinkHandler(link: string): Observable<IDBRequest> {

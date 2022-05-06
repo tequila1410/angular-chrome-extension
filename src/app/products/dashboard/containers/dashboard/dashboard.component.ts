@@ -6,14 +6,14 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { ProxyModel } from '../../../../auth/models/proxy.model';
-import { ProxyService } from '../../../../core/services/proxy.service';
-import { Observable, Subject } from 'rxjs';
-import { MockDataApi } from '../../../../core/api/mock-data.api';
-import { map, takeUntil, tap } from 'rxjs/operators';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../../../core/store/app.reducer';
+import {ProxyModel} from '../../../../auth/models/proxy.model';
+import {ProxyService} from '../../../../core/services/proxy.service';
+import {Observable, Subject} from 'rxjs';
+import {MockDataApi} from '../../../../core/api/mock-data.api';
+import {map, takeUntil, tap} from 'rxjs/operators';
+import {FormControl, FormGroup} from '@angular/forms';
+import {Store} from '@ngrx/store';
+import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
@@ -29,10 +29,10 @@ import {
   onAuthRequiredHandler,
   onProxyErrorHandler,
 } from '../../../../core/utils/chrome-backgroud';
-import { Router } from '@angular/router';
-import { User } from '../../../../core/models/user.model';
-import { getUserData } from '../../../../core/store/user/user.selector';
-import { signOut } from '../../../../core/store/user/user.actions';
+import {Router} from '@angular/router';
+import {User} from '../../../../core/models/user.model';
+import {getUserData} from '../../../../core/store/user/user.selector';
+import {signOut} from '../../../../core/store/user/user.actions';
 import {
   animate,
   state,
@@ -40,8 +40,9 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { DashboardApi } from 'src/app/core/api/dashboard.api';
-import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model';
+import {DashboardApi} from 'src/app/core/api/dashboard.api';
+import {DashboardOverview} from 'src/app/core/models/dashboard-overview.model';
+import {ExclusionDbService} from "../../../../core/utils/indexedDB/exclusion-db.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -49,8 +50,8 @@ import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model'
   styleUrls: ['./dashboard.component.scss'],
   animations: [
     trigger('fadeIn', [
-      state('in', style({ opacity: 1 })),
-      transition(':enter', [style({ opacity: 0 }), animate(300)]),
+      state('in', style({opacity: 1})),
+      transition(':enter', [style({opacity: 0}), animate(300)]),
     ]),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,7 +99,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private dashboardApi: DashboardApi,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private exclusionDB: ExclusionDbService
   ) {
     this.form = new FormGroup({
       proxy: new FormControl(),
@@ -115,6 +117,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return res.data;
         })
       )
+
+    this.exclusionDB.getLinks()
+      .subscribe(links => {
+        console.log('component: ', links);7
+      });
   }
 
   ngOnInit(): void {
@@ -176,7 +183,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.store.dispatch(connecting(this.selectedServer));
     }
 
-    if  (this.isConnecting && this.isConnectionError) {
+    if (this.isConnecting && this.isConnectionError) {
       setTimeout(() => {
         this.store.dispatch(closeConnection());
       }, 5000)

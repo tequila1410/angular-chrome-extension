@@ -30,6 +30,7 @@ export class VpnEffect {
     this.actions$.pipe(
       ofType(connecting),
       mergeMap(proxy => {
+        // get executions
         return from(setProxy(proxy));
       }),
       mergeMap((proxy) => {

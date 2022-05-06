@@ -50,10 +50,10 @@ export class ExclusionDbService {
     if (!this.openRequest?.result) {
       return this.testIndexDBInit()
         .pipe(exhaustMap(() => {
-        return fn(...arguments);
+        return fn();
       }));
     }
-    return fn(...arguments);
+    return fn();
   }
 
   public getLinks(): Observable<{link: string}[]> {

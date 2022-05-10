@@ -24,17 +24,17 @@ export const signOutSuccess = createAction('[User sign out success]');
 
 export const signOutError = createAction('[User sign out error]');
 
-export const signUp = createAction(
+export const signUpFP = createAction(
   '[User sign up]',
-  props<{name?: string, email: string, password: string, password_confirmation: string, token: string}>()
+  props<{fingerprint: string, token: string}>()
   );
 
-export const signUpSuccess = createAction(
+export const signUpFPSuccess = createAction(
   '[User sign up success]',
   props<{token: string, user: User}>()
 );
 
-export const signUpError = createAction(
+export const signUpFPError = createAction(
   '[User sign up error]',
   props<{message: string}>()
 );

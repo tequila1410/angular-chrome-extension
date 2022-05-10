@@ -4,7 +4,7 @@ import {
   authenticate,
   authenticateError,
   authenticateSuccess,
-  signOut, signOutSuccess,
+  signOut, signOutSuccess, signUpFP, signUpFPError, signUpFPSuccess,
 } from "./user.actions";
 import {catchError, exhaustMap, map, tap} from "rxjs/operators";
 import {of} from "rxjs";
@@ -13,10 +13,11 @@ import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
-import { SnackbarService } from "../../snackbar/snackbar.service";
+import { SnackbarService } from "../../components/snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
 import { bestServerSelect } from "../vpn/vpn.actions";
 import {clearProxy} from "../../utils/chrome-backgroud";
+import { MockDataApi } from "../../api/mock-data.api";
 
 @Injectable()
 export class UserEffects {
@@ -77,6 +78,26 @@ export class UserEffects {
     )
   )
 
+  signUpFP$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(signUpFP),
+      exhaustMap(actions => {
+        return this.mockDataApi.getTestUserData(actions.fingerprint, actions.token)
+          .pipe(
+            map(testUserData => {
+              this.router.navigate(['/dashboard']);
+              this.setUserToLocalStorage(testUserData.data.token, testUserData.data.user);
+              return signUpFPSuccess({...testUserData.data})
+            }),
+            catchError(error => {
+              console.log(error);
+              this.router.navigate(['/auth'])
+              return of(signUpFPError(error));
+            })
+          )
+      })
+    ))
+
   // signUp$ = createEffect(() =>
   //   this.actions$.pipe(
   //     ofType(signUp),
@@ -111,7 +132,8 @@ export class UserEffects {
     private authApi: AuthApi,
     private router: Router,
     private store: Store<AppState>,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private mockDataApi: MockDataApi
   ) {
   }
 

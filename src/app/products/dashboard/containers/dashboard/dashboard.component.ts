@@ -118,10 +118,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         })
       )
 
-    this.exclusionDB.getLinks()
-      .subscribe(links => {
-        console.log('component: ', links);7
-      });
+    this.exclusionDB.getRegularLinks()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
   }
 
   ngOnInit(): void {

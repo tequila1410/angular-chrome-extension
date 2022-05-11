@@ -8,6 +8,7 @@ import {
   connecting,
   connectingError,
   connectingSuccess,
+  setExclusionsModeSuccess,
   setRecentlyUsedSuccess, setSelectedServer,
   setServersSuccess
 } from "./vpn.actions";
@@ -18,6 +19,7 @@ export interface VPNState {
   serverList: ProxyModel[];
   recentlyUsed: ProxyModel[];
   bestServerSelected: boolean;
+  exclusionsMode: string;
   selectedServer?: ProxyModel;
   error?: string;
 }
@@ -27,7 +29,8 @@ const initialState: VPNState = {
   connecting: false,
   serverList: [],
   recentlyUsed: [],
-  bestServerSelected: JSON.parse(localStorage.getItem('isBestServerSelected') || 'true')
+  bestServerSelected: JSON.parse(localStorage.getItem('isBestServerSelected') || 'true'),
+  exclusionsMode: localStorage.getItem('exclusionsMode') || 'regularMode'
 }
 
 const _vpnReducer = createReducer(
@@ -46,6 +49,7 @@ const _vpnReducer = createReducer(
   on(setServersSuccess, (state, data) => ({...state, serverList: data.serverList, selectedServer: data.selectedServer})),
   on(setSelectedServer, (state, data) => ({...state, selectedServer: data.selectedServer})),
   on(bestServerSelectSuccess, (state, data) => ({...state, bestServerSelected: data.bestServerSelected})),
+  on(setExclusionsModeSuccess, (state, data) => ({...state, exclusionsMode: data.exclusionsMode})),
   on(setRecentlyUsedSuccess, (state, data) => ({...state, recentlyUsed: data.recentlyUsedProxies}))
 )
 

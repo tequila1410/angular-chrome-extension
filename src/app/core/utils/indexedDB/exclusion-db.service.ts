@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {exhaustMap, map} from "rxjs/operators";
+import {exhaustMap} from "rxjs/operators";
+import {ExclusionLink} from "../../models/exclusion-link.model";
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +16,17 @@ export class ExclusionDbService {
     console.log('IndexedDBService constructor');
   }
 
-  private testIndexDBInit() {
+  private exclusionsIndexDBInit() {
     return new Observable((subscriber) => {
-      this.openRequest = indexedDB.open('testDB', 1);
+      this.openRequest = indexedDB.open('exclusionsDB', 1);
       this.openRequest.onupgradeneeded = () => {
         this.db = this.openRequest.result;
 
-        if (!this.db.objectStoreNames.contains('links')) {
-          this.db.createObjectStore('links', {autoIncrement: true});
+        if (!this.db.objectStoreNames.contains('regularModeLinks')) {
+          this.db.createObjectStore('regularModeLinks', {keyPath: 'link'});
+        }
+        if (!this.db.objectStoreNames.contains('selectiveModeLinks')) {
+          this.db.createObjectStore('selectiveModeLinks', {keyPath: 'link'});
         }
 
         subscriber.next(this.db);
@@ -48,7 +52,7 @@ export class ExclusionDbService {
   private handler(fn: Function): Observable<any> {
     fn = fn.bind(this);
     if (!this.openRequest?.result) {
-      return this.testIndexDBInit()
+      return this.exclusionsIndexDBInit()
         .pipe(exhaustMap(() => {
         return fn();
       }));
@@ -56,75 +60,137 @@ export class ExclusionDbService {
     return fn();
   }
 
-  public getLinks(): Observable<{link: string}[]> {
-    return this.handler(this.getLinksHandler)
+  public getRegularLinks(): Observable<ExclusionLink[]> {
+    return this.handler(this.getRegularLinksHandler)
   }
 
-  private getLinksHandler(): Observable<{link: string}[]> {
+  public getSelectiveLinks(): Observable<ExclusionLink[]> {
+    return this.handler(this.getSelectiveLinksHandler)
+  }
+
+  private getRegularLinksHandler(): Observable<ExclusionLink[]> {
     return new Observable((subscriber) => {
-      let transaction = this.db.transaction('links', 'readonly');
-      let linksStore = transaction.objectStore('links');
+      let regularTransaction = this.db.transaction('regularModeLinks', 'readonly');
+      let regularLinksStore = regularTransaction.objectStore('regularModeLinks');
 
-      let request = linksStore.getAll();
+      let reularRequest = regularLinksStore.getAll();
 
-      request.onsuccess = () => {
-        subscriber.next(request.result);
+      reularRequest.onsuccess = () => {
+        subscriber.next(reularRequest.result);
       }
 
-      request.onerror = () => {
-        console.log('get links error', request.error)
-        subscriber.error(request);
+      reularRequest.onerror = () => {
+        console.log('get links error', reularRequest.error)
+        subscriber.error(reularRequest);
       }
     })
   }
 
-  public addLink(link: string) {
-    return this.handler(() => this.addLinkHandler(link));
-  }
-
-  private addLinkHandler(link: string): Observable<IDBRequest> {
+  private getSelectiveLinksHandler(): Observable<ExclusionLink[]> {
     return new Observable((subscriber) => {
-      let transaction = this.db.transaction('links', 'readwrite');
-      let links = transaction.objectStore('links');
+      let selectiveTransaction = this.db.transaction('selectiveModeLinks', 'readonly');
+      let selectiveLinksStore = selectiveTransaction.objectStore('selectiveModeLinks');
 
-      let linkObject = {
-        link,
-        created: new Date()
-      };
+      let selectiveRequest = selectiveLinksStore.getAll();
 
-      let request = links.add(linkObject);
-
-      request.onsuccess = () => {
-        console.log('link added', request.result);
-        subscriber.next(request);
+      selectiveRequest.onsuccess = () => {
+        subscriber.next(selectiveRequest.result);
       }
 
-      request.onerror = () => {
-        console.log('link add error', request.error)
-        subscriber.error(request);
+      selectiveRequest.onerror = () => {
+        console.log('get links error', selectiveRequest.error)
+        subscriber.error(selectiveRequest);
+      }
+    })
+  }
+
+  public addLink(mode: string, link: ExclusionLink) {
+    return this.handler(() => this.addLinkHandler(mode, link));
+  }
+
+  private addLinkHandler(mode: string, link: ExclusionLink): Observable<IDBRequest> {
+    return new Observable((subscriber) => {
+      let transaction;
+      let links;
+
+      if (mode === 'regularMode') {
+        transaction = this.db.transaction('regularModeLinks', 'readwrite');
+        links = transaction.objectStore('regularModeLinks');
+      }
+      if (mode === 'selectiveMode') {
+        transaction = this.db.transaction('selectiveModeLinks', 'readwrite');
+        links = transaction.objectStore('selectiveModeLinks');
+      }
+
+      if (links) {
+        let request = links.add(link);
+        request.onsuccess = () => {
+          console.log('link added', request.result);
+          subscriber.next(request);
+        }
+  
+        request.onerror = () => {
+          console.log('link add error', request.error)
+          subscriber.error(request);
+        }
       }
     });
   }
 
-  public removeLink() {
-    return this.handler(this.removeLinkHandler);
+  public removeLink(mode: string, linkName: string) {
+    return this.handler(() => this.removeLinkHandler(mode, linkName));
   }
 
-  private removeLinkHandler(linkId: number): Observable<any> {
+  private removeLinkHandler(mode: string, linkName: string): Observable<any> {
     return new Observable((subscriber) => {
-      let transaction = this.db.transaction('links', 'readwrite');
-      let links = transaction.objectStore('links');
+      let transaction;
+      let links;
 
-      let request = links.delete(linkId);
-
-      request.onsuccess = () => {
-        subscriber.next(request.result);
+      if (mode === 'regularMode') {
+        transaction = this.db.transaction('regularModeLinks', 'readwrite');
+        links = transaction.objectStore('regularModeLinks');
+      }
+      if (mode === 'selectiveMode') {
+        transaction = this.db.transaction('selectiveModeLinks', 'readwrite');
+        links = transaction.objectStore('selectiveModeLinks');
       }
 
-      request.onerror = () => {
-        subscriber.error(request);
+      if (links) {
+        let request = links.delete(linkName);
+
+        request.onsuccess = () => {
+          console.log('link removed');
+          subscriber.next(request.result);
+        }
+
+        request.onerror = () => {
+          console.log('link remove error')
+          subscriber.error(request);
+        }
       }
     })
+  }
+
+  public removeDB(mode: string): void {
+    this.handler(() => this.removeDBHandler(mode));
+  }
+
+  private removeDBHandler(mode: string): void {
+    let transaction;
+    let links;
+
+    if (mode === 'regularMode') {
+      transaction = this.db.transaction('regularModeLinks', 'readwrite');
+      links = transaction.objectStore('regularModeLinks');
+    }
+    if (mode === 'selectiveMode') {
+      transaction = this.db.transaction('selectiveModeLinks', 'readwrite');
+      links = transaction.objectStore('selectiveModeLinks');
+    }
+
+    if (links) {
+      links.clear();
+    }
   }
 
 }

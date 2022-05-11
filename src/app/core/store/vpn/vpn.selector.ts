@@ -33,3 +33,8 @@ export const isBestServerSelected = createSelector(
   selectVPN,
   (state: VPNState) => state.bestServerSelected
 )
+
+export const exclusionsMode = createSelector(
+  selectVPN,
+  (state: VPNState) => state.exclusionsMode
+)

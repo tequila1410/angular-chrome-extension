@@ -1,4 +1,5 @@
 import {ProxyModel} from "../../auth/models/proxy.model";
+import { ExclusionLink } from "../models/exclusion-link.model";
 
 export function onAuthRequiredHandler(username: string, password: string): void {
   chrome.webRequest.onAuthRequired.addListener((details: any) => {
@@ -16,7 +17,7 @@ export function onProxyErrorHandler(): Promise<any> {
   })
 }
 
-export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {
+export function setProxy(proxy: ProxyModel, exclusionsLinks: ExclusionLink[]): Promise<ProxyModel> {
   return new Promise((resolve, reject) => {
     let config = {
       mode: "fixed_servers",
@@ -26,7 +27,7 @@ export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {
           host: proxy.host,
           port: proxy.port
         },
-        bypassList: ["foobar.com"] // there are list of executed sites could be
+        bypassList: exclusionsLinks
       }
     };
 

@@ -5,11 +5,11 @@ import {
   closeConnection,
   closeConnectionSuccess,
   connecting, connectingError,
-  connectingSuccess, setRecentlyUsed, setRecentlyUsedSuccess,
+  connectingSuccess, setExclusionsMode, setExclusionsModeSuccess, setRecentlyUsed, setRecentlyUsedSuccess,
   setServers,
   setServersSuccess
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap, tap, withLatestFrom} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, take, tap, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
 import {clearProxy, sendMessage, setProxy} from "../../utils/chrome-backgroud";
@@ -17,21 +17,37 @@ import {ServerApi} from "../../api/server.api";
 import {MockDataApi} from "../../api/mock-data.api";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
+import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";
+import { exclusionsMode } from "./vpn.selector";
+import { ExclusionLink } from "../../models/exclusion-link.model";
 
 @Injectable()
 export class VpnEffect {
+  exclusionsLinks!: ExclusionLink[];
 
   constructor(private actions$: Actions,
               private store$: Store<AppState>,
-              private api: MockDataApi) {
+              private api: MockDataApi,
+              private exclusionDB: ExclusionDbService) {
   }
 
   $connecting = createEffect(() =>
     this.actions$.pipe(
       ofType(connecting),
       mergeMap(proxy => {
-        // get executions
-        return from(setProxy(proxy));
+        // this.store$
+        //   .select(exclusionsMode)
+        //   .pipe(take(1))
+        //   .subscribe(exclusionsMode => {
+        //     if (exclusionsMode === 'regularMode') {
+        //       this.exclusionDB.getRegularLinks().subscribe(links => this.exclusionsLinks = links);
+        //     }
+        //     if (exclusionsMode === 'selectiveMode') {
+        //       this.exclusionDB.getSelectiveLinks().subscribe(links => this.exclusionsLinks = links);
+        //     }
+        //   });
+
+        return from(setProxy(proxy, this.exclusionsLinks));
       }),
       mergeMap((proxy) => {
         return this.api.testNetwork(proxy);
@@ -99,6 +115,16 @@ export class VpnEffect {
         localStorage.setItem('recentlyUsed', JSON.stringify(newRecentlyUsed));
 
         return setRecentlyUsedSuccess({recentlyUsedProxies: newRecentlyUsed});
+      })
+    )
+  )
+
+  $setExclusionsMode = createEffect(() => 
+    this.actions$.pipe(
+      ofType(setExclusionsMode),
+      map((action) => {
+        localStorage.setItem('exclusionsMode', action.exclusionsMode)
+        return setExclusionsModeSuccess({exclusionsMode: action.exclusionsMode})
       })
     )
   )

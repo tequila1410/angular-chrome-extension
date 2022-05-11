@@ -2,37 +2,70 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ExclusionDbService } from 'src/app/core/utils/indexedDB/exclusion-db.service';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/core/store/app.reducer';
+import { exclusionsMode } from 'src/app/core/store/vpn/vpn.selector';
+import { take, takeUntil } from 'rxjs/operators';
+import { setExclusionsMode } from 'src/app/core/store/vpn/vpn.actions';
+import { ExclusionLink } from 'src/app/core/models/exclusion-link.model';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
+  animations: [
+    trigger('fadeIn', [
+      state('in', style({opacity: 1})),
+      transition(':enter', [style({opacity: 0}), animate(300)]),
+    ]),
+  ],
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  modeForm: FormGroup;
+  modeForm!: FormGroup;
 
   inputVisible: boolean = false;
 
-  websiteList: any[] = [];
-
-  regularWebsiteList: any[] = [];
-
-  selectiveWebsiteList: any[] = [];
+  websiteList!: ExclusionLink[];
 
   destroy$: Subject<void> = new Subject<void>();
 
-  constructor(private router: Router, private fb: FormBuilder) {
-    this.modeForm = this.fb.group({
-      mode: ['regularMode'],
+  constructor(private router: Router,
+              private fb: FormBuilder,
+              private exclusionDB: ExclusionDbService,
+              private store: Store<AppState>) {
+
+    this.store
+      .select(exclusionsMode)
+      .pipe(take(1))
+      .subscribe(exclusionsMode => {
+        this.modeForm = this.fb.group({
+          mode: [exclusionsMode],
+        });
     });
   }
 
   ngOnInit(): void {
     if (this.modeForm.value.mode === 'regularMode') {
-      this.websiteList = this.regularWebsiteList;
+      this.exclusionDB.getRegularLinks()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(links => {
+          this.websiteList = links;
+        });
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
-      this.websiteList = this.selectiveWebsiteList;
+      this.exclusionDB.getSelectiveLinks()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(links => {
+          this.websiteList = links;
+        });
     }
   }
 
@@ -41,40 +74,58 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   modeChange(event: any) {
-    this.modeForm = this.fb.group({
-      mode: [`${event.target.value}`],
-    });
+    this.store.dispatch(setExclusionsMode({exclusionsMode: event.target.value}));
 
     if (event.target.value === 'regularMode') {
-      this.websiteList = this.regularWebsiteList;
+      this.exclusionDB.getRegularLinks()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(links => {
+          this.websiteList = links;
+        });
     }
     if (event.target.value === 'selectiveMode') {
-      this.websiteList = this.selectiveWebsiteList;
+      this.exclusionDB.getSelectiveLinks()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(links => {
+          this.websiteList = links;
+        });
     }
   }
 
-  addWebsite() {
+  inputVisibility() {
     this.inputVisible = true;
   }
 
-  pushWebsite(event: any) {
+  addWebsite(event: any) {
     if (event.target.value) {
+      let linkObject: ExclusionLink = {
+        link: event.target.value,
+        created: new Date()
+      };
+
       if (this.modeForm.value.mode === 'regularMode') {
-        this.regularWebsiteList.unshift(event.target.value);
+        this.exclusionDB.addLink('regularMode', linkObject).pipe(takeUntil(this.destroy$)).subscribe();
       }
       if (this.modeForm.value.mode === 'selectiveMode') {
-        this.selectiveWebsiteList.unshift(event.target.value);
+        this.exclusionDB.addLink('selectiveMode', linkObject).pipe(takeUntil(this.destroy$)).subscribe();
       }
+      this.websiteList.push(linkObject);
       this.inputVisible = false;
     }
   }
 
-  deleteWebsite(itemIndex: any) {
-    this.websiteList.splice(itemIndex, 1);
+  deleteWebsite(link: string, itemIndex: number) {
+    if (this.modeForm.value.mode === 'regularMode') {
+      this.exclusionDB.removeLink('regularMode', link).pipe(takeUntil(this.destroy$)).subscribe();
+    }
+    if (this.modeForm.value.mode === 'selectiveMode') {
+      this.exclusionDB.removeLink('selectiveMode', link).pipe(takeUntil(this.destroy$)).subscribe();
+    }
+    this.websiteList.splice(itemIndex, 1)
   }
 
   exportWebsiteList() {
-    const list = this.websiteList.join('\n');
+    const list = JSON.stringify(this.websiteList);
 
     const file = new window.Blob([list], { type: 'text/plain' });
 
@@ -89,13 +140,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   clearChosenList() {
     if (this.modeForm.value.mode === 'regularMode') {
-      this.regularWebsiteList = [];
-      this.websiteList = this.regularWebsiteList;
+      this.exclusionDB.removeDB('regularMode');
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
-      this.selectiveWebsiteList = [];
-      this.websiteList = this.selectiveWebsiteList;
+      this.exclusionDB.removeDB('selectiveMode');
     }
+    this.websiteList = [];
   }
 
   ngOnDestroy(): void {

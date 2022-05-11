@@ -61,3 +61,13 @@ export const bestServerSelectSuccess = createAction(
   '[VPN auto finding best server success]',
   props<{bestServerSelected: boolean}>()
 )
+
+export const setExclusionsMode = createAction(
+  '[VPN exclusions mode set]',
+  props<{exclusionsMode: string}>()
+)
+
+export const setExclusionsModeSuccess = createAction(
+  '[VPN exclusions mode set success]',
+  props<{exclusionsMode: string}>()
+)

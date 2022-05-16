@@ -12,9 +12,13 @@ import {
 } from '@angular/animations';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/core/store/app.reducer';
-import { exclusionsMode } from 'src/app/core/store/vpn/vpn.selector';
+import { exclusionsMode, getRegularExclusions, getSelectiveExclusions } from 'src/app/core/store/vpn/vpn.selector';
 import { take, takeUntil } from 'rxjs/operators';
-import { setExclusionsMode } from 'src/app/core/store/vpn/vpn.actions';
+import {
+  setExclusionsMode,
+  addRegularExclusion, addSelectiveExclusion,
+  deleteRegularExclusion, deleteSelectiveExclusion,
+  clearChosenExclusions } from 'src/app/core/store/vpn/vpn.actions';
 import { ExclusionLink } from 'src/app/core/models/exclusion-link.model';
 
 @Component({
@@ -39,7 +43,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
               private fb: FormBuilder,
-              private exclusionDB: ExclusionDbService,
               private store: Store<AppState>) {
 
     this.store
@@ -54,49 +57,55 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.modeForm.value.mode === 'regularMode') {
-      this.exclusionDB.getRegularLinks()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(links => {
-          this.websiteList = links;
-        });
+      this.store
+      .select(getRegularExclusions)
+      .pipe(take(1))
+      .subscribe(regularExclusions => {
+        this.websiteList = regularExclusions;
+      })
+
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
-      this.exclusionDB.getSelectiveLinks()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(links => {
-          this.websiteList = links;
-        });
+      this.store
+      .select(getSelectiveExclusions)
+      .pipe(take(1))
+      .subscribe(selectiveExclusions => {
+        this.websiteList = selectiveExclusions;
+      })
     }
   }
 
-  goToDashboard() {
+  goToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
-  modeChange(event: any) {
+  modeChange(event: any): void {
     this.store.dispatch(setExclusionsMode({exclusionsMode: event.target.value}));
 
     if (event.target.value === 'regularMode') {
-      this.exclusionDB.getRegularLinks()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(links => {
-          this.websiteList = links;
-        });
+      this.store
+      .select(getRegularExclusions)
+      .pipe(take(1))
+      .subscribe(regularExclusions => {
+        this.websiteList = regularExclusions;
+      })
+
     }
     if (event.target.value === 'selectiveMode') {
-      this.exclusionDB.getSelectiveLinks()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(links => {
-          this.websiteList = links;
-        });
+      this.store
+      .select(getSelectiveExclusions)
+      .pipe(take(1))
+      .subscribe(selectiveExclusions => {
+        this.websiteList = selectiveExclusions;
+      })
     }
   }
 
-  inputVisibility() {
+  inputVisibility(): void {
     this.inputVisible = true;
   }
 
-  addWebsite(event: any) {
+  addWebsite(event: any): void {
     if (event.target.value) {
       let linkObject: ExclusionLink = {
         link: event.target.value,
@@ -104,27 +113,27 @@ export class SettingsComponent implements OnInit, OnDestroy {
       };
 
       if (this.modeForm.value.mode === 'regularMode') {
-        this.exclusionDB.addLink('regularMode', linkObject).pipe(takeUntil(this.destroy$)).subscribe();
+        this.store.dispatch(addRegularExclusion({regularExclusion: linkObject}));
       }
       if (this.modeForm.value.mode === 'selectiveMode') {
-        this.exclusionDB.addLink('selectiveMode', linkObject).pipe(takeUntil(this.destroy$)).subscribe();
+        this.store.dispatch(addSelectiveExclusion({selectiveExclusion: linkObject}));
       }
       this.websiteList.push(linkObject);
       this.inputVisible = false;
     }
   }
 
-  deleteWebsite(link: string, itemIndex: number) {
+  deleteWebsite(linkName: string, itemIndex: number): void {
     if (this.modeForm.value.mode === 'regularMode') {
-      this.exclusionDB.removeLink('regularMode', link).pipe(takeUntil(this.destroy$)).subscribe();
+      this.store.dispatch(deleteRegularExclusion({linkName}));
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
-      this.exclusionDB.removeLink('selectiveMode', link).pipe(takeUntil(this.destroy$)).subscribe();
+      this.store.dispatch(deleteSelectiveExclusion({linkName}));
     }
     this.websiteList.splice(itemIndex, 1)
   }
 
-  exportWebsiteList() {
+  exportWebsiteList(): void {
     const list = JSON.stringify(this.websiteList);
 
     const file = new window.Blob([list], { type: 'text/plain' });
@@ -138,12 +147,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
     downloadAncher.click();
   }
 
-  clearChosenList() {
+  clearChosenList(): void {
     if (this.modeForm.value.mode === 'regularMode') {
-      this.exclusionDB.removeDB('regularMode');
+      this.store.dispatch(clearChosenExclusions({chosenMode: 'regularMode'}));
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
-      this.exclusionDB.removeDB('selectiveMode');
+      this.store.dispatch(clearChosenExclusions({chosenMode: 'selectiveMode'}));
     }
     this.websiteList = [];
   }

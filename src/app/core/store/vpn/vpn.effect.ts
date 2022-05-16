@@ -5,49 +5,118 @@ import {
   closeConnection,
   closeConnectionSuccess,
   connecting, connectingError,
-  connectingSuccess, setExclusionsMode, setExclusionsModeSuccess, setRecentlyUsed, setRecentlyUsedSuccess,
+  connectingSuccess,
+  setRecentlyUsed, setRecentlyUsedSuccess,
   setServers,
-  setServersSuccess
+  setServersSuccess,
+  setExclusionsMode, setExclusionsModeSuccess, 
+  setRegularExclusionsSuccess, setSelectiveExclusionsSuccess, 
+  setSelectiveExclusions, setRegularExclusions, 
+  addRegularExclusion, addRegularExclusionSuccess, 
+  addSelectiveExclusion, addSelectiveExclusionSuccess,
+  deleteRegularExclusion, deleteSelectiveExclusion, 
+  deleteRegularExclusionSuccess, deleteSelectiveExclusionSuccess, 
+  clearChosenExclusions, clearRegularExclusions, clearSelectedExclusions
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap, take, tap, withLatestFrom} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, switchMap, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
 import {clearProxy, sendMessage, setProxy} from "../../utils/chrome-backgroud";
-import {ServerApi} from "../../api/server.api";
 import {MockDataApi} from "../../api/mock-data.api";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";
-import { exclusionsMode } from "./vpn.selector";
 import { ExclusionLink } from "../../models/exclusion-link.model";
 
 @Injectable()
 export class VpnEffect {
-  exclusionsLinks!: ExclusionLink[];
 
   constructor(private actions$: Actions,
               private store$: Store<AppState>,
               private api: MockDataApi,
               private exclusionDB: ExclusionDbService) {
   }
+  $setExclusionsMode = createEffect(() => 
+    this.actions$.pipe(
+      ofType(setExclusionsMode),
+      map((action) => {
+        localStorage.setItem('exclusionsMode', action.exclusionsMode)
+        return setExclusionsModeSuccess({exclusionsMode: action.exclusionsMode})
+      })
+    )
+  )
+
+  $setRegularExclusions = createEffect(() => 
+    this.actions$.pipe(
+      ofType(setRegularExclusions),
+      exhaustMap(() => this.exclusionDB.getRegularLinks()),
+      map(regularExclusions => {
+        this.store$.dispatch(setSelectiveExclusions());
+        return setRegularExclusionsSuccess({regularExclusions})
+      })
+    )
+  )
+
+  $setSelectiveExclusions = createEffect(() => 
+    this.actions$.pipe(
+      ofType(setSelectiveExclusions),
+      exhaustMap(() => this.exclusionDB.getSelectiveLinks()),
+      map(selectiveExclusions => {
+        return setSelectiveExclusionsSuccess({selectiveExclusions})
+      })
+    )
+  )
+
+  $addRegularExclusion = createEffect(() => 
+    this.actions$.pipe(
+      ofType(addRegularExclusion),
+      switchMap(exclusion => this.exclusionDB.addLink('regularMode', exclusion.regularExclusion)),
+      map(() => addRegularExclusionSuccess())
+    )
+  )
+
+  $addSelectiveExclusion = createEffect(() => 
+    this.actions$.pipe(
+      ofType(addSelectiveExclusion),
+      switchMap(exclusion => this.exclusionDB.addLink('selectiveMode', exclusion.selectiveExclusion)),
+      map(() => addSelectiveExclusionSuccess())
+    )
+  )
+
+  $deleteRegularExclusion = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteRegularExclusion),
+      switchMap(link => this.exclusionDB.removeLink('regularMode', link.linkName)),
+      map(() => deleteRegularExclusionSuccess())
+    ))
+  
+  $deleteSelectiveExclusion = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteSelectiveExclusion),
+      switchMap(link => this.exclusionDB.removeLink('selectiveMode', link.linkName)),
+      map(() => deleteSelectiveExclusionSuccess())
+    ))
+
+  $clearChosenExclusions = createEffect(() => 
+    this.actions$.pipe(
+      ofType(clearChosenExclusions),
+      switchMap(mode => this.exclusionDB.removeDB(mode.chosenMode)),
+      map((mode) => mode === 'regularMode' ? clearRegularExclusions() : clearSelectedExclusions())
+    ))
 
   $connecting = createEffect(() =>
     this.actions$.pipe(
       ofType(connecting),
-      mergeMap(proxy => {
-        // this.store$
-        //   .select(exclusionsMode)
-        //   .pipe(take(1))
-        //   .subscribe(exclusionsMode => {
-        //     if (exclusionsMode === 'regularMode') {
-        //       this.exclusionDB.getRegularLinks().subscribe(links => this.exclusionsLinks = links);
-        //     }
-        //     if (exclusionsMode === 'selectiveMode') {
-        //       this.exclusionDB.getSelectiveLinks().subscribe(links => this.exclusionsLinks = links);
-        //     }
-        //   });
-
-        return from(setProxy(proxy, this.exclusionsLinks));
+      withLatestFrom(this.store$),
+      mergeMap(([proxy, storeState]) => {
+        let exclusions: ExclusionLink[] = [];
+        if (storeState.vpn.exclusionsMode === 'regularMode') {
+          exclusions = storeState.vpn.regularExclusions;
+        }
+        if (storeState.vpn.exclusionsMode === 'selectiveMode') {
+          exclusions = storeState.vpn.selectiveExclusions;
+        }
+        return from(setProxy(proxy, exclusions));
       }),
       mergeMap((proxy) => {
         return this.api.testNetwork(proxy);
@@ -57,7 +126,7 @@ export class VpnEffect {
       }),
       catchError(error => {
         console.log(error)
-        return of(connectingError({message: 'sam sasi error'}))
+        return of(connectingError({message: 'connection error'}))
         // return of();
       })
     )
@@ -115,16 +184,6 @@ export class VpnEffect {
         localStorage.setItem('recentlyUsed', JSON.stringify(newRecentlyUsed));
 
         return setRecentlyUsedSuccess({recentlyUsedProxies: newRecentlyUsed});
-      })
-    )
-  )
-
-  $setExclusionsMode = createEffect(() => 
-    this.actions$.pipe(
-      ofType(setExclusionsMode),
-      map((action) => {
-        localStorage.setItem('exclusionsMode', action.exclusionsMode)
-        return setExclusionsModeSuccess({exclusionsMode: action.exclusionsMode})
       })
     )
   )

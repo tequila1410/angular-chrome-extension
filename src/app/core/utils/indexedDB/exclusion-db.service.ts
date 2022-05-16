@@ -104,11 +104,11 @@ export class ExclusionDbService {
     })
   }
 
-  public addLink(mode: string, link: ExclusionLink) {
+  public addLink(mode: string, link: ExclusionLink): Observable<ExclusionLink> {
     return this.handler(() => this.addLinkHandler(mode, link));
   }
 
-  private addLinkHandler(mode: string, link: ExclusionLink): Observable<IDBRequest> {
+  private addLinkHandler(mode: string, link: ExclusionLink): Observable<ExclusionLink> {
     return new Observable((subscriber) => {
       let transaction;
       let links;
@@ -126,7 +126,7 @@ export class ExclusionDbService {
         let request = links.add(link);
         request.onsuccess = () => {
           console.log('link added', request.result);
-          subscriber.next(request);
+          subscriber.next(link);
         }
   
         request.onerror = () => {
@@ -137,7 +137,7 @@ export class ExclusionDbService {
     });
   }
 
-  public removeLink(mode: string, linkName: string) {
+  public removeLink(mode: string, linkName: string): Observable<any> {
     return this.handler(() => this.removeLinkHandler(mode, linkName));
   }
 
@@ -171,26 +171,29 @@ export class ExclusionDbService {
     })
   }
 
-  public removeDB(mode: string): void {
-    this.handler(() => this.removeDBHandler(mode));
+  public removeDB(mode: string): Observable<string> {
+    return this.handler(() => this.removeDBHandler(mode));
   }
 
-  private removeDBHandler(mode: string): void {
-    let transaction;
-    let links;
+  private removeDBHandler(mode: string): Observable<string> {
+    return new Observable((subscriber) => {
+      let transaction;
+      let links;
 
-    if (mode === 'regularMode') {
-      transaction = this.db.transaction('regularModeLinks', 'readwrite');
-      links = transaction.objectStore('regularModeLinks');
-    }
-    if (mode === 'selectiveMode') {
-      transaction = this.db.transaction('selectiveModeLinks', 'readwrite');
-      links = transaction.objectStore('selectiveModeLinks');
-    }
+      if (mode === 'regularMode') {
+        transaction = this.db.transaction('regularModeLinks', 'readwrite');
+        links = transaction.objectStore('regularModeLinks');
+      }
+      if (mode === 'selectiveMode') {
+        transaction = this.db.transaction('selectiveModeLinks', 'readwrite');
+        links = transaction.objectStore('selectiveModeLinks');
+      }
 
-    if (links) {
-      links.clear();
-    }
+      if (links) {
+        links.clear();
+        subscriber.next(mode)
+      }
+    })
   }
 
 }

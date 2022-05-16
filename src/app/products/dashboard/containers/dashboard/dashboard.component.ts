@@ -17,7 +17,7 @@ import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
-  connectingSuccess, setServers,
+  connectingSuccess, setRegularExclusions, setSelectiveExclusions, setServers,
 } from '../../../../core/store/vpn/vpn.actions';
 import {
   getSelectedVpnServer,
@@ -42,7 +42,6 @@ import {
 } from '@angular/animations';
 import {DashboardApi} from 'src/app/core/api/dashboard.api';
 import {DashboardOverview} from 'src/app/core/models/dashboard-overview.model';
-import {ExclusionDbService} from "../../../../core/utils/indexedDB/exclusion-db.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -99,9 +98,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private dashboardApi: DashboardApi,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private store: Store<AppState>,
-    private exclusionDB: ExclusionDbService
+    private store: Store<AppState>
   ) {
+    this.store.dispatch(setRegularExclusions());
+
     this.form = new FormGroup({
       proxy: new FormControl(),
     });
@@ -117,10 +117,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return res.data;
         })
       )
-
-    this.exclusionDB.getRegularLinks()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
   }
 
   ngOnInit(): void {

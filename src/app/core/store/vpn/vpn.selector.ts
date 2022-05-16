@@ -38,3 +38,13 @@ export const exclusionsMode = createSelector(
   selectVPN,
   (state: VPNState) => state.exclusionsMode
 )
+
+export const getRegularExclusions = createSelector(
+  selectVPN,
+  (state: VPNState) => state.regularExclusions
+)
+
+export const getSelectiveExclusions = createSelector(
+  selectVPN,
+  (state: VPNState) => state.selectiveExclusions
+)

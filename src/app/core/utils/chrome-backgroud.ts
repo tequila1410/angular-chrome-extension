@@ -1,4 +1,5 @@
 import {ProxyModel} from "../../auth/models/proxy.model";
+import { ExclusionLink } from "../models/exclusion-link.model";
 
 export function onAuthRequiredHandler(username: string | null, password: string | null): void {
   console.log('set onAuthRequiredHandler', username, password);
@@ -17,7 +18,7 @@ export function onProxyErrorHandler(): Promise<any> {
   })
 }
 
-export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {
+export function setProxy(proxy: ProxyModel, exclusionsLinks: ExclusionLink[]): Promise<ProxyModel> {
   console.log('proxy to set: ', proxy);
   return new Promise((resolve, reject) => {
     let config = {
@@ -28,7 +29,7 @@ export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {
           host: proxy.host,
           port: proxy.port
         },
-        bypassList: ["foobar.com"] // there are list of executed sites could be
+        bypassList: exclusionsLinks
       }
     };
 

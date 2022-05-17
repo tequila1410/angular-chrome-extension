@@ -15,7 +15,7 @@ import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
-  setServers,
+  connectingSuccess, setRegularExclusions, setSelectiveExclusions, setServers,
 } from '../../../../core/store/vpn/vpn.actions';
 import {
   getSelectedVpnServer,
@@ -98,6 +98,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store<AppState>
   ) {
+    this.store.dispatch(setRegularExclusions());
+
     this.form = new FormGroup({
       proxy: new FormControl(),
     });

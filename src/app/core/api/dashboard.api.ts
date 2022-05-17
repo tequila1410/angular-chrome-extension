@@ -6,8 +6,6 @@ import {DashboardOverview} from "../models/dashboard-overview.model";
 @Injectable()
 export class DashboardApi {
 
-  private API_URL: string = 'https://dev-api.zoogvpn.com';
-
   constructor(private httpClient: HttpClient) {
 
   }
@@ -17,7 +15,7 @@ export class DashboardApi {
    * @return {Observable<DashboardOverview>}
    */
   getOverViewData(): Observable<{ data: DashboardOverview }> {
-    return this.httpClient.get<{ data: DashboardOverview }>(`${this.API_URL}/api/dashboard/overview`);
+    return this.httpClient.get<{ data: DashboardOverview }>(`zoog_api/api/dashboard/overview`);
   }
 
 }

@@ -37,8 +37,8 @@
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
         </div>
-        <span class="icon icon-play" [class]="availableFeature ? 'icon-green' : 'icon-gray'"></span>
-        <span class="icon icon-p2p" [class]="availableFeature ? 'icon-green' : 'icon-gray'"></span>
+        <span class="icon icon-play" [class]="proxy.isAllowedStream ? 'icon-green' : 'icon-gray'"></span>
+        <span class="icon icon-p2p" [class]="proxy.isAllowedP2P ? 'icon-green' : 'icon-gray'"></span>
         <div>{{proxy.id}}</div>
         <div class="ping">{{proxy.ping}} ms</div>
       </div>

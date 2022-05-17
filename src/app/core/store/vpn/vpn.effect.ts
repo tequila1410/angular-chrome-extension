@@ -23,12 +23,18 @@ export class VpnEffect {
 
   constructor(private actions$: Actions,
               private store$: Store<AppState>,
-              private api: MockDataApi) {
+              private api: ServerApi) {
   }
 
   $connecting = createEffect(() =>
     this.actions$.pipe(
       ofType(connecting),
+      withLatestFrom(this.store$),
+      map(([proxy, storeState]) => {
+        if (storeState.vpn.connected)
+          clearProxy();
+        return proxy;
+      }),
       mergeMap(proxy => {
         // get executions
         return from(setProxy(proxy));
@@ -37,6 +43,7 @@ export class VpnEffect {
         return this.api.testNetwork(proxy);
       }),
       map(proxy => {
+        console.log('connecting success: ', proxy)
         return connectingSuccess(proxy);
       }),
       catchError(error => {
@@ -64,9 +71,11 @@ export class VpnEffect {
       withLatestFrom(this.store$),
       map(([response, storeState]) => {
         const selectedServer = storeState.vpn.bestServerSelected ?
-          response.data.serverList.reduce((a, b) => (a.ping < b.ping ? a : b))
+          response.data.serverList
+            .filter(a => a.host !== 'locked')
+            .reduce((a, b) => (a.ping < b.ping ? a : b))
           :
-          response.data.serverList[0];
+          response.data.serverList.find(a => a.host !== 'locked');
         return setServersSuccess({serverList: response.data.serverList, selectedServer})
       })
     )

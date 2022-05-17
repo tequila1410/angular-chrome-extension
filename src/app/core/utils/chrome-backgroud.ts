@@ -1,6 +1,7 @@
 import {ProxyModel} from "../../auth/models/proxy.model";
 
-export function onAuthRequiredHandler(username: string, password: string): void {
+export function onAuthRequiredHandler(username: string | null, password: string | null): void {
+  console.log('set onAuthRequiredHandler', username, password);
   chrome.webRequest.onAuthRequired.addListener((details: any) => {
     console.log('auth required: ', details);
 
@@ -17,6 +18,7 @@ export function onProxyErrorHandler(): Promise<any> {
 }
 
 export function setProxy(proxy: ProxyModel): Promise<ProxyModel> {
+  console.log('proxy to set: ', proxy);
   return new Promise((resolve, reject) => {
     let config = {
       mode: "fixed_servers",

@@ -1,13 +1,11 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
 } from '@angular/core';
 import {ProxyModel} from '../../../../auth/models/proxy.model';
-import {ProxyService} from '../../../../core/services/proxy.service';
 import {Observable, Subject} from 'rxjs';
 import {MockDataApi} from '../../../../core/api/mock-data.api';
 import {map, takeUntil, tap} from 'rxjs/operators';
@@ -17,7 +15,7 @@ import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
-  connectingSuccess, setServers,
+  setServers,
 } from '../../../../core/store/vpn/vpn.actions';
 import {
   getSelectedVpnServer,
@@ -29,7 +27,7 @@ import {
   onAuthRequiredHandler,
   onProxyErrorHandler,
 } from '../../../../core/utils/chrome-backgroud';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {User} from '../../../../core/models/user.model';
 import {getUserData} from '../../../../core/store/user/user.selector';
 import {signOut} from '../../../../core/store/user/user.actions';
@@ -42,7 +40,7 @@ import {
 } from '@angular/animations';
 import {DashboardApi} from 'src/app/core/api/dashboard.api';
 import {DashboardOverview} from 'src/app/core/models/dashboard-overview.model';
-import {ExclusionDbService} from "../../../../core/utils/indexedDB/exclusion-db.service";
+import {UserCred} from "../../../../core/models/user-cred.enum";
 
 @Component({
   selector: 'app-dashboard',
@@ -54,7 +52,7 @@ import {ExclusionDbService} from "../../../../core/utils/indexedDB/exclusion-db.
       transition(':enter', [style({opacity: 0}), animate(300)]),
     ]),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   /**
@@ -94,13 +92,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   destroy$: Subject<void> = new Subject<void>();
 
   constructor(
-    private proxyService: ProxyService,
     private serverService: MockDataApi,
     private dashboardApi: DashboardApi,
-    private cdr: ChangeDetectorRef,
     private router: Router,
-    private store: Store<AppState>,
-    private exclusionDB: ExclusionDbService
+    private route: ActivatedRoute,
+    private store: Store<AppState>
   ) {
     this.form = new FormGroup({
       proxy: new FormControl(),
@@ -117,15 +113,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return res.data;
         })
       )
-
-    this.exclusionDB.getLinks()
-      .subscribe(links => {
-        console.log('component: ', links);7
-      });
   }
 
   ngOnInit(): void {
-    onAuthRequiredHandler('7a9e9ebb1a0f', 'eb8c940eb5');
     onProxyErrorHandler().then((details) => {
       this.store.dispatch(closeConnection());
       console.error(details.error);
@@ -136,7 +126,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isVPNConnected) => {
         this.isConnected = isVPNConnected;
-        this.cdr.detectChanges();
       });
 
     this.store
@@ -144,7 +133,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isConnecting) => {
         this.isConnecting = isConnecting;
-        this.cdr.detectChanges();
       });
 
     this.store
@@ -153,10 +141,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((connectionError) => {
         if (connectionError) {
           this.isConnectionError = true;
-          this.cdr.detectChanges();
         } else {
           this.isConnectionError = false;
-          this.cdr.detectChanges();
         }
       });
 
@@ -165,9 +151,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectedServer) => {
         this.selectedServer = selectedServer;
-        this.cdr.detectChanges();
       });
 
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params: Params) => {
+      console.log('params[\'connect\']', params['connect']);
+      if (params['connect'] === 'connect') {
+        this.vpnConnectToggle(true)
+      }
+    });
 
     this.store.dispatch(setServers());
   }
@@ -176,11 +169,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Toggle to connect and disconnect proxy
    * @return {void}
    */
-  vpnConnectToggle(): void {
-    if (this.isConnected) {
+  vpnConnectToggle(force?: boolean): void {
+    if (this.isConnected && !force) {
       this.store.dispatch(closeConnection());
     } else if (this.selectedServer) {
-      this.store.dispatch(connecting(this.selectedServer));
+      console.log('this.selectedServer: ', this.selectedServer);
+      const login = localStorage.getItem(UserCred.userLogin);
+      const password = localStorage.getItem(UserCred.userPassword);
+
+      if (login && password) {
+        onAuthRequiredHandler(login, password);
+        this.store.dispatch(connecting(this.selectedServer));
+      } else {
+        let pass = prompt(`Enter the pass for ${this.currentUser?.email}`) || '';
+        onAuthRequiredHandler(login, pass);
+        localStorage.setItem(UserCred.userPassword, pass);
+        this.store.dispatch(connecting(this.selectedServer));
+      }
     }
 
     if (this.isConnecting && this.isConnectionError) {

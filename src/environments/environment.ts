@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  zoogApiUrl: 'https://dev-api.zoogvpn.com'
+  zoogApiUrl: 'https://dev-api.zoogvpn.com',
+  zoogAppUrl: 'https://dev-ng.zoogvpn.com'
 };
 
 /*

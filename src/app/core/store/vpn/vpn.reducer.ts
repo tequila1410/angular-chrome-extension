@@ -11,6 +11,7 @@ import {
   setRecentlyUsedSuccess, setSelectedServer,
   setServersSuccess
 } from "./vpn.actions";
+import {signOutSuccess} from "../user/user.actions";
 
 export interface VPNState {
   connected: boolean;
@@ -46,7 +47,8 @@ const _vpnReducer = createReducer(
   on(setServersSuccess, (state, data) => ({...state, serverList: data.serverList, selectedServer: data.selectedServer})),
   on(setSelectedServer, (state, data) => ({...state, selectedServer: data.selectedServer})),
   on(bestServerSelectSuccess, (state, data) => ({...state, bestServerSelected: data.bestServerSelected})),
-  on(setRecentlyUsedSuccess, (state, data) => ({...state, recentlyUsed: data.recentlyUsedProxies}))
+  on(setRecentlyUsedSuccess, (state, data) => ({...state, recentlyUsed: data.recentlyUsedProxies})),
+  on(signOutSuccess, (state) => ({...state, error: undefined, selectedServer: undefined}))
 )
 
 

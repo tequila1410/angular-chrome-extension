@@ -9,13 +9,13 @@ import {
   setRecentlyUsed, setRecentlyUsedSuccess,
   setServers,
   setServersSuccess,
-  setExclusionsMode, setExclusionsModeSuccess, 
-  setRegularExclusionsSuccess, setSelectiveExclusionsSuccess, 
-  setSelectiveExclusions, setRegularExclusions, 
-  addRegularExclusion, addRegularExclusionSuccess, 
+  setExclusionsMode, setExclusionsModeSuccess,
+  setRegularExclusionsSuccess, setSelectiveExclusionsSuccess,
+  setSelectiveExclusions, setRegularExclusions,
+  addRegularExclusion, addRegularExclusionSuccess,
   addSelectiveExclusion, addSelectiveExclusionSuccess,
-  deleteRegularExclusion, deleteSelectiveExclusion, 
-  deleteRegularExclusionSuccess, deleteSelectiveExclusionSuccess, 
+  deleteRegularExclusion, deleteSelectiveExclusion,
+  deleteRegularExclusionSuccess, deleteSelectiveExclusionSuccess,
   clearChosenExclusions, clearRegularExclusions, clearSelectedExclusions
 } from "./vpn.actions";
 import {catchError, exhaustMap, map, mergeMap, switchMap, withLatestFrom} from "rxjs/operators";
@@ -27,16 +27,17 @@ import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";
 import { ExclusionLink } from "../../models/exclusion-link.model";
+import {ServerApi} from "../../api/server.api";
 
 @Injectable()
 export class VpnEffect {
 
   constructor(private actions$: Actions,
               private store$: Store<AppState>,
-              private api: ServerApi) {
+              private api: ServerApi,
               private exclusionDB: ExclusionDbService) {
   }
-  $setExclusionsMode = createEffect(() => 
+  $setExclusionsMode = createEffect(() =>
     this.actions$.pipe(
       ofType(setExclusionsMode),
       map((action) => {
@@ -46,7 +47,7 @@ export class VpnEffect {
     )
   )
 
-  $setRegularExclusions = createEffect(() => 
+  $setRegularExclusions = createEffect(() =>
     this.actions$.pipe(
       ofType(setRegularExclusions),
       exhaustMap(() => this.exclusionDB.getRegularLinks()),
@@ -57,7 +58,7 @@ export class VpnEffect {
     )
   )
 
-  $setSelectiveExclusions = createEffect(() => 
+  $setSelectiveExclusions = createEffect(() =>
     this.actions$.pipe(
       ofType(setSelectiveExclusions),
       exhaustMap(() => this.exclusionDB.getSelectiveLinks()),
@@ -67,7 +68,7 @@ export class VpnEffect {
     )
   )
 
-  $addRegularExclusion = createEffect(() => 
+  $addRegularExclusion = createEffect(() =>
     this.actions$.pipe(
       ofType(addRegularExclusion),
       switchMap(exclusion => this.exclusionDB.addLink('regularMode', exclusion.regularExclusion)),
@@ -75,7 +76,7 @@ export class VpnEffect {
     )
   )
 
-  $addSelectiveExclusion = createEffect(() => 
+  $addSelectiveExclusion = createEffect(() =>
     this.actions$.pipe(
       ofType(addSelectiveExclusion),
       switchMap(exclusion => this.exclusionDB.addLink('selectiveMode', exclusion.selectiveExclusion)),
@@ -89,7 +90,7 @@ export class VpnEffect {
       switchMap(link => this.exclusionDB.removeLink('regularMode', link.linkName)),
       map(() => deleteRegularExclusionSuccess())
     ))
-  
+
   $deleteSelectiveExclusion = createEffect(() =>
     this.actions$.pipe(
       ofType(deleteSelectiveExclusion),
@@ -97,7 +98,7 @@ export class VpnEffect {
       map(() => deleteSelectiveExclusionSuccess())
     ))
 
-  $clearChosenExclusions = createEffect(() => 
+  $clearChosenExclusions = createEffect(() =>
     this.actions$.pipe(
       ofType(clearChosenExclusions),
       switchMap(mode => this.exclusionDB.removeDB(mode.chosenMode)),

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from '../../store/app.reducer';
@@ -8,17 +8,24 @@ import {authenticateSuccess, signUpFP} from '../../store/user/user.actions';
 import {getFingerPrint} from '../../utils/fingerprint';
 import {ReCaptchaV3Service} from 'ng-recaptcha';
 import { catchError, take, tap } from 'rxjs/operators';
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-user-auth-handler',
   templateUrl: './user-auth-handler.component.html',
   styleUrls: ['./user-auth-handler.component.scss']
 })
-export class AuthUserHandlerComponent {
+export class AuthUserHandlerComponent implements OnInit {
+
+  readonly APP_URL: string = environment.zoogAppUrl;
 
   constructor(private router: Router,
               private store: Store<AppState>,
               private recaptchaV3Service: ReCaptchaV3Service) {
+
+  }
+
+  ngOnInit() {
     this.authenticateUserHandler();
   }
 
@@ -30,7 +37,7 @@ export class AuthUserHandlerComponent {
       this.store.dispatch(authenticateSuccess({token, user: JSON.parse(user)}))
       this.getProxyAfterAuth();
     } else {
-      getCookie('userCookie', 'https://dev-ng.zoogvpn.com')
+      getCookie('userCookie', this.APP_URL)
         .then((cookie) => {
           const userCookie = JSON.parse(cookie.value);
           this.store.dispatch(authenticateSuccess({token: userCookie.token, user: userCookie.user}));
@@ -38,20 +45,24 @@ export class AuthUserHandlerComponent {
         })
         .catch(reason => {
           console.warn(reason);
-          getFingerPrint().then(fingerprint => this.signUpFP(fingerprint));
+          setTimeout(() => {
+            getFingerPrint().then(fingerprint => this.signUpFP(fingerprint));
+          }, 2000);
           this.getProxyAfterAuth();
         })
     }
   }
 
   private signUpFP(fingerprint: string): void {
-    this.recaptchaV3Service.execute('signInAction')
+    console.log('start');
+    this.recaptchaV3Service.execute('signUpFPAction')
       .pipe(
-        take(1),
         tap(token => {
+          console.log(fingerprint);
           this.store.dispatch(signUpFP({fingerprint, token}));
         }),
         catchError((err) => {
+          console.log('captcha error ', err)
           return err;
         })
       )

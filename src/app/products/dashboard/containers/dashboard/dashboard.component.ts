@@ -1,23 +1,21 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { ProxyModel } from '../../../../auth/models/proxy.model';
-import { ProxyService } from '../../../../core/services/proxy.service';
-import { Observable, Subject } from 'rxjs';
-import { MockDataApi } from '../../../../core/api/mock-data.api';
-import { map, takeUntil, tap } from 'rxjs/operators';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../../../core/store/app.reducer';
+import {ProxyModel} from '../../../../auth/models/proxy.model';
+import {Observable, Subject} from 'rxjs';
+import {MockDataApi} from '../../../../core/api/mock-data.api';
+import {map, takeUntil, tap} from 'rxjs/operators';
+import {FormControl, FormGroup} from '@angular/forms';
+import {Store} from '@ngrx/store';
+import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
-  connectingSuccess, setServers,
+  connectingSuccess, setRegularExclusions, setSelectiveExclusions, setServers,
 } from '../../../../core/store/vpn/vpn.actions';
 import {
   getSelectedVpnServer,
@@ -29,10 +27,10 @@ import {
   onAuthRequiredHandler,
   onProxyErrorHandler,
 } from '../../../../core/utils/chrome-backgroud';
-import { Router } from '@angular/router';
-import { User } from '../../../../core/models/user.model';
-import { getUserData } from '../../../../core/store/user/user.selector';
-import { signOut } from '../../../../core/store/user/user.actions';
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {User} from '../../../../core/models/user.model';
+import {getUserData} from '../../../../core/store/user/user.selector';
+import {signOut} from '../../../../core/store/user/user.actions';
 import {
   animate,
   state,
@@ -40,8 +38,9 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { DashboardApi } from 'src/app/core/api/dashboard.api';
-import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model';
+import {DashboardApi} from 'src/app/core/api/dashboard.api';
+import {DashboardOverview} from 'src/app/core/models/dashboard-overview.model';
+import {UserCred} from "../../../../core/models/user-cred.enum";
 
 @Component({
   selector: 'app-dashboard',
@@ -49,11 +48,11 @@ import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model'
   styleUrls: ['./dashboard.component.scss'],
   animations: [
     trigger('fadeIn', [
-      state('in', style({ opacity: 1 })),
-      transition(':enter', [style({ opacity: 0 }), animate(300)]),
+      state('in', style({opacity: 1})),
+      transition(':enter', [style({opacity: 0}), animate(300)]),
     ]),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   /**
@@ -93,13 +92,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   destroy$: Subject<void> = new Subject<void>();
 
   constructor(
-    private proxyService: ProxyService,
     private serverService: MockDataApi,
     private dashboardApi: DashboardApi,
-    private cdr: ChangeDetectorRef,
     private router: Router,
+    private route: ActivatedRoute,
     private store: Store<AppState>
   ) {
+    this.store.dispatch(setRegularExclusions());
+
     this.form = new FormGroup({
       proxy: new FormControl(),
     });
@@ -118,7 +118,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    onAuthRequiredHandler('7a9e9ebb1a0f', 'eb8c940eb5');
     onProxyErrorHandler().then((details) => {
       this.store.dispatch(closeConnection());
       console.error(details.error);
@@ -129,7 +128,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isVPNConnected) => {
         this.isConnected = isVPNConnected;
-        this.cdr.detectChanges();
       });
 
     this.store
@@ -137,7 +135,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isConnecting) => {
         this.isConnecting = isConnecting;
-        this.cdr.detectChanges();
       });
 
     this.store
@@ -146,10 +143,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((connectionError) => {
         if (connectionError) {
           this.isConnectionError = true;
-          this.cdr.detectChanges();
         } else {
           this.isConnectionError = false;
-          this.cdr.detectChanges();
         }
       });
 
@@ -158,9 +153,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectedServer) => {
         this.selectedServer = selectedServer;
-        this.cdr.detectChanges();
       });
 
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params: Params) => {
+      console.log('params[\'connect\']', params['connect']);
+      if (params['connect'] === 'connect') {
+        this.vpnConnectToggle(true)
+      }
+    });
 
     this.store.dispatch(setServers());
   }
@@ -169,14 +171,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Toggle to connect and disconnect proxy
    * @return {void}
    */
-  vpnConnectToggle(): void {
-    if (this.isConnected) {
+  vpnConnectToggle(force?: boolean): void {
+    if (this.isConnected && !force) {
       this.store.dispatch(closeConnection());
     } else if (this.selectedServer) {
-      this.store.dispatch(connecting(this.selectedServer));
+      console.log('this.selectedServer: ', this.selectedServer);
+      const login = localStorage.getItem(UserCred.userLogin);
+      const password = localStorage.getItem(UserCred.userPassword);
+
+      if (login && password) {
+        onAuthRequiredHandler(login, password);
+        this.store.dispatch(connecting(this.selectedServer));
+      } else {
+        let pass = prompt(`Enter the pass for ${this.currentUser?.email}`) || '';
+        onAuthRequiredHandler(login, pass);
+        localStorage.setItem(UserCred.userPassword, pass);
+        this.store.dispatch(connecting(this.selectedServer));
+      }
     }
 
-    if  (this.isConnecting && this.isConnectionError) {
+    if (this.isConnecting && this.isConnectionError) {
       setTimeout(() => {
         this.store.dispatch(closeConnection());
       }, 5000)

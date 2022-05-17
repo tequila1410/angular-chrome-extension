@@ -1,4 +1,4 @@
-<div class="settings">
+<div class="settings" [@fadeIn]="'in'">
   <div class="settings-header">
     <div class="settings-navigation">
       <span class="material-icons arrow-back" (click)="goToDashboard()">arrow_back</span>
@@ -39,20 +39,20 @@
             <button (click)="clearChosenList()" class="exclusions-controls-wrapper-btn">DELETE ALL</button>
           </div>
 
-          <button (click)="addWebsite()" class="exclusions-controls-add">+ ADD A WEBSITE</button>
+          <button (click)="inputVisibility()" class="exclusions-controls-add">+ ADD A WEBSITE</button>
 
           <ul class="exclusions-controls-list">
             <li *ngIf="inputVisible" class="exclusions-controls-list-input">
-              <input type="text" (change)="pushWebsite($event)" (click)="pushWebsite($event)">
+              <input type="text" (change)="addWebsite($event)" (click)="addWebsite($event)">
             </li>
             <li *ngFor="let website of websiteList; let itemIndex = index" class="exclusions-controls-list-item">
               <span>
                 <span>
                   <input type="checkbox" checked>
-                  <span>{{website}}</span>
+                  <span>{{website.link}}</span>
                 </span> 
                 
-                <button (click)="deleteWebsite(itemIndex)">
+                <button (click)="deleteWebsite(website.link, itemIndex)">
                   <span class="material-icons close">close</span>
                 </button>
               </span>

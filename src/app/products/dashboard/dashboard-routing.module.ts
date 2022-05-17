@@ -11,7 +11,10 @@ const routes: Route[] = [{
 }, {
   path: 'settings',
   component: SettingsComponent
-}];
+}, {
+  path: ':connect',
+  component: DashboardComponent
+},];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -19,17 +19,42 @@ export class MockDataApi implements ServerApiModel {
       '45.90.251.10',
       '188.244.121.188',
       '188.244.121.236',
-      '188.244.121.89'
+      '188.244.121.89',
+      '23.106.58.10'
     ];
+
+    const testServers2 = [{
+      ip: '95.168.176.100',
+      locationName: 'UK - London 3',
+      domain: "uk2.zoogvpn.com",
+      port: 3128
+    }, {
+      ip: '23.106.58.10',
+      locationName: 'UK - London 4',
+      domain: "uk3.zoogvpn.com",
+      port: 3128
+    }, {
+      ip: '81.17.62.28',
+      locationName: 'UK - London Free',
+      domain: "uk.free.zoogvpn.com",
+      port: 3128
+    }, {
+      ip: '193.187.1.190',
+      locationName: 'UK - London 5',
+      domain: "uk5.zoogvpn.com",
+      port: 3128
+    }]
     let result: ProxyModel[] = [];
-    testServers.forEach((ip, index) => result.push({
-      id: ip,
-      locationName: 'United Kingdom',
+    testServers2.forEach((server, index) => result.push({
+      id: server.ip,
+      locationName: server.locationName,
       scheme: 'http',
-      host: ip,
-      port: 12323,
+      host: server.domain,
+      port: server.port,
       image: '',
-      ping: Math.floor(Math.random() * 150)
+      ping: Math.floor(Math.random() * 150),
+      isAllowedStream: true,
+      isAllowedP2P: true,
     }))
     return of({
       data: {
@@ -40,7 +65,7 @@ export class MockDataApi implements ServerApiModel {
   }
 
   testNetwork(proxy: any) {
-    return this.httpClient.get('https://www.google.com/', {
+    return this.httpClient.get('https://api-d.zoogvpn.com/', {
         responseType: 'text'
       })
       .pipe(
@@ -59,7 +84,7 @@ export class MockDataApi implements ServerApiModel {
     //Test user: setrarorto@vusra.com / password: setrarorto@vusra.com
     return of({
       data: {
-        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvZGV2LWFwaS56b29ndnBuLmNvbVwvYXBpXC91c2Vyc1wvbG9naW4iLCJpYXQiOjE2NTE2Nzk5MzcsImV4cCI6MTY1MTY4MzUzNywibmJmIjoxNjUxNjc5OTM3LCJqdGkiOiJKYnhIdXBtcGxDcHc1UzlaIiwic3ViIjo1NDYwNTgsInBydiI6ImNlMDUzZmY5M2M5OGUxNzk3NWNiM2Y4ZDAwMDEyMWI2OGFiOGExZTcifQ.zrB3yJxiNkWPjXrdh8uG431Ve0wDls3IYi6dPPewsT0",
+        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvZGV2LWFwaS56b29ndnBuLmNvbVwvYXBpXC91c2Vyc1wvbG9naW4iLCJpYXQiOjE2NTIzMDc0NjIsImV4cCI6MTY1MjMxMTA2MiwibmJmIjoxNjUyMzA3NDYyLCJqdGkiOiJHYTl2SnFZcDJpQ1ZVU2tvIiwic3ViIjo1NDYwNTgsInBydiI6ImNlMDUzZmY5M2M5OGUxNzk3NWNiM2Y4ZDAwMDEyMWI2OGFiOGExZTcifQ.AHk0Zcc9xv1WV6e8RZbMPY0RGXCS5u6SwCFjweg_BFE",
         user: {
           accountStatus: "Expired",
           id: 546270,

@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {ServerApiModel} from "./server-api.model";
 import {Observable} from "rxjs";
 import {ProxyModel} from "../../auth/models/proxy.model";
-import {map} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
@@ -15,26 +15,61 @@ export class ServerApi implements ServerApiModel {
 
   getServersData(): Observable<{data: {serverList: ProxyModel[], tariffName: string}}> {
 
-    return this.httpClient.get<{data: {serverList: {ipv4: string, locationName: string, image: string, ping: number}[], tariffName: string}}>('zoog_api/api/server/locations/overview')
+    return this.httpClient.get<{
+      data: {
+        serverList: {
+          domain: string,
+          locationName: string,
+          image: string,
+          ping: number,
+          isAvailableHttpProxy: boolean,
+          isAllowedStream: boolean,
+          isAllowedP2P: boolean,
+          ipv4: string
+        }[],
+        tariffName: string
+      }
+    }>('zoog_api/api/server/locations/overview')
       .pipe(
         map(response => {
-          const newServers: ProxyModel[] = response.data.serverList.map(item => {
-            return {
-              host: item.ipv4,
-              id: item.ipv4,
-              locationName: item.locationName,
-              image: item.image,
-              port: 80,
-              scheme: 'http',
-              ping: item.ping
-            }
-          });
+          const newServers: ProxyModel[] = [];
+          const serverList = response.data.serverList;
+          for (let i = 0; i < serverList.length; i++) {
+            if (response.data.serverList[i].isAvailableHttpProxy)
+              newServers.push({
+                host: serverList[i].domain,
+                id: serverList[i].ipv4,
+                locationName: serverList[i].locationName,
+                image: serverList[i].image,
+                port: 3128,
+                scheme: 'http',
+                ping: serverList[i].ping,
+                isAllowedStream: serverList[i].isAllowedStream,
+                isAllowedP2P: serverList[i].isAllowedP2P
+              })
+          }
           return {
             data: {
               serverList: newServers,
               tariffName: response.data.tariffName
             }
           }
+        })
+      )
+  }
+
+  testNetwork(proxy: any) {
+    return this.httpClient.get('https://google.com/', {
+      responseType: 'text'
+    })
+      .pipe(
+        map(() => {
+          console.log('VPN connect success');
+          return proxy;
+        }),
+        catchError(error => {
+          console.log('VPN connect error: ', error);
+          return proxy;
         })
       )
   }

@@ -71,12 +71,14 @@ export class VpnListComponent implements OnInit, OnDestroy {
     });
 
     this.bestPingCheckbox.valueChanges.subscribe((bestServerSelected: boolean) => {
-      if (bestServerSelected !== undefined) {
-        this.store.dispatch(bestServerSelect({bestServerSelected}));
+      this.store.dispatch(bestServerSelect({bestServerSelected}));
+      if (bestServerSelected) {
         const selectedServer = bestServerSelected ?
-          this.proxyData.reduce((a, b) => (a.ping < b.ping ? a : b))
+          this.proxyData
+            .filter(proxy => proxy.host !== 'locked')
+            .reduce((a, b) => (a.ping < b.ping ? a : b))
           :
-          this.proxyData[0];
+          this.proxyData.find(a => a.host !== 'locked');
         this.store.dispatch(setSelectedServer({selectedServer}));
         this.goToDashboard();
       }
@@ -84,10 +86,11 @@ export class VpnListComponent implements OnInit, OnDestroy {
   }
 
   selectLocation(proxy: ProxyModel) {
-    this.store.dispatch(connecting(proxy));
+    // this.store.dispatch(connecting(proxy));
     this.store.dispatch(setRecentlyUsed({recentlyUsedProxy: proxy}));
+    this.store.dispatch(setSelectedServer({selectedServer: proxy}));
 
-    this.router.navigate(['dashboard']);
+    this.router.navigate(['dashboard', 'connect']);
   }
 
   goToDashboard() {

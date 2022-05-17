@@ -36,7 +36,7 @@ export const signUpFPSuccess = createAction(
 
 export const signUpFPError = createAction(
   '[User sign up error]',
-  props<{message: string}>()
+  props<{fingerprint: string}>()
 );
 
 // export const sendNewPassAction = createAction(

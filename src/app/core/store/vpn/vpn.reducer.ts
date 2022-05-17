@@ -1,16 +1,23 @@
 import {ProxyModel} from "../../../auth/models/proxy.model";
 import {Action, createReducer, on} from "@ngrx/store";
 import {
-  bestServerSelect, bestServerSelectSuccess,
+  bestServerSelectSuccess,
   closeConnection,
   closeConnectionError,
   closeConnectionSuccess,
   connecting,
   connectingError,
   connectingSuccess,
+  setRegularExclusionsSuccess,
+  setExclusionsModeSuccess,
   setRecentlyUsedSuccess, setSelectedServer,
-  setServersSuccess
+  setServersSuccess,
+  setSelectiveExclusionsSuccess,
+  clearRegularExclusions,
+  clearSelectedExclusions
 } from "./vpn.actions";
+import {signOutSuccess} from "../user/user.actions";
+import { ExclusionLink } from "../../models/exclusion-link.model";
 
 export interface VPNState {
   connected: boolean;
@@ -18,6 +25,9 @@ export interface VPNState {
   serverList: ProxyModel[];
   recentlyUsed: ProxyModel[];
   bestServerSelected: boolean;
+  exclusionsMode: string;
+  regularExclusions: ExclusionLink[];
+  selectiveExclusions: ExclusionLink[];
   selectedServer?: ProxyModel;
   error?: string;
 }
@@ -27,7 +37,10 @@ const initialState: VPNState = {
   connecting: false,
   serverList: [],
   recentlyUsed: [],
-  bestServerSelected: JSON.parse(localStorage.getItem('isBestServerSelected') || 'true')
+  bestServerSelected: JSON.parse(localStorage.getItem('isBestServerSelected') || 'true'),
+  exclusionsMode: localStorage.getItem('exclusionsMode') || 'regularMode',
+  regularExclusions: [],
+  selectiveExclusions: []
 }
 
 const _vpnReducer = createReducer(
@@ -46,7 +59,13 @@ const _vpnReducer = createReducer(
   on(setServersSuccess, (state, data) => ({...state, serverList: data.serverList, selectedServer: data.selectedServer})),
   on(setSelectedServer, (state, data) => ({...state, selectedServer: data.selectedServer})),
   on(bestServerSelectSuccess, (state, data) => ({...state, bestServerSelected: data.bestServerSelected})),
-  on(setRecentlyUsedSuccess, (state, data) => ({...state, recentlyUsed: data.recentlyUsedProxies}))
+  on(setRecentlyUsedSuccess, (state, data) => ({...state, recentlyUsed: data.recentlyUsedProxies})),
+  on(signOutSuccess, (state) => ({...state, error: undefined, selectedServer: undefined})),
+  on(setExclusionsModeSuccess, (state, data) => ({...state, exclusionsMode: data.exclusionsMode})),
+  on(setRegularExclusionsSuccess, (state, data) => ({...state, regularExclusions: data.regularExclusions})),
+  on(setSelectiveExclusionsSuccess, (state, data) => ({...state, selectiveExclusions: data.selectiveExclusions})),
+  on(clearRegularExclusions, (state) => ({...state, regularExclusions: []})),
+  on(clearSelectedExclusions, (state) => ({...state, selectiveExclusions: []}))
 )
 
 

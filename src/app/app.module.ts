@@ -20,6 +20,7 @@ import {RequestInterceptorService} from "./core/services/app.interceptor";
 import {DashboardModule} from "./products/dashboard/dashboard.module";
 import { SnackbarComponent } from './core/components/snackbar/snackbar.conmonent';
 import { DashboardApi } from './core/api/dashboard.api';
+import {RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module} from "ng-recaptcha";
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { DashboardApi } from './core/api/dashboard.api';
     StoreDevtoolsModule.instrument({maxAge: 25, logOnly: false}),
     EffectsModule.forRoot([UserEffects, VpnEffect]),
     BrowserAnimationsModule,
+    RecaptchaV3Module
   ],
   providers: [
     AuthApi,
@@ -44,7 +46,10 @@ import { DashboardApi } from './core/api/dashboard.api';
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptorService,
       multi: true
-    }
+    },
+    {
+      provide: RECAPTCHA_V3_SITE_KEY, useValue: '6LeBBAodAAAAAN-ro5COYhQBrsiG1hYEG4G6KTeJ'
+    },
   ],
   bootstrap: [AppComponent]
 })

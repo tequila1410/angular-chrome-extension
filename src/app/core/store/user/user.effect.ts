@@ -19,6 +19,7 @@ import {clearProxy} from "../../utils/chrome-backgroud";
 import { MockDataApi } from "../../api/mock-data.api";
 import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
+import {setServers} from "../vpn/vpn.actions";
 
 @Injectable()
 export class UserEffects {
@@ -67,12 +68,13 @@ export class UserEffects {
   loginSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(authenticateSuccess),
-      tap(userData => {
+      map(userData => {
         this.setUserToLocalStorage(userData.token, userData.user);
         this.setUserCredsToLocalStorage(userData.user.email);
         this.router.navigate(['/dashboard']);
+        return setServers();
       })
-    ), {dispatch: false}
+    )
   );
 
   logOut$ = createEffect(() =>
@@ -104,7 +106,7 @@ export class UserEffects {
           token: actions.token,
           disableEmail: true
         }
-        console.log('let register fp')
+
         return this.authApi.registerByFingerPrint(userRegisterData.email, userRegisterData.name, userRegisterData.password,
           userRegisterData.passwordConfirmation, userRegisterData.token, userRegisterData.disableEmail)
       }),

@@ -165,8 +165,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.vpnConnectToggle(true)
       }
     });
-
-    this.store.dispatch(setServers());
   }
 
   /**
@@ -177,7 +175,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.isConnected && !force) {
       this.store.dispatch(closeConnection());
     } else if (this.selectedServer) {
-      console.log('this.selectedServer: ', this.selectedServer);
       const login = localStorage.getItem(UserCred.userLogin);
       const password = localStorage.getItem(UserCred.userPassword);
 

@@ -54,11 +54,9 @@ export class AuthUserHandlerComponent implements OnInit {
   }
 
   private signUpFP(fingerprint: string): void {
-    console.log('start');
     this.recaptchaV3Service.execute('signUpFPAction')
       .pipe(
         tap(token => {
-          console.log(fingerprint);
           this.store.dispatch(signUpFP({fingerprint, token}));
         }),
         catchError((err) => {

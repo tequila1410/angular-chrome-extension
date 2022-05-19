@@ -86,11 +86,13 @@ export class VpnListComponent implements OnInit, OnDestroy {
   }
 
   selectLocation(proxy: ProxyModel) {
-    // this.store.dispatch(connecting(proxy));
-    this.store.dispatch(setRecentlyUsed({recentlyUsedProxy: proxy}));
-    this.store.dispatch(setSelectedServer({selectedServer: proxy}));
-
-    this.router.navigate(['dashboard', 'connect']);
+    if (proxy.host !== 'locked') {
+      // this.store.dispatch(connecting(proxy));
+      this.store.dispatch(setRecentlyUsed({recentlyUsedProxy: proxy}));
+      this.store.dispatch(setSelectedServer({selectedServer: proxy}));
+  
+      this.router.navigate(['dashboard', 'connect']);
+    }
   }
 
   goToDashboard() {

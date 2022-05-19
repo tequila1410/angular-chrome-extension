@@ -1,0 +1,5 @@
+<div  [@fadeIn]="'in'" *ngIf="show" class="popup">
+  <h4>{{text}}</h4>
+  <input [formControl]="formControl" type="text" placeholder="Password" class="popup-input">
+  <button (click)="passApply()" class="popup-button">Apply</button>
+</div>

@@ -8,6 +8,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import { BytesPipe } from 'src/app/core/pipes/bites.pipe';
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {RequestInterceptorService} from "../../core/services/app.interceptor";
+import {PassPopupComponent} from 'src/app/core/components/pass-popup/pass-popup.component';
 
 
 
@@ -15,7 +16,8 @@ import {RequestInterceptorService} from "../../core/services/app.interceptor";
   declarations: [
     ...containers,
     ...components,
-    BytesPipe
+    BytesPipe,
+    PassPopupComponent
   ],
   exports: [
     BytesPipe

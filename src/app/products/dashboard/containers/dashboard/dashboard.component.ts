@@ -41,6 +41,7 @@ import {
 import {DashboardApi} from 'src/app/core/api/dashboard.api';
 import {DashboardOverview} from 'src/app/core/models/dashboard-overview.model';
 import {UserCred} from "../../../../core/models/user-cred.enum";
+import {PassPopupService} from 'src/app/core/components/pass-popup/pass-popup.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -96,7 +97,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private dashboardApi: DashboardApi,
     private router: Router,
     private route: ActivatedRoute,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private passPopupService: PassPopupService
   ) {
     this.store.dispatch(setRegularExclusions());
 
@@ -183,10 +185,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         onAuthRequiredHandler(login, password);
         this.store.dispatch(connecting(this.selectedServer));
       } else {
-        let pass = prompt(`Enter the pass for ${this.currentUser?.email}`) || '';
-        onAuthRequiredHandler(login, pass);
-        localStorage.setItem(UserCred.userPassword, pass);
-        this.store.dispatch(connecting(this.selectedServer));
+        this.passPopupService.show(`Enter the pass for ${this.currentUser?.email}`, login, UserCred.userPassword, this.selectedServer)
       }
     }
 

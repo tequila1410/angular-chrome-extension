@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  zoogApiUrl: 'https://dev-api.zoogvpn.com',
+  zoogApiUrl: 'https://api-d.zoogvpn.com',
   zoogAppUrl: 'https://dev-ng.zoogvpn.com'
 };

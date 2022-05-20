@@ -39,7 +39,7 @@
         </div>
         <span class="icon icon-play" [class]="proxy.isAllowedStream ? 'icon-green' : 'icon-gray'"></span>
         <span class="icon icon-p2p" [class]="proxy.isAllowedP2P ? 'icon-green' : 'icon-gray'"></span>
-        <!-- <div>{{proxy.id}}</div> -->
+        <div *ngIf="proxy.host !== 'locked'">{{proxy.id}}</div>
         <div class="ping">{{proxy.ping}} ms</div>
       </div>
     </div>

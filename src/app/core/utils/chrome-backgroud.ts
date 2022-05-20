@@ -32,7 +32,6 @@ export function setProxy(proxy: ProxyModel, exclusionsLinks: ExclusionLink[]): P
         bypassList: exclusionsLinks
       }
     };
-
     chrome.proxy.settings.set(
       {value: config, scope: 'regular'},
       (details: any) => {

@@ -36,6 +36,7 @@
       border-radius: 7px;
       cursor: pointer;
       transition: box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+      text-decoration: none;
 
       &:hover {
         color: #9fcf2d;

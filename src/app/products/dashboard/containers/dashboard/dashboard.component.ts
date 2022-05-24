@@ -118,7 +118,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.overviewData$ = this.dashboardApi.getOverViewData()
       .pipe(
         map(res => {
-          if (res.data.accountDetails.monthlyUsedBandwidth >= res.data.accountDetails.monthlyBandwidthAllowance) {
+          if (res.data.accountDetails.monthlyUsedBandwidth >= res.data.accountDetails.monthlyBandwidthAllowance
+              && res.data.accountDetails.monthlyBandwidthAllowance > 0) {
             this.connectAvailable = false;
           }
           return res.data;

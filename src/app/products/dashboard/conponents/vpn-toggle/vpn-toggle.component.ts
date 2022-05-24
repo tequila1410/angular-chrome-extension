@@ -13,6 +13,8 @@ export class VpnToggleComponent implements OnInit {
 
   @Input() isConnectionError!: boolean;
 
+  @Input() connectAvailable!: boolean;
+
   @Input() selectedServer!: ProxyModel | undefined;
 
   @Output() vpnConnectToggle: EventEmitter<any> = new EventEmitter<any>();

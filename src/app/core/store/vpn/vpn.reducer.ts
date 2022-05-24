@@ -45,7 +45,7 @@ const initialState: VPNState = {
 
 const _vpnReducer = createReducer(
   initialState,
-  on(connecting, (state) => ({...state, connecting: true})),
+  on(connecting, (state) => ({...state, connecting: true, connected: false})),
   on(connectingSuccess, (state, proxyData) => ({
     ...state,
     connecting: false,

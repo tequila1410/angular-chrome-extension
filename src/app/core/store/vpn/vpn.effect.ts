@@ -18,10 +18,10 @@ import {
   deleteRegularExclusionSuccess, deleteSelectiveExclusionSuccess,
   clearChosenExclusions, clearRegularExclusions, clearSelectedExclusions
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap, switchMap, withLatestFrom} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, switchMap, timeout, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
-import {clearProxy, sendMessage, setProxy} from "../../utils/chrome-backgroud";
+import {clearProxy, sendMessage, setIcon, setProxy} from "../../utils/chrome-backgroud";
 import {MockDataApi} from "../../api/mock-data.api";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
@@ -112,20 +112,21 @@ export class VpnEffect {
       mergeMap(([proxy, storeState]) => {
         if (storeState.vpn.connected)
           clearProxy();
-        let exclusions: ExclusionLink[] = [];
-        if (storeState.vpn.exclusionsMode === 'regularMode') {
-          exclusions = storeState.vpn.regularExclusions;
-        }
-        if (storeState.vpn.exclusionsMode === 'selectiveMode') {
-          exclusions = storeState.vpn.selectiveExclusions;
-        }
-        return from(setProxy(proxy, exclusions));
+        // let exclusions: ExclusionLink[] = [];
+        // if (storeState.vpn.exclusionsMode === 'regularMode') {
+        //   exclusions = storeState.vpn.regularExclusions;
+        // }
+        // if (storeState.vpn.exclusionsMode === 'selectiveMode') {
+        //   exclusions = storeState.vpn.selectiveExclusions;
+        // }
+        console.log('effect set proxy')
+        return from(setProxy(proxy, []));
       }),
       mergeMap((proxy) => {
         return this.api.testNetwork(proxy);
       }),
       map(proxy => {
-        console.log('connecting success: ', proxy)
+        setIcon();
         return connectingSuccess(proxy);
       }),
       catchError(error => {

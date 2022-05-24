@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SnackbarService } from 'src/app/core/components/snackbar/snackbar.service';
+import { ProxyModel } from 'src/app/auth/models/proxy.model';
 
 @Component({
   selector: 'app-vpn-toggle',
@@ -14,6 +14,8 @@ export class VpnToggleComponent implements OnInit {
   @Input() isConnectionError!: boolean;
 
   @Input() connectAvailable!: boolean;
+
+  @Input() selectedServer!: ProxyModel | undefined;
 
   @Output() vpnConnectToggle: EventEmitter<any> = new EventEmitter<any>();
 

@@ -21,8 +21,9 @@
     [isConnected]="isConnected"
     [isConnecting]="isConnecting"
     [isConnectionError]="isConnectionError"
-    (vpnConnectToggle)="vpnConnectToggle()"
     [connectAvailable]="connectAvailable">
+    [selectedServer]="selectedServer"
+    (vpnConnectToggle)="vpnConnectToggle()">
   </app-vpn-toggle>
 
   <app-pass-popup></app-pass-popup>

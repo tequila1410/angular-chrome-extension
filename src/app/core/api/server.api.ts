@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {ServerApiModel} from "./server-api.model";
 import {Observable} from "rxjs";
 import {ProxyModel} from "../../auth/models/proxy.model";
-import {catchError, map} from "rxjs/operators";
+import {catchError, delay, map, timeout} from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
@@ -59,12 +59,10 @@ export class ServerApi implements ServerApiModel {
   }
 
   testNetwork(proxy: any) {
-    return this.httpClient.get('https://google.com/', {
-      responseType: 'text'
-    })
+    return this.httpClient.get('https://api.ipify.org?format=json', )
       .pipe(
-        map(() => {
-          console.log('VPN connect success');
+        map((response) => {
+          console.log('ipify: ', response);
           return proxy;
         }),
         catchError(error => {

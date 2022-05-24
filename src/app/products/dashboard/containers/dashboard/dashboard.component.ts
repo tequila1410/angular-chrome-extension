@@ -129,7 +129,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     onProxyErrorHandler().then((details) => {
       this.store.dispatch(closeConnection());
-      console.error(details.error);
+      console.error('onProxyErrorHandler: ', details.error);
     });
 
     this.store
@@ -137,6 +137,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isVPNConnected) => {
         this.isConnected = isVPNConnected;
+        console.log('is vpn connected: ', this.isConnected);
       });
 
     this.store

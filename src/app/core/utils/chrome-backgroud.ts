@@ -1,13 +1,19 @@
 import {ProxyModel} from "../../auth/models/proxy.model";
 import { ExclusionLink } from "../models/exclusion-link.model";
+import local = chrome.storage.local;
+import {UserCred} from "../models/user-cred.enum";
 
 export function onAuthRequiredHandler(username: string | null, password: string | null): void {
   console.log('set onAuthRequiredHandler', username, password);
-  chrome.webRequest.onAuthRequired.addListener((details: any) => {
-    console.log('auth required: ', details);
+  chrome.webRequest.onAuthRequired.addListener(callbackFn, {urls: ['<all_urls>']}, ['blocking']);
+}
 
-    return {authCredentials: {username, password}};
-  }, {urls: ['<all_urls>']}, ['blocking']);
+const callbackFn = (details: any) => {
+
+  const username = localStorage.getItem(UserCred.userLogin);
+  const password = localStorage.getItem(UserCred.userPassword);
+
+  return {authCredentials: {username, password}};
 }
 
 export function onProxyErrorHandler(): Promise<any> {
@@ -19,7 +25,6 @@ export function onProxyErrorHandler(): Promise<any> {
 }
 
 export function setProxy(proxy: ProxyModel, exclusionsLinks: ExclusionLink[]): Promise<ProxyModel> {
-  console.log('proxy to set: ', proxy);
   return new Promise((resolve, reject) => {
     let config = {
       mode: "fixed_servers",
@@ -36,11 +41,14 @@ export function setProxy(proxy: ProxyModel, exclusionsLinks: ExclusionLink[]): P
       {value: config, scope: 'regular'},
       (details: any) => {
         console.log('set proxy details: ', details);
-        chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-green.png')}`});
         resolve(proxy);
       }
     );
   })
+}
+
+export function setIcon(iconPath?: string) {
+  chrome.browserAction.setIcon({path: `${chrome.runtime.getURL(iconPath || 'assets/images/icons/19x19-green.png')}`});
 }
 
 export function getProxy(): Promise<ProxyModel> {
@@ -56,7 +64,7 @@ export function getProxy(): Promise<ProxyModel> {
 }
 
 export function clearProxy(): void {
-  chrome.proxy.settings.clear({});
+  chrome.proxy.settings.clear({scope: 'regular'});
   chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-grey.png')}`});
 }
 
@@ -66,6 +74,13 @@ export function sendMessage(type: string = 'enable.proxy', data: {force: boolean
   });
 }
 
+export function removeOnAuthRequiredHandler() {
+  chrome.webRequest.onAuthRequired.removeListener(callbackFn)
+}
+
+export function checkListener() {
+  console.log(chrome.webRequest.onAuthRequired.hasListeners());
+}
 
 export function getCookie(name: string, url: string): Promise<any> {
   return new Promise((resolve, reject) => {

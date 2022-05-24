@@ -72,7 +72,7 @@ export class SnackbarComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.show = false;
           this.message = '';
-        }, 5000)
+        }, 6000)
 
       })
   }

@@ -122,6 +122,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
               && res.data.accountDetails.monthlyBandwidthAllowance > 0) {
             this.connectAvailable = false;
           }
+          const element = document.getElementsByClassName('grecaptcha-badge')[0] as HTMLElement;
+          if (element) {
+            element.style.visibility = 'hidden';
+          }
           return res.data;
         })
       )
@@ -225,6 +229,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   signOut(): void {
     this.store.dispatch(signOut());
+    const element = document.getElementsByClassName('grecaptcha-badge')[0] as HTMLElement;
+    if (element) {
+      element.style.visibility = 'visible';
+    }
   }
 
   /**

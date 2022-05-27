@@ -20,6 +20,7 @@ export class ServerApi implements ServerApiModel {
         serverList: {
           domain: string,
           locationName: string,
+          locationCode: string,
           image: string,
           ping: number,
           isAvailableHttpProxy: boolean,
@@ -40,6 +41,7 @@ export class ServerApi implements ServerApiModel {
                 host: serverList[i].domain,
                 id: serverList[i].ipv4,
                 locationName: serverList[i].locationName,
+                locationCode: serverList[i].locationCode,
                 image: serverList[i].image,
                 port: 3128,
                 scheme: 'http',

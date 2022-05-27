@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../core/store/app.reducer";
-import {authenticate} from "../../../core/store/user/user.actions";
+import {authenticate, signUpFP} from "../../../core/store/user/user.actions";
 import {ReCaptchaV3Service} from "ng-recaptcha";
 import {catchError, take, tap} from "rxjs/operators";
+import {getFingerPrint} from "../../../core/utils/fingerprint";
 
 @Component({
   selector: 'app-sign-in',
@@ -27,29 +28,34 @@ export class SignInComponent implements OnInit {
   }
 
   loginUser() {
-
     this.recaptchaV3Service.execute('signInAction')
       .pipe(
         take(1),
         tap(token => {
-          // console.log(token);
           const {email, password} = this.form.value;
           this.store.dispatch(authenticate({email, password, token}));
         }),
-        catchError((err) => {
-          // console.log(err)
+        catchError((err, caught) => {
           this.form.enable();
-          return err;
+          return caught;
         })
       )
       .subscribe();
-
-
   }
 
-  goToForgot() {
-
-
+  loginByFingerPrint() {
+    this.recaptchaV3Service.execute('signUpFPAction')
+      .pipe(
+        tap(token => {
+          getFingerPrint().then(fingerprint => {
+            this.store.dispatch(signUpFP({fingerprint, token}));
+          });
+        }),
+        catchError((error, caught) => {
+          return caught;
+        })
+      )
+      .subscribe();
   }
 
 }

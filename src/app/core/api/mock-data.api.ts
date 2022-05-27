@@ -55,6 +55,7 @@ export class MockDataApi implements ServerApiModel {
       ping: Math.floor(Math.random() * 150),
       isAllowedStream: true,
       isAllowedP2P: true,
+      locationCode: ''
     }))
     return of({
       data: {

@@ -14,16 +14,10 @@ import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { SnackbarService } from "../../components/snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
-import {
-  checkListener,
-  clearProxy,
-  handlerBehaviorChanged,
-  removeOnAuthRequiredHandler
-} from "../../utils/chrome-backgroud";
 import { MockDataApi } from "../../api/mock-data.api";
 import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
-import {setServers} from "../vpn/vpn.actions";
+import {closeConnection, setServers} from "../vpn/vpn.actions";
 
 @Injectable()
 export class UserEffects {
@@ -88,11 +82,8 @@ export class UserEffects {
         map(() => {
           // update client limits
           // maybe routing somewhere
-          clearProxy();
-          checkListener();
-          removeOnAuthRequiredHandler();
-          handlerBehaviorChanged();
-          checkListener();
+
+          this.store.dispatch(closeConnection());
           this.clearLocalStorage();
           this.router.navigate(['/auth']);
           return signOutSuccess();
@@ -114,6 +105,7 @@ export class UserEffects {
       map(response => {
         this.router.navigate(['/dashboard']);
         this.setUserToLocalStorage(response.data.token, response.data.user);
+        this.setUserCredsToLocalStorage(response.data.user.email, this.actionTmp.fingerprint);
 
         return authenticateSuccess({...response.data})
       }),

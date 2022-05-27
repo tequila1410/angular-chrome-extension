@@ -5,6 +5,7 @@ export interface ProxyModel {
   port: number;
   id: string;
   locationName: string;
+  locationCode: string;
   image: string;
   ping: number;
   isAllowedStream: boolean;

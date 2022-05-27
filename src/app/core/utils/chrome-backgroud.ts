@@ -13,6 +13,8 @@ const callbackFn = (details: any) => {
   const username = localStorage.getItem(UserCred.userLogin);
   const password = localStorage.getItem(UserCred.userPassword);
 
+  console.log('proxy ask for creds', username, password);
+
   return {authCredentials: {username, password}};
 }
 
@@ -64,8 +66,18 @@ export function getProxy(): Promise<ProxyModel> {
 }
 
 export function clearProxy(): void {
-  chrome.proxy.settings.clear({scope: 'regular'});
+  chrome.proxy.settings.clear({});
   chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-grey.png')}`});
+}
+
+export function clearBudge(): void {
+  chrome.browserAction.setBadgeText({});
+}
+
+export function setBadge(text: string): void {
+  chrome.browserAction.setBadgeBackgroundColor({ color: '#85a832' }, () => {
+    chrome.browserAction.setBadgeText({ text });
+  });
 }
 
 export function sendMessage(type: string = 'enable.proxy', data: {force: boolean} = {force: true}) {
@@ -90,5 +102,11 @@ export function getCookie(name: string, url: string): Promise<any> {
         cookie ? resolve(cookie) : reject('No cookie was find.');
       }
     );
+  })
+}
+
+export function handlerBehaviorChanged() {
+  chrome.webRequest.handlerBehaviorChanged(() => {
+    console.log('handlerBehaviorChanged was called');
   })
 }

@@ -21,7 +21,14 @@ import {
 import {catchError, exhaustMap, map, mergeMap, switchMap, timeout, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
-import {clearProxy, sendMessage, setIcon, setProxy} from "../../utils/chrome-backgroud";
+import {
+  checkListener, clearBudge,
+  clearProxy, handlerBehaviorChanged,
+  removeOnAuthRequiredHandler,
+  sendMessage, setBadge,
+  setIcon,
+  setProxy
+} from "../../utils/chrome-backgroud";
 import {MockDataApi} from "../../api/mock-data.api";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
@@ -127,6 +134,7 @@ export class VpnEffect {
       }),
       map(proxy => {
         setIcon();
+        setBadge(proxy.locationCode);
         return connectingSuccess(proxy);
       }),
       catchError((error, caught) => {
@@ -141,6 +149,11 @@ export class VpnEffect {
       ofType(closeConnection),
       map(() => {
         clearProxy();
+        clearBudge();
+        checkListener();
+        removeOnAuthRequiredHandler();
+        handlerBehaviorChanged();
+        checkListener();
         return closeConnectionSuccess();
       })
     )

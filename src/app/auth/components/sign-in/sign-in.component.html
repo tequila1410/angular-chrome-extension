@@ -1,7 +1,7 @@
 <div class="sign-in">
   <div class="gradient">
     <img src="../../../../assets/images/icons/zoog-vpn-logo.png" alt="zoog-logo" class="zoog-logo">
-  
+
     <form class="sign-in-form" [formGroup]="form">
       <h1 class="sign-in-form-title">Login to Your Account</h1>
       <input type="email" formControlName="email"
@@ -11,7 +11,8 @@
             placeholder="Password" class="sign-in-form-input">
 
       <button (click)="loginUser()" class="sign-in-form-btn">Login to Your Account</button>
-    
+      <button (click)="loginByFingerPrint()" class="sign-in-form-btn">Login with My Device ID</button>
+
       <div class="sign-in-register">
         <div class="sign-in-register-text">Don't have a ZoogVPN account yet?</div>
         <a href="https://app.zoogvpn.com/sign-up" target="_blank" class="sign-in-register-link">Sign Up</a>

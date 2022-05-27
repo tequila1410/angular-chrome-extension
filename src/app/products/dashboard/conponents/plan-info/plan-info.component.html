@@ -8,7 +8,7 @@
       <span class="date">{{subscriptionData?.expiresDate | date:"longDate"}}</span>
     </div>
     <div>
-      <a target="_blank" href="https://app.zoogvpn.com/plans" class="btn">Extend</a>
+      <a target="_blank" [href]="extendPlanLink" class="btn">Extend</a>
     </div>
   </div>
   <div *ngIf="overviewData?.accountDetails as det" class="bandwidth">

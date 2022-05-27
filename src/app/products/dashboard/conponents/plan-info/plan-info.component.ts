@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { DashboardOverview } from 'src/app/core/models/dashboard-overview.model';
-import {SubscriptionData} from "../../../../core/models/user.model";
+import {SubscriptionData, User} from "../../../../core/models/user.model";
 
 @Component({
   selector: 'app-plan-info',
@@ -13,9 +13,15 @@ export class PlanInfoComponent implements OnInit {
 
   @Input() overviewData!: DashboardOverview | undefined | null;
 
+  @Input() currentUser!: User | undefined;
+
+  extendPlanLink!: string;
+
   constructor() { }
 
   ngOnInit(): void {
+    this.extendPlanLink = this.currentUser?.email.endsWith('@zoogvpn.com') ?
+      'https://zoogvpn.com/pricing/' : 'https://app.zoogvpn.com/plans';
   }
 
 }

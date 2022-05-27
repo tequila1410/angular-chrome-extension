@@ -3,11 +3,10 @@ import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {
   authenticate,
   authenticateError,
-  authenticateSuccess,
-  signOut, signOutSuccess, signUpFP, signUpFPError, signUpFPSuccess,
+  authenticateSuccess, signInFPError,
+  signOut, signOutSuccess, signUpFP, signUpFPSuccess,
 } from "./user.actions";
 import {catchError, exhaustMap, map, mergeMap, tap} from "rxjs/operators";
-import {of} from "rxjs";
 import {User} from "../../models/user.model";
 import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
@@ -15,7 +14,12 @@ import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { SnackbarService } from "../../components/snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
-import {checkListener, clearProxy, removeOnAuthRequiredHandler} from "../../utils/chrome-backgroud";
+import {
+  checkListener,
+  clearProxy,
+  handlerBehaviorChanged,
+  removeOnAuthRequiredHandler
+} from "../../utils/chrome-backgroud";
 import { MockDataApi } from "../../api/mock-data.api";
 import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
@@ -23,6 +27,8 @@ import {setServers} from "../vpn/vpn.actions";
 
 @Injectable()
 export class UserEffects {
+
+  actionTmp!: {token: string, fingerprint: string};
 
   private clearLocalStorage(): void {
     localStorage.removeItem('user');
@@ -52,15 +58,14 @@ export class UserEffects {
       exhaustMap((actions) => {
         this.setUserCredsToLocalStorage(actions.email, actions.password);
         return this.authApi.userLogin(actions.email, actions.password, actions.token)
-          .pipe(
-            map(userData => {
-              return authenticateSuccess({...userData.data});
-            }),
-            catchError((error) => {
-              this.showSnackBar(error.error);
-              return of(authenticateError(error));
-            })
-          )
+      }),
+      map(userData => {
+        return authenticateSuccess({...userData.data});
+      }),
+      catchError((error, caught) => {
+        this.showSnackBar(error.error);
+        authenticateError(error);
+        return caught;
       })
     )
   );
@@ -77,36 +82,61 @@ export class UserEffects {
     )
   );
 
-  logOut$ = createEffect(() =>
+  logOut$ = createEffect(() => {
+      return this.actions$.pipe(
+        ofType(signOut),
+        map(() => {
+          // update client limits
+          // maybe routing somewhere
+          clearProxy();
+          checkListener();
+          removeOnAuthRequiredHandler();
+          handlerBehaviorChanged();
+          checkListener();
+          this.clearLocalStorage();
+          this.router.navigate(['/auth']);
+          return signOutSuccess();
+        })
+      )
+    }
+  )
+
+  signUpFP$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(signOut),
-      map(() => {
-        // update client limits
-        // maybe routing somewhere
-        clearProxy();
-        checkListener();
-        removeOnAuthRequiredHandler();
-        checkListener();
-        this.clearLocalStorage();
-        this.router.navigate(['/auth']);
-        return signOutSuccess();
+      ofType(signUpFP),
+      exhaustMap(actions => {
+        this.actionTmp = actions;
+        const login = `ext_${actions.fingerprint}@zoogvpn.com`;
+        const pass = actions.fingerprint;
+
+        return this.authApi.userLogin(login, pass, actions.token);
+      }),
+      map(response => {
+        this.router.navigate(['/dashboard']);
+        this.setUserToLocalStorage(response.data.token, response.data.user);
+
+        return authenticateSuccess({...response.data})
+      }),
+      catchError((error, caught) => {
+        signInFPError({fingerprint: this.actionTmp.fingerprint});
+        return caught;
       })
     )
   )
 
-  signUpFP$ = createEffect(() => {
-    let actionTmp: {token: string, fingerprint: string};
+  signInFPError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(signUpFP),
-      exhaustMap(actions => {
-        actionTmp = actions;
-        this.setUserCredsToLocalStorage(`ext_${actions.fingerprint}@zoogvpn.com`, actions.fingerprint);
+      ofType(signInFPError),
+      mergeMap((actions) => {
+        return this.recaptchaV3Service.execute('signUpFPAction').pipe(map(token => ({actions, token})));
+      }),
+      mergeMap(data => {
         const userRegisterData = {
-          email: `ext_${actions.fingerprint}@zoogvpn.com`,
-          name: actions.fingerprint,
-          password: actions.fingerprint,
-          passwordConfirmation: actions.fingerprint,
-          token: actions.token,
+          email: `ext_${data.actions.fingerprint}@zoogvpn.com`,
+          name: data.actions.fingerprint,
+          password: data.actions.fingerprint,
+          passwordConfirmation: data.actions.fingerprint,
+          token: data.token,
           disableEmail: true
         }
 
@@ -114,7 +144,6 @@ export class UserEffects {
           userRegisterData.passwordConfirmation, userRegisterData.token, userRegisterData.disableEmail)
       }),
       map(response => {
-        this.router.navigate(['/dashboard']);
         const responseNew = {
           data: {
             token: response.data.token,
@@ -133,66 +162,12 @@ export class UserEffects {
         this.setUserToLocalStorage(responseNew.data.token, responseNew.data.user);
         return signUpFPSuccess({...responseNew.data})
       }),
-      catchError(error => {
-        // console.log(error);
-        // this.router.navigate(['/auth'])
-        return of(signUpFPError({fingerprint: actionTmp.fingerprint}));
+      catchError((error, caught) => {
+        authenticateError(error);
+        return caught;
       })
     )
   })
-
-  signUpFPError$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(signUpFPError),
-      exhaustMap((actions) => {
-        console.log('let generate captcha 2')
-        return this.recaptchaV3Service.execute('signUpFPAction').pipe(map(token => ({actions, token})));
-        // return of({actions, token: 'dev'})
-      }),
-      exhaustMap(data => {
-        const login = `ext_${data.actions.fingerprint}@zoogvpn.com`;
-        const pass = data.actions.fingerprint;
-        return this.authApi.userLogin(login, pass, data.token);
-      }),
-      map(response => {
-        console.log('that good')
-        return authenticateSuccess({...response.data});
-      }),
-      catchError(error => {
-        console.log('mb captcha error: ', error)
-        return of(authenticateError(error))
-      })
-    )
-  })
-
-  // signUp$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(signUp),
-  //     exhaustMap(actions => {
-  //         const referralID = localStorage.getItem('referralID') || undefined;
-  //         const friendID = localStorage.getItem('friendID') || undefined;
-  //         const gaCid = this.gaService.getGaCid();
-  //
-  //         return this.authApi.userRegister(actions.name || undefined, actions.email, actions.password,
-  //           actions.password_confirmation, actions.token, gaCid, referralID, friendID)
-  //           .pipe(
-  //             map(userData => {
-  //               // update user limits
-  //               localStorage.removeItem('referralID');
-  //               localStorage.removeItem('friendID');
-  //               this.router.navigate(['/plans']);
-  //               this.setUserToLocalStorage(userData.data.token, userData.data.user);
-  //               return signUpSuccess({...userData.data});
-  //             }),
-  //             catchError(error => {
-  //               this.showSnackBarError(transformHttpError(error.error.errors));
-  //               return of(signUpError(error));
-  //             })
-  //           )
-  //       }
-  //     )
-  //   )
-  // );
 
   constructor(
     private actions$: Actions,

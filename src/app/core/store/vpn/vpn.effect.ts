@@ -129,10 +129,9 @@ export class VpnEffect {
         setIcon();
         return connectingSuccess(proxy);
       }),
-      catchError(error => {
-        console.log(error)
-        return of(connectingError({message: 'connection error'}))
-        // return of();
+      catchError((error, caught) => {
+        connectingError({message: 'connection error'});
+        return caught;
       })
     )
   )

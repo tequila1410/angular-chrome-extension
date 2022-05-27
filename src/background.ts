@@ -11,7 +11,6 @@ chrome.runtime.onInstalled.addListener(() => {
     {'incognito': false},
     (config) => {
       const proxy = config?.value?.rules?.singleProxy;
-      localStorage.setItem('a', JSON.stringify(config))
       if (proxy)
         chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-green.png')}`});
     }

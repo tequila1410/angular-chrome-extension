@@ -4,8 +4,12 @@ import {User} from "../../models/user.model";
 import {
   authenticate,
   authenticateError,
-  authenticateSuccess, setNewName, setUserSubscriptionStatus,
-  signOutSuccess, signUpFP, signUpFPSuccess, signUpFPError, updateUserDataSuccess, verifyUserActionSuccess
+  authenticateSuccess,
+  signOutSuccess,
+  signUpFP,
+  signUpFPSuccess,
+  updateUserDataSuccess,
+  signInFPError
 } from "./user.actions";
 
 export interface UserState {
@@ -21,13 +25,13 @@ const initialState: UserState = {
 
 const _userReducer = createReducer(
   initialState,
-  on(authenticate, (state) => state = {...state, loading: true}),
-  on(authenticateSuccess, (state, userData: {token: string, user: User}) => state = {loading: false, authenticated: true, user: userData.user}),
-  on(authenticateError, (state, {message}) => state = {...state, loading: false, authenticated: false}),
-  on(signOutSuccess, state => state = {...state, authenticated: false, user: undefined}),
-  on(signUpFP, state => state = {...state, loading: true}),
-  on(signUpFPSuccess, (state, userData: {token: string, user: User}) => state = {loading: false, authenticated: true, user: userData.user}),
-  on(signUpFPError, state => state = {...state, loading: false}),
+  on(authenticate, (state) => ({...state, loading: true})),
+  on(authenticateSuccess, (state, userData: {token: string, user: User}) => ({loading: false, authenticated: true, user: userData.user})),
+  on(authenticateError, (state, {message}) => ({...state, loading: false, authenticated: false})),
+  on(signOutSuccess, state => ({...state, authenticated: false, user: undefined})),
+  on(signUpFP, state => ({...state, loading: true})),
+  on(signUpFPSuccess, (state, userData: {token: string, user: User}) => ({loading: false, authenticated: true, user: userData.user})),
+  on(signInFPError, state => ({...state, loading: false})),
   // on(verifyUserActionSuccess, state => {
   //   if (state.user)
   //     state = {...state, user: {...state.user, verified: 1}};

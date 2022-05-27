@@ -34,8 +34,8 @@ export const signUpFPSuccess = createAction(
   props<{token: string, user: User}>()
 );
 
-export const signUpFPError = createAction(
-  '[User sign up error]',
+export const signInFPError = createAction(
+  '[User sign in error]',
   props<{fingerprint: string}>()
 );
 

@@ -171,6 +171,39 @@ export class ExclusionDbService {
     })
   }
 
+  public changeLink(mode: string, link: ExclusionLink) {
+    return this.handler(() => this.changeLinkHandler(mode, link));
+  }
+
+  private changeLinkHandler(mode: string, link: ExclusionLink) {
+    return new Observable((subscriber) => {
+      let transaction;
+      let links;
+
+      if (mode === 'regularMode') {
+        transaction = this.db.transaction('regularModeLinks', 'readwrite');
+        links = transaction.objectStore('regularModeLinks');
+      }
+      if (mode === 'selectiveMode') {
+        transaction = this.db.transaction('selectiveModeLinks', 'readwrite');
+        links = transaction.objectStore('selectiveModeLinks');
+      }
+
+      if (links) {
+        let request = links.put(link);
+        request.onsuccess = () => {
+          console.log('link changed', request.result);
+          subscriber.next(link);
+        }
+  
+        request.onerror = () => {
+          console.log('link change error', request.error)
+          subscriber.error(request);
+        }
+      }
+    })
+  }
+
   public removeDB(mode: string): Observable<string> {
     return this.handler(() => this.removeDBHandler(mode));
   }

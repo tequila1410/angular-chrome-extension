@@ -2,6 +2,7 @@ import {ProxyModel} from "../../auth/models/proxy.model";
 import { ExclusionLink } from "../models/exclusion-link.model";
 import local = chrome.storage.local;
 import {UserCred} from "../models/user-cred.enum";
+import pacGenerator from "./pacGenerator";
 
 export function onAuthRequiredHandler(username: string | null, password: string | null): void {
   console.log('set onAuthRequiredHandler', username, password);
@@ -24,26 +25,23 @@ export function onProxyErrorHandler(): Promise<any> {
   })
 }
 
-export function setProxy(proxy: ProxyModel, exclusionsLinks: ExclusionLink[]): Promise<ProxyModel> {
+export function setProxy(proxy: ProxyModel, exclusionsLinks: string[], inverted: boolean): Promise<ProxyModel> {
   return new Promise((resolve, reject) => {
+
     let config = {
-      mode: "fixed_servers",
-      rules: {
-        singleProxy: {
-          scheme: proxy.scheme,
-          host: proxy.host,
-          port: proxy.port
-        },
-        bypassList: exclusionsLinks
-      }
-    };
-    chrome.proxy.settings.set(
-      {value: config, scope: 'regular'},
-      (details: any) => {
-        console.log('set proxy details: ', details);
-        resolve(proxy);
-      }
-    );
+      bypassList: exclusionsLinks,
+      host: proxy.host,
+      port: proxy.port,
+      scheme: proxy.scheme,
+      inverted: inverted
+    }
+
+    const chromeConfig = convertToChromeConfig(config);
+
+    chrome.proxy.settings.set(chromeConfig, () => {
+      resolve(proxy);
+    });
+
   })
 }
 
@@ -92,3 +90,27 @@ export function getCookie(name: string, url: string): Promise<any> {
     );
   })
 }
+
+function convertToChromeConfig(proxyConfig: any) {
+  const {
+    bypassList,
+    host,
+    port,
+    scheme,
+    inverted
+  } = proxyConfig;
+
+  const proxyAddress = `${host}:${port}`;
+  
+  const pacScript = pacGenerator.generate(scheme, proxyAddress, bypassList, inverted);
+
+  return {
+    value: {
+      mode: 'pac_script',
+      pacScript: {
+        data: pacScript,
+      },
+    },
+    scope: 'regular',
+  };
+};

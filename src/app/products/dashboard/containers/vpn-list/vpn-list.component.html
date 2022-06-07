@@ -9,6 +9,11 @@
     </div>
   </div>
 
+  <div class="location-section-best">
+    <input type="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
+    <label for="Best Location">Autoselect server with the best Ping</label>
+  </div>
+
   <div *ngIf="proxyDataFilter; else noData" class="list">
     <div class="location-section" *ngIf="proxyDataUsed">
       <h3 class="label">
@@ -19,16 +24,14 @@
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
         </div>
-        <div>{{proxy.id}}</div>
+        <span class="icon icon-play" [class]="proxy.isAllowedStream ? 'icon-green' : 'icon-gray'"></span>
+        <span class="icon icon-p2p" [class]="proxy.isAllowedP2P ? 'icon-green' : 'icon-gray'"></span>
+        <div class="host">{{proxy.id}}</div>
         <div class="ping">{{proxy.ping}} ms</div>
       </div>
     </div>
 
     <div class="location-section">
-      <div class="location-section-best">
-        <input type="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
-        <label for="Best Location">Autoselect server with the best Ping</label>
-      </div>
       <h3 class="label">
         All locations ({{proxyDataFilter.length}})
       </h3>
@@ -39,8 +42,8 @@
         </div>
         <span class="icon icon-play" [class]="proxy.isAllowedStream ? 'icon-green' : 'icon-gray'"></span>
         <span class="icon icon-p2p" [class]="proxy.isAllowedP2P ? 'icon-green' : 'icon-gray'"></span>
-        <div *ngIf="proxy.host !== 'locked'">{{proxy.id}}</div>
-        <div class="ping">{{proxy.ping}} ms</div>
+        <div class="host" [class.blur]="proxy.host === 'locked'">{{proxy.host !== 'locked' ? proxy.id : '0.0.0.0'}}</div>
+        <div class="ping" [class.blur]="proxy.host === 'locked'">{{proxy.ping}} ms</div>
       </div>
     </div>
   </div>

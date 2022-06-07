@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ExclusionDbService } from 'src/app/core/utils/indexedDB/exclusion-db.service';
 import {
   animate,
@@ -39,11 +39,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   websiteList!: ExclusionLink[];
 
+  webSiteForm!: FormGroup;
+
   destroy$: Subject<void> = new Subject<void>();
 
   constructor(private router: Router,
               private fb: FormBuilder,
               private store: Store<AppState>) {
+    this.webSiteForm = this.fb.group({
+      webSite: new FormControl('', {
+        validators: [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]
+      }),
+    });
 
     this.store
       .select(exclusionsMode)
@@ -102,11 +109,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   inputVisibility(): void {
-    this.inputVisible = true;
+    this.inputVisible = !this.inputVisible;
+    this.webSiteForm.reset();
   }
 
   addWebsite(event: any): void {
-    if (event.target.value) {
+    if (this.webSiteForm.valid) {
       let linkObject: ExclusionLink = {
         link: event.target.value,
         created: new Date()
@@ -120,6 +128,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       }
       this.websiteList.push(linkObject);
       this.inputVisible = false;
+      this.webSiteForm.reset();
     }
   }
 

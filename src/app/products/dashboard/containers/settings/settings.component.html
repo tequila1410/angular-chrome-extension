@@ -43,7 +43,13 @@
 
           <ul class="exclusions-controls-list">
             <li *ngIf="inputVisible" class="exclusions-controls-list-input">
-              <input type="text" (change)="addWebsite($event)" (click)="addWebsite($event)">
+              <form [formGroup]="webSiteForm">
+                <input id="webSite" formControlName="webSite" type="url"
+                  (blur)="inputVisibility()"
+                  (change)="addWebsite($event)"
+                  (click)="addWebsite($event)">
+                <label for="webSite" *ngIf="webSiteForm.controls['webSite'].errors?.pattern">Please provide valid url</label>
+              </form>
             </li>
             <li *ngFor="let website of websiteList; let itemIndex = index" class="exclusions-controls-list-item">
               <span>
@@ -52,7 +58,7 @@
                   <span>{{website.link}}</span>
                 </span> 
                 
-                <button (click)="deleteWebsite(website.link, itemIndex)">
+                <button (click)="deleteWebsite(website.link, itemIndex)" class="exclusions-controls-list-btn">
                   <span class="material-icons close">close</span>
                 </button>
               </span>

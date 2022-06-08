@@ -163,20 +163,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.websiteList.splice(itemIndex, 1)
   }
 
-  exportWebsiteList(): void {
-    const list = JSON.stringify(this.websiteList);
-
-    const file = new window.Blob([list], { type: 'text/plain' });
-
-    const downloadAncher = document.createElement('a');
-    downloadAncher.style.display = 'none';
-
-    const fileURL = URL.createObjectURL(file);
-    downloadAncher.href = fileURL;
-    downloadAncher.download = `${this.modeForm.value.mode}Websites.txt`;
-    downloadAncher.click();
-  }
-
   clearChosenList(): void {
     if (this.modeForm.value.mode === 'regularMode') {
       this.store.dispatch(clearChosenExclusions({chosenMode: 'regularMode'}));

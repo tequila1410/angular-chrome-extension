@@ -10,8 +10,8 @@
   </div>
 
   <div class="location-section-best">
-    <input type="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
-    <label for="Best Location">Autoselect server with the best Ping</label>
+    <input type="checkbox" id="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
+    <label for="checkbox">Auto-connect to the best VPN server</label>
   </div>
 
   <div *ngIf="proxyDataFilter; else noData" class="list">

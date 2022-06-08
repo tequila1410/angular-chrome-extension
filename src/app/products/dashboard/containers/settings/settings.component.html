@@ -29,17 +29,10 @@
         </form>
 
         <div class="exclusions-controls">
-          <div class="exclusions-controls-wrapper">
-            <!-- ПОРАБОТАТЬ СО СТИЛЯМИ -->
-            <div class="exclusions-controls-wrapper-btn">
-              <input type="file" id="file">
-              <label for="file">IMPORT</label>
-            </div>
-            <button (click)="exportWebsiteList()" class="exclusions-controls-wrapper-btn">EXPORT</button>
-            <button (click)="clearChosenList()" class="exclusions-controls-wrapper-btn">DELETE ALL</button>
-          </div>
 
           <button (click)="inputVisibility()" class="exclusions-controls-add">+ ADD A WEBSITE</button>
+
+          <button (click)="clearChosenList()" class="exclusions-controls-delete">DELETE ALL</button>
 
           <ul class="exclusions-controls-list">
             <li *ngIf="inputVisible" class="exclusions-controls-list-input">
@@ -54,8 +47,8 @@
             <li *ngFor="let website of websiteList; let itemIndex = index" class="exclusions-controls-list-item">
               <span>
                 <span>
-                  <input type="checkbox" [checked]="website.enabled" (change)="enableChange($event, website)">
-                  <span>{{website.link}}</span>
+                  <input type="checkbox" [id]="'checkbox' + itemIndex">
+                  <label [for]="'checkbox' + itemIndex">{{website.link}}</label>
                 </span> 
                 
                 <button (click)="deleteWebsite(website.link, itemIndex)" class="exclusions-controls-list-btn">

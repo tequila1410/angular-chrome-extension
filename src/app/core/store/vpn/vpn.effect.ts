@@ -16,7 +16,9 @@ import {
   addSelectiveExclusion, addSelectiveExclusionSuccess,
   deleteRegularExclusion, deleteSelectiveExclusion,
   deleteRegularExclusionSuccess, deleteSelectiveExclusionSuccess,
-  clearChosenExclusions, clearRegularExclusions, clearSelectedExclusions
+  clearChosenExclusions, clearRegularExclusions, clearSelectedExclusions,
+  changeRegularExclusion, changeSelectiveExclusion,
+  changeRegularExclusionSuccess, changeSelectiveExclusionSuccess,
 } from "./vpn.actions";
 import {catchError, exhaustMap, map, mergeMap, switchMap, timeout, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
@@ -112,22 +114,50 @@ export class VpnEffect {
       map((mode) => mode === 'regularMode' ? clearRegularExclusions() : clearSelectedExclusions())
     ))
 
+  $changeRegularExclusion = createEffect(() =>
+    this.actions$.pipe(
+      ofType(changeRegularExclusion),
+      switchMap(exclusion => this.exclusionDB.changeLink('regularMode', exclusion.regularExclusion)),
+      map(() => changeRegularExclusionSuccess())
+    )
+  )
+
+  $changeSelectiveExclusion = createEffect(() =>
+    this.actions$.pipe(
+      ofType(changeSelectiveExclusion),
+      switchMap(exclusion => this.exclusionDB.changeLink('selectiveMode', exclusion.selectiveExclusion)),
+      map(() => changeSelectiveExclusionSuccess())
+    )
+  ) 
+
   $connecting = createEffect(() =>
     this.actions$.pipe(
       ofType(connecting),
       withLatestFrom(this.store$),
       mergeMap(([proxy, storeState]) => {
-        if (storeState.vpn.connected)
+        if (storeState.vpn.connected) {
           clearProxy();
-        // let exclusions: ExclusionLink[] = [];
-        // if (storeState.vpn.exclusionsMode === 'regularMode') {
-        //   exclusions = storeState.vpn.regularExclusions;
-        // }
-        // if (storeState.vpn.exclusionsMode === 'selectiveMode') {
-        //   exclusions = storeState.vpn.selectiveExclusions;
-        // }
+        }
+        let exclusions: string[] = [];
+        let inverted: boolean = false;
+        if (storeState.vpn.exclusionsMode === 'regularMode') {
+          inverted = false;
+          storeState.vpn.regularExclusions.find(ex => {
+            if (ex.enabled) {
+              exclusions.push(ex.link)
+            }
+          })
+        }
+        if (storeState.vpn.exclusionsMode === 'selectiveMode') {
+          inverted = true;
+          storeState.vpn.selectiveExclusions.find(ex => {
+            if (ex.enabled) {
+              exclusions.push(ex.link)
+            }
+          })
+        }
         console.log('effect set proxy')
-        return from(setProxy(proxy, []));
+        return from(setProxy(proxy, exclusions, inverted));
       }),
       mergeMap((proxy) => {
         return this.api.testNetwork(proxy);
@@ -206,35 +236,5 @@ export class VpnEffect {
       })
     )
   )
-
-  convertToChromeConfig(proxyConfig: any) {
-    const {
-      bypassList,
-      host,
-      port,
-      inverted,
-      defaultExclusions,
-      nonRoutableCidrNets,
-    } = proxyConfig;
-
-    const proxyAddress = `${host}:${port}`;
-    const pacScript = pacGenerator.generate(
-      proxyAddress,
-      bypassList,
-      inverted,
-      defaultExclusions,
-      nonRoutableCidrNets,
-    );
-
-    return {
-      value: {
-        mode: 'pac_script',
-        pacScript: {
-          data: pacScript,
-        },
-      },
-      scope: 'regular',
-    };
-  };
 
 }

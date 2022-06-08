@@ -143,3 +143,21 @@ export const clearRegularExclusions = createAction(
 export const clearSelectedExclusions = createAction(
   '[VPN clear selective exclusions]'
 )
+
+export const changeRegularExclusion = createAction(
+  '[VPN change regular exclusion]',
+  props<{regularExclusion: ExclusionLink}>()
+)
+
+export const changeRegularExclusionSuccess = createAction(
+  '[VPN change regular exclusion success]'
+)
+
+export const changeSelectiveExclusion = createAction(
+  '[VPN change selective exclusion]',
+  props<{selectiveExclusion: ExclusionLink}>()
+)
+
+export const changeSelectiveExclusionSuccess = createAction(
+  '[VPN change selective exclusion success]'
+)

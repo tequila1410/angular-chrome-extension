@@ -48,7 +48,7 @@
             <li *ngFor="let website of websiteList; let itemIndex = index" class="exclusions-controls-list-item">
               <span>
                 <span>
-                  <input type="checkbox" checked>
+                  <input type="checkbox" [checked]="website.enabled" (change)="enableChange($event, website)">
                   <span>{{website.link}}</span>
                 </span> 
                 

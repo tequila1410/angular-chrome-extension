@@ -1,5 +1,5 @@
-import {convertCidrToNet} from "./util";
-import {IPV4_REGEX} from "./constans";
+// import {convertCidrToNet} from "./util";
+// import {IPV4_REGEX} from "./constans";
 
 /**
  * Returns pac script text
@@ -8,11 +8,9 @@ import {IPV4_REGEX} from "./constans";
  * @param proxy
  * @param exclusionsList
  * @param inverted
- * @param defaultExclusions
- * @param nonRoutableNets
  * @returns {string}
  */
-function proxyPacScript(proxy: any, exclusionsList: any, inverted: any, defaultExclusions: any, nonRoutableNets: any) {
+function proxyPacScript(scheme: string, proxy: string, exclusionsList: string[], inverted: boolean) {
   // Used to adjust pacscript after application or browser restart
   const pacScriptTimeToLiveMs = 200;
   // Used to adjust pacscript lifetime after internet reconnection
@@ -29,7 +27,7 @@ function proxyPacScript(proxy: any, exclusionsList: any, inverted: any, defaultE
 
             function FindProxyForURL(url, host) {
                 const DIRECT = "DIRECT";
-                const PROXY = "HTTPS ${proxy}";
+                const PROXY = "${scheme.toUpperCase()} ${proxy}";
 
                 if (!active && (Date.now() > started + ${pacScriptActivationTimeoutMs})) {
                     active = true;
@@ -48,17 +46,6 @@ function proxyPacScript(proxy: any, exclusionsList: any, inverted: any, defaultE
 
                 if (isPlainHostName(host)
                     || shExpMatch(host, 'localhost')) {
-                    return DIRECT;
-                }
-
-                const ipv4Regex = new RegExp(${IPV4_REGEX});
-                const nonRoutableNets = ${JSON.stringify(nonRoutableNets)};
-                if (ipv4Regex.test(host) && nonRoutableNets.some(([pattern, mask]) => isInNet(host, pattern, mask))) {
-                    return DIRECT;
-                }
-
-                const defaultExclusions = ${JSON.stringify(defaultExclusions)};
-                if (defaultExclusions.some(el => (areHostnamesEqual(host, el) || shExpMatch(host, el)))) {
                     return DIRECT;
                 }
 
@@ -84,30 +71,22 @@ function directPacScript() {
 }
 
 /**
- *
+ * @param {string} scheme
  * @param {string} proxy
  * @param {string[]} exclusionsList
  * @param {boolean} inverted
- * @param {string[]} defaultExclusions
- * @param {string[]} nonRoutableCidrNets
  * @return {string}
  */
-const generate = (
-  proxy: any,
-  exclusionsList = [],
-  inverted = false,
-  defaultExclusions = [],
-  nonRoutableCidrNets = [],
-) => {
+const generate = (scheme: string, proxy: string, exclusionsList: string[], inverted: boolean) => {
   if (!proxy) {
     return directPacScript();
   }
 
-  const nonRoutableNets = nonRoutableCidrNets.map((net) => {
-    return convertCidrToNet(net);
-  });
+  // const nonRoutableNets = nonRoutableCidrNets.map((net) => {
+  //   return convertCidrToNet(net);
+  // });
 
-  return proxyPacScript(proxy, exclusionsList, inverted, defaultExclusions, nonRoutableNets);
+  return proxyPacScript(scheme, proxy, exclusionsList, inverted);
 };
 
 export default { generate };

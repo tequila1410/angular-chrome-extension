@@ -1,4 +1,5 @@
 export interface ExclusionLink {
   link: string,
-  created: Date
+  created: Date,
+  enabled: boolean
 }

@@ -12,13 +12,16 @@ import {
 } from '@angular/animations';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/core/store/app.reducer';
-import { exclusionsMode, getRegularExclusions, getSelectiveExclusions } from 'src/app/core/store/vpn/vpn.selector';
+import { exclusionsMode, getRegularExclusions, getSelectiveExclusions, isVPNConnected } from 'src/app/core/store/vpn/vpn.selector';
 import { take, takeUntil } from 'rxjs/operators';
 import {
   setExclusionsMode,
   addRegularExclusion, addSelectiveExclusion,
   deleteRegularExclusion, deleteSelectiveExclusion,
-  clearChosenExclusions } from 'src/app/core/store/vpn/vpn.actions';
+  clearChosenExclusions, 
+  changeRegularExclusion,
+  changeSelectiveExclusion,
+  closeConnection} from 'src/app/core/store/vpn/vpn.actions';
 import { ExclusionLink } from 'src/app/core/models/exclusion-link.model';
 
 @Component({
@@ -38,6 +41,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
   inputVisible: boolean = false;
 
   websiteList!: ExclusionLink[];
+  
+  /**
+   * Check if proxy is connected
+   * @type {boolean}
+   */
+  isConnected: boolean = false;
 
   destroy$: Subject<void> = new Subject<void>();
 
@@ -73,6 +82,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.websiteList = selectiveExclusions;
       })
     }
+
+    this.store
+      .select(isVPNConnected)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isVPNConnected) => {
+        this.isConnected = isVPNConnected;
+      });
   }
 
   goToDashboard(): void {
@@ -80,6 +96,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   modeChange(event: any): void {
+    if (this.isConnected) {
+      this.store.dispatch(closeConnection());
+    }
+
     this.store.dispatch(setExclusionsMode({exclusionsMode: event.target.value}));
 
     if (event.target.value === 'regularMode') {
@@ -109,7 +129,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (event.target.value) {
       let linkObject: ExclusionLink = {
         link: event.target.value,
-        created: new Date()
+        created: new Date(),
+        enabled: true
       };
 
       if (this.modeForm.value.mode === 'regularMode') {
@@ -155,6 +176,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.store.dispatch(clearChosenExclusions({chosenMode: 'selectiveMode'}));
     }
     this.websiteList = [];
+  }
+
+  enableChange(event: any, exclusion: ExclusionLink): void {
+    let newLinkObject: ExclusionLink = {
+      link: exclusion.link,
+      created: exclusion.created,
+      enabled: event.target.checked
+    }
+    if (this.modeForm.value.mode === 'regularMode') {
+      this.store.dispatch(changeRegularExclusion({regularExclusion: newLinkObject}));
+    }
+    if (this.modeForm.value.mode === 'selectiveMode') {
+      this.store.dispatch(changeSelectiveExclusion({selectiveExclusion: newLinkObject}));
+    }
+    exclusion.enabled = event.target.checked;
   }
 
   ngOnDestroy(): void {

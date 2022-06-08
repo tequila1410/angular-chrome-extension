@@ -80,7 +80,10 @@ export class VpnListComponent implements OnInit, OnDestroy {
           :
           this.proxyData.find(a => a.host !== 'locked');
         this.store.dispatch(setSelectedServer({selectedServer}));
-        this.goToDashboard();
+      }
+      else {
+        const selectedServer = this.proxyData.filter(proxy => proxy.host !== 'locked')[0]
+        this.store.dispatch(setSelectedServer({selectedServer}));
       }
     });
   }

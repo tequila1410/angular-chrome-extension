@@ -1,6 +1,8 @@
 @import "src/assets/styles/variables";
+@import "src/assets/styles/mixins.scss";
 
 .settings {
+  @include chbx-rdbt;
   background-color: #131313;
   color: #d8d8d8;
   height: 563px;
@@ -71,39 +73,29 @@
             label {
               font-size: 14px;
               font-weight: bold;
-              margin-left: 8px;
             }
 
             p {
               margin-top: 8px;
               font-size: 14px;
             }
+
           }
         }
 
         &-controls {
-          &-wrapper {
-            display: flex;
-            justify-content: space-between;
-            margin: 16px 0 12px 0;
-            
-            &-btn {
-              border: none;
-              background-color: transparent;
-              margin: 0;
-              cursor: pointer;
-              font-size: 14px;
-              font-weight: 600;
-              color: #d8d8d8;
-              transition: 0.3s;
+          &-delete {
+            border: none;
+            background-color: transparent;
+            margin: 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #d8d8d8;
+            transition: 0.3s;
 
-              &:hover {
-                color: #fff;
-              }
-
-              input {
-                display: none;
-              }
+            &:hover {
+              color: #fff;
             }
           }
 
@@ -150,6 +142,7 @@
                 justify-content: space-between;
 
                 span {
+                  padding-left: 4px;
                   display: flex;
                   align-items: center;
                 }

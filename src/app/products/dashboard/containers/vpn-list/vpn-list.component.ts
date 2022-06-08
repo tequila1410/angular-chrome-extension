@@ -72,25 +72,19 @@ export class VpnListComponent implements OnInit, OnDestroy {
 
     this.bestPingCheckbox.valueChanges.subscribe((bestServerSelected: boolean) => {
       this.store.dispatch(bestServerSelect({bestServerSelected}));
-      if (bestServerSelected) {
-        const selectedServer = bestServerSelected ?
-          this.proxyData
-            .filter(proxy => proxy.host !== 'locked')
-            .reduce((a, b) => (a.ping < b.ping ? a : b))
-          :
-          this.proxyData.find(a => a.host !== 'locked');
-        this.store.dispatch(setSelectedServer({selectedServer}));
-      }
-      else {
-        const selectedServer = this.proxyData.filter(proxy => proxy.host !== 'locked')[0]
-        this.store.dispatch(setSelectedServer({selectedServer}));
-      }
+
+      const selectedServer = bestServerSelected ?
+        this.proxyData
+          .filter(proxy => proxy.host !== 'locked' && proxy.ping > 0)
+          .reduce((a, b) => (a.ping < b.ping ? a : b))
+        :
+        this.proxyData.filter(proxy => proxy.host !== 'locked' && proxy.ping > 0)[0];
+      this.store.dispatch(setSelectedServer({selectedServer}));
     });
   }
 
   selectLocation(proxy: ProxyModel) {
     if (proxy.host !== 'locked') {
-      // this.store.dispatch(connecting(proxy));
       this.store.dispatch(setRecentlyUsed({recentlyUsedProxy: proxy}));
       this.store.dispatch(setSelectedServer({selectedServer: proxy}));
   

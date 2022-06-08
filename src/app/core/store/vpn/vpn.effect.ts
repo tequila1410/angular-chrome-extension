@@ -197,10 +197,10 @@ export class VpnEffect {
       map(([response, storeState]) => {
         const selectedServer = storeState.vpn.bestServerSelected ?
           response.data.serverList
-            .filter(a => a.host !== 'locked')
+            .filter(a => a.host !== 'locked' && a.ping > 0)
             .reduce((a, b) => (a.ping < b.ping ? a : b))
           :
-          response.data.serverList.find(a => a.host !== 'locked');
+          response.data.serverList.filter(a => a.host !== 'locked' && a.ping > 0)[0];
         return setServersSuccess({serverList: response.data.serverList, selectedServer})
       })
     )

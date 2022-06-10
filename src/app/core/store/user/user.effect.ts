@@ -18,6 +18,7 @@ import { MockDataApi } from "../../api/mock-data.api";
 import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
 import {closeConnection, setServers} from "../vpn/vpn.actions";
+import {of} from "rxjs";
 
 @Injectable()
 export class UserEffects {
@@ -100,26 +101,45 @@ export class UserEffects {
         const login = `ext_${actions.fingerprint}@zoogvpn.com`;
         const pass = actions.fingerprint;
 
-        return this.authApi.userLogin(login, pass, actions.token);
-      }),
-      map(response => {
-        this.router.navigate(['/dashboard']);
-        this.setUserToLocalStorage(response.data.token, response.data.user);
-        this.setUserCredsToLocalStorage(response.data.user.email, this.actionTmp.fingerprint);
+        return this.authApi.userLogin(login, pass, actions.token)
+          .pipe(
+            map(response => {
+              this.router.navigate(['/dashboard']);
+              this.setUserToLocalStorage(response.data.token, response.data.user);
+              this.setUserCredsToLocalStorage(response.data.user.email, this.actionTmp.fingerprint);
 
-        return authenticateSuccess({...response.data})
+              return authenticateSuccess({...response.data})
+            }),
+            catchError((error, caught) => {
+
+              return of(signInFPError({fingerprint: this.actionTmp.fingerprint}))
+            })
+          );
       }),
-      catchError((error, caught) => {
-        signInFPError({fingerprint: this.actionTmp.fingerprint});
-        return caught;
-      })
+      // map(response => {
+      //   this.router.navigate(['/dashboard']);
+      //   this.setUserToLocalStorage(response.data.token, response.data.user);
+      //   this.setUserCredsToLocalStorage(response.data.user.email, this.actionTmp.fingerprint);
+      //
+      //   return authenticateSuccess({...response.data})
+      // }),
+      // catchError((error, caught) => {
+      //   signInFPError({fingerprint: this.actionTmp.fingerprint});
+      //   console.log('errrooooooooooooor', this.actionTmp.fingerprint)
+      //   return caught;
+      // })
     )
   )
 
   signInFPError$ = createEffect(() => {
+
+    let login, pass;
     return this.actions$.pipe(
       ofType(signInFPError),
       mergeMap((actions) => {
+        login = `ext_${actions.fingerprint}@zoogvpn.com`;
+        pass = actions.fingerprint;
+
         return this.recaptchaV3Service.execute('signUpFPAction').pipe(map(token => ({actions, token})));
       }),
       mergeMap(data => {
@@ -134,30 +154,55 @@ export class UserEffects {
 
         return this.authApi.registerByFingerPrint(userRegisterData.email, userRegisterData.name, userRegisterData.password,
           userRegisterData.passwordConfirmation, userRegisterData.token, userRegisterData.disableEmail)
-      }),
-      map(response => {
-        const responseNew = {
-          data: {
-            token: response.data.token,
-            user: {
-              accountStatus: '',
-              email: response.data.email,
-              firstName: response.data.firstName,
-              id: response.data.id,
-              secondName: response.data.secondName,
-              subscriptionData: response.data.subscriptionData,
-              verified: response.data.verified
-            }
-          }
-        }
+          .pipe(
+            map(response => {
+              const responseNew = {
+                data: {
+                  token: response.data.token,
+                  user: {
+                    accountStatus: '',
+                    email: response.data.email,
+                    firstName: response.data.firstName,
+                    id: response.data.id,
+                    secondName: response.data.secondName,
+                    subscriptionData: response.data.subscriptionData,
+                    verified: response.data.verified
+                  }
+                }
+              }
 
-        this.setUserToLocalStorage(responseNew.data.token, responseNew.data.user);
-        return signUpFPSuccess({...responseNew.data})
+              this.setUserToLocalStorage(responseNew.data.token, responseNew.data.user);
+              this.setUserCredsToLocalStorage(responseNew.data.user.email, this.actionTmp.fingerprint);
+              return authenticateSuccess({...responseNew.data})
+            }),
+            catchError((error, caught) => {
+              return of(authenticateError(error));
+            })
+          )
       }),
-      catchError((error, caught) => {
-        authenticateError(error);
-        return caught;
-      })
+      // map(response => {
+      //   const responseNew = {
+      //     data: {
+      //       token: response.data.token,
+      //       user: {
+      //         accountStatus: '',
+      //         email: response.data.email,
+      //         firstName: response.data.firstName,
+      //         id: response.data.id,
+      //         secondName: response.data.secondName,
+      //         subscriptionData: response.data.subscriptionData,
+      //         verified: response.data.verified
+      //       }
+      //     }
+      //   }
+      //
+      //   this.setUserToLocalStorage(responseNew.data.token, responseNew.data.user);
+      //   return signUpFPSuccess({...responseNew.data})
+      // }),
+      // catchError((error, caught) => {
+      //   authenticateError(error);
+      //   return caught;
+      // })
     )
   })
 

@@ -20,12 +20,12 @@ import {
   changeRegularExclusion, changeSelectiveExclusion,
   changeRegularExclusionSuccess, changeSelectiveExclusionSuccess,
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap, switchMap, timeout, withLatestFrom} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, switchMap, tap, timeout, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
 import pacGenerator from "../../utils/pacGenerator";
 import {
   checkListener, clearBudge,
-  clearProxy, handlerBehaviorChanged,
+  clearProxy, getProxy, getProxyObservable, handlerBehaviorChanged,
   removeOnAuthRequiredHandler,
   sendMessage, setBadge,
   setIcon,
@@ -128,7 +128,7 @@ export class VpnEffect {
       switchMap(exclusion => this.exclusionDB.changeLink('selectiveMode', exclusion.selectiveExclusion)),
       map(() => changeSelectiveExclusionSuccess())
     )
-  ) 
+  )
 
   $connecting = createEffect(() =>
     this.actions$.pipe(
@@ -189,21 +189,31 @@ export class VpnEffect {
     )
   )
 
-  $setServers = createEffect(() =>
-    this.actions$.pipe(
-      ofType(setServers),
-      exhaustMap(() => this.api.getServersData()),
-      withLatestFrom(this.store$),
-      map(([response, storeState]) => {
-        const selectedServer = storeState.vpn.bestServerSelected ?
-          response.data.serverList
-            .filter(a => a.host !== 'locked' && a.ping > 0)
-            .reduce((a, b) => (a.ping < b.ping ? a : b))
-          :
-          response.data.serverList.filter(a => a.host !== 'locked' && a.ping > 0)[0];
-        return setServersSuccess({serverList: response.data.serverList, selectedServer})
-      })
-    )
+  $setServers = createEffect(() => {
+    let proxyHost: string;
+      return this.actions$.pipe(
+        ofType(setServers),
+        switchMap(() => getProxyObservable()),
+        exhaustMap((proxy) => {
+          proxyHost = proxy?.host;
+          return this.api.getServersData()
+        }),
+        withLatestFrom(this.store$),
+        map(([response, storeState]) => {
+          console.log('proxyHost: ', proxyHost);
+          if (proxyHost)
+            return setServersSuccess({serverList: response.data.serverList, selectedServer: response.data.serverList.find(r => r.host === proxyHost)});
+          const selectedServer = storeState.vpn.bestServerSelected ?
+            response.data.serverList
+              .filter(a => a.host !== 'locked' && a.ping > 0)
+              .reduce((a, b) => (a.ping < b.ping ? a : b))
+            :
+            response.data.serverList.filter(a => a.host !== 'locked' && a.ping > 0)[0];
+
+          return setServersSuccess({serverList: response.data.serverList, selectedServer})
+        })
+      )
+    }
   )
 
   $bestServerSelect = createEffect(() =>

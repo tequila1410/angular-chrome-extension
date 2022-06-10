@@ -3,6 +3,7 @@ import { ExclusionLink } from "../models/exclusion-link.model";
 import local = chrome.storage.local;
 import {UserCred} from "../models/user-cred.enum";
 import pacGenerator from "./pacGenerator";
+import {Observable} from "rxjs";
 
 export function onAuthRequiredHandler(username: string | null, password: string | null): void {
   console.log('set onAuthRequiredHandler', username, password);
@@ -56,8 +57,72 @@ export function getProxy(): Promise<ProxyModel> {
     chrome.proxy.settings.get(
       {'incognito': false},
       (config) => {
-        const proxy: ProxyModel = config?.value?.rules?.singleProxy;
-        resolve(proxy);
+        if (config?.value?.pacScript?.data) {
+          const pacScript: string = config.value.pacScript.data;
+          const from = 'PROXY = "';
+          const to = '"';
+
+          let substr = pacScript.slice(pacScript.indexOf(from) + from.length);
+          let resultStr = substr.slice(0, substr.indexOf(to));
+          let [scheme, hostWithPort] = resultStr.split(' ');
+          let [host, port] = hostWithPort.split(':');
+
+          const proxyFromPac: ProxyModel = {
+            scheme,
+            host,
+            port: +port,
+            id: '',
+            locationCode: '',
+            locationName: '',
+            image: scheme,
+            ping: 0,
+            isAllowedP2P: false,
+            isAllowedStream: false
+          };
+          console.log(proxyFromPac);
+          resolve(proxyFromPac);
+        } else {
+          const proxy: ProxyModel = config?.value?.rules?.singleProxy;
+          resolve(proxy);
+        }
+      }
+    );
+  })
+}
+
+export function getProxyObservable(): Observable<any> {
+  return new Observable(subscriber => {
+    chrome.proxy.settings.get(
+      {'incognito': false},
+      (config) => {
+        if (config?.value?.pacScript?.data) {
+          const pacScript: string = config.value.pacScript.data;
+          const from = 'PROXY = "';
+          const to = '"';
+
+          let substr = pacScript.slice(pacScript.indexOf(from) + from.length);
+          let resultStr = substr.slice(0, substr.indexOf(to));
+          let [scheme, hostWithPort] = resultStr.split(' ');
+          let [host, port] = hostWithPort.split(':');
+
+          const proxyFromPac: ProxyModel = {
+            scheme,
+            host,
+            port: +port,
+            id: '',
+            locationCode: '',
+            locationName: '',
+            image: scheme,
+            ping: 0,
+            isAllowedP2P: false,
+            isAllowedStream: false
+          };
+          console.log(proxyFromPac);
+          subscriber.next(proxyFromPac);
+        } else {
+          const proxy: ProxyModel = config?.value?.rules?.singleProxy;
+          subscriber.next(proxy);
+        }
       }
     );
   })
@@ -119,7 +184,7 @@ function convertToChromeConfig(proxyConfig: any) {
   } = proxyConfig;
 
   const proxyAddress = `${host}:${port}`;
-  
+
   const pacScript = pacGenerator.generate(scheme, proxyAddress, bypassList, inverted);
 
   return {

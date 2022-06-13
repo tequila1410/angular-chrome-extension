@@ -199,10 +199,16 @@ export class VpnEffect {
           return this.api.getServersData()
         }),
         withLatestFrom(this.store$),
-        map(([response, storeState]) => {
+        switchMap(([response, storeState]) => {
           console.log('proxyHost: ', proxyHost);
-          if (proxyHost)
-            return setServersSuccess({serverList: response.data.serverList, selectedServer: response.data.serverList.find(r => r.host === proxyHost)});
+          const server = response.data.serverList.find(r => r.host === proxyHost);
+          if (server) {
+            connectingSuccess(server);
+            return [setServersSuccess({
+              serverList: response.data.serverList,
+              selectedServer: server
+            }), connectingSuccess(server)];
+          }
           const selectedServer = storeState.vpn.bestServerSelected ?
             response.data.serverList
               .filter(a => a.host !== 'locked' && a.ping > 0)
@@ -210,7 +216,7 @@ export class VpnEffect {
             :
             response.data.serverList.filter(a => a.host !== 'locked' && a.ping > 0)[0];
 
-          return setServersSuccess({serverList: response.data.serverList, selectedServer})
+          return [setServersSuccess({serverList: response.data.serverList, selectedServer})]
         })
       )
     }

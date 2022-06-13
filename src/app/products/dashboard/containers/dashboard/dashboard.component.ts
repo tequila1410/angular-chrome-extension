@@ -104,7 +104,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store<AppState>,
     private passPopupService: PassPopupService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private cdr: ChangeDetectorRef
   ) {
     this.store.dispatch(setRegularExclusions());
 
@@ -170,6 +171,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectedServer) => {
         this.selectedServer = selectedServer;
+        this.cdr.detectChanges();
       });
 
     this.route.params
@@ -196,7 +198,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else if (this.selectedServer) {
         const login = localStorage.getItem(UserCred.userLogin);
         const password = localStorage.getItem(UserCred.userPassword);
-  
+
         if (login && password) {
           onAuthRequiredHandler(login, password);
           this.store.dispatch(connecting(this.selectedServer));

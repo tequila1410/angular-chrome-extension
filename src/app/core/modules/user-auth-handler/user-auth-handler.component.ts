@@ -70,7 +70,7 @@ export class AuthUserHandlerComponent implements OnInit {
   private getProxyAfterAuth(): void {
     getProxy().then((proxy) => {
       if (proxy) {
-        this.store.dispatch(connectingSuccess(proxy));
+        // this.store.dispatch(connectingSuccess(proxy));
       }
     });
   }

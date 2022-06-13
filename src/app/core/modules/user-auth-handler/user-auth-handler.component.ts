@@ -2,12 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from '../../store/app.reducer';
-import {getCookie, getProxy} from '../../utils/chrome-backgroud';
-import {connectingSuccess, setServers} from '../../store/vpn/vpn.actions';
+import {getCookie} from '../../utils/chrome-backgroud';
 import {authenticateSuccess, signUpFP} from '../../store/user/user.actions';
 import {getFingerPrint} from '../../utils/fingerprint';
 import {ReCaptchaV3Service} from 'ng-recaptcha';
-import { catchError, take, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import {environment} from "../../../../environments/environment";
 
 @Component({
@@ -34,21 +33,18 @@ export class AuthUserHandlerComponent implements OnInit {
     const token = localStorage.getItem('token');
 
     if (user && token) {
-      this.store.dispatch(authenticateSuccess({token, user: JSON.parse(user)}))
-      this.getProxyAfterAuth();
+      this.store.dispatch(authenticateSuccess({token, user: JSON.parse(user)}));
     } else {
       getCookie('userCookie', this.APP_URL)
         .then((cookie) => {
           const userCookie = JSON.parse(cookie.value);
           this.store.dispatch(authenticateSuccess({token: userCookie.token, user: userCookie.user}));
-          this.getProxyAfterAuth();
         })
         .catch(reason => {
           console.warn(reason);
           setTimeout(() => {
             getFingerPrint().then(fingerprint => this.signUpFP(fingerprint));
           }, 2000);
-          this.getProxyAfterAuth();
         })
     }
   }
@@ -66,14 +62,4 @@ export class AuthUserHandlerComponent implements OnInit {
       )
       .subscribe();
   }
-
-  private getProxyAfterAuth(): void {
-    getProxy().then((proxy) => {
-      if (proxy) {
-        // this.store.dispatch(connectingSuccess(proxy));
-      }
-    });
-  }
-
-
 }

@@ -27,7 +27,7 @@ function proxyPacScript(scheme: string, proxy: string, exclusionsList: string[],
 
             function FindProxyForURL(url, host) {
                 const DIRECT = "DIRECT";
-                const PROXY = "${scheme.toUpperCase()} ${proxy}";
+                const PROXY = "PROXY ${proxy}";
 
                 if (!active && (Date.now() > started + ${pacScriptActivationTimeoutMs})) {
                     active = true;

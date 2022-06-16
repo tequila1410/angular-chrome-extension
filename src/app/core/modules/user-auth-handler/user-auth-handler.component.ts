@@ -43,7 +43,15 @@ export class AuthUserHandlerComponent implements OnInit {
         .catch(reason => {
           console.warn(reason);
           setTimeout(() => {
-            getFingerPrint().then(fingerprint => this.signUpFP(fingerprint));
+            getFingerPrint().then(fingerprint => {
+              if (fingerprint === undefined || fingerprint === null) {
+                this.router.navigate(['/auth']);
+              } else {
+                this.signUpFP(fingerprint);
+              }
+            }).catch(err => {
+              this.router.navigate(['/auth']);
+            });
           }, 2000);
         })
     }

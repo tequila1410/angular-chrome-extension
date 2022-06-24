@@ -177,7 +177,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.route.params
       .pipe(takeUntil(this.destroy$))
       .subscribe((params: Params) => {
-      console.log('params[\'connect\']', params['connect']);
       if (params['connect'] === 'connect') {
         this.vpnConnectToggle(true)
       }

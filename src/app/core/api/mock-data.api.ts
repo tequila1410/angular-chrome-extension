@@ -25,24 +25,24 @@ export class MockDataApi implements ServerApiModel {
 
     const testServers2 = [{
       ip: '95.168.176.100',
-      locationName: 'UK - London 3',
+      locationName: 'UK - London 3 3128',
       domain: "uk2.zoogvpn.com",
       port: 3128
     }, {
-      ip: '23.106.58.10',
-      locationName: 'UK - London 4',
-      domain: "uk3.zoogvpn.com",
-      port: 3128
+      ip: '95.168.176.100',
+      locationName: 'UK - London 3 3129',
+      domain: "uk2.zoogvpn.com",
+      port: 3129
     }, {
-      ip: '81.17.62.28',
-      locationName: 'UK - London Free',
-      domain: "uk.free.zoogvpn.com",
-      port: 3128
+      ip: '95.168.176.100',
+      locationName: 'UK - London 3 3130',
+      domain: "uk2.zoogvpn.com",
+      port: 3130
     }, {
-      ip: '193.187.1.190',
-      locationName: 'UK - London 5',
-      domain: "uk5.zoogvpn.com",
-      port: 3128
+      ip: '95.168.176.100',
+      locationName: 'UK - London 3 3131',
+      domain: "uk2.zoogvpn.com",
+      port: 3131
     }]
     let result: ProxyModel[] = [];
     testServers2.forEach((server, index) => result.push({
@@ -66,12 +66,10 @@ export class MockDataApi implements ServerApiModel {
   }
 
   testNetwork(proxy: any) {
-    return this.httpClient.get('https://api-d.zoogvpn.com/', {
-        responseType: 'text'
-      })
+    return this.httpClient.get('https://api.ipify.org?format=json', )
       .pipe(
-        map(() => {
-          console.log('VPN connect success');
+        map((response) => {
+          console.log('ipify: ', response);
           return proxy;
         }),
         catchError(error => {

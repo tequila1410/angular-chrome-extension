@@ -6,7 +6,7 @@ import {
   authenticateSuccess, signInFPError,
   signOut, signOutSuccess, signUpFP, signUpFPSuccess,
 } from "./user.actions";
-import {catchError, exhaustMap, map, mergeMap, tap} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, tap, withLatestFrom} from "rxjs/operators";
 import {User} from "../../models/user.model";
 import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
@@ -19,6 +19,7 @@ import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
 import {closeConnection, setServers} from "../vpn/vpn.actions";
 import {of} from "rxjs";
+import {clearProxyCookie} from "../../utils/chrome-backgroud";
 
 @Injectable()
 export class UserEffects {
@@ -80,9 +81,13 @@ export class UserEffects {
   logOut$ = createEffect(() => {
       return this.actions$.pipe(
         ofType(signOut),
-        map(() => {
+        withLatestFrom(this.store),
+        map(([data, storeState]) => {
           // update client limits
           // maybe routing somewhere
+          storeState.vpn.serverList.forEach(server => {
+            clearProxyCookie(server.host);
+          });
 
           this.store.dispatch(closeConnection());
           this.clearLocalStorage();

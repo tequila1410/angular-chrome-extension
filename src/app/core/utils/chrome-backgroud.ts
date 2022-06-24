@@ -55,7 +55,7 @@ export function setIcon(iconPath?: string) {
 export function getProxy(): Promise<ProxyModel> {
   return new Promise((resolve, reject) => {
     chrome.proxy.settings.get(
-      {'incognito': false},
+      {'incognito': true},
       (config) => {
         if (config?.value?.pacScript?.data) {
           const pacScript: string = config.value.pacScript.data;
@@ -93,7 +93,7 @@ export function getProxy(): Promise<ProxyModel> {
 export function getProxyObservable(): Observable<any> {
   return new Observable(subscriber => {
     chrome.proxy.settings.get(
-      {'incognito': false},
+      {'incognito': true},
       (config) => {
         if (config?.value?.pacScript?.data) {
           const pacScript: string = config.value.pacScript.data;
@@ -172,6 +172,19 @@ export function handlerBehaviorChanged() {
   chrome.webRequest.handlerBehaviorChanged(() => {
     console.log('handlerBehaviorChanged was called');
   })
+}
+
+export function clearProxyCookie(rootDomain: string) {
+  return new Promise((resolve => {
+    let options: any = {};
+    options.origins = [];
+    options.origins.push("http://"+ rootDomain);
+    options.origins.push("https://"+ rootDomain);
+    let types = {"cookies": true};
+    chrome.browsingData.remove(options, types, () => {
+      resolve(true);
+    });
+  }))
 }
 
 function convertToChromeConfig(proxyConfig: any) {

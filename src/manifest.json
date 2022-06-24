@@ -1,7 +1,7 @@
 {
   "name": "ZoogVPN",
   "version": "0.0.1",
-  "description": "ZoogVPN test extension",
+  "description": "ZoogVPN test vpn extension",
   "manifest_version": 2,
   "permissions": [
     "<all_urls>",
@@ -16,7 +16,8 @@
     "webRequestBlocking",
     "cookies",
     "activeTab",
-    "webNavigation"
+    "webNavigation",
+    "browsingData"
   ],
   "background": {
     "scripts": [

@@ -8,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
     });
   }, { url: [{ urlMatches: 'google.com' }] });
   chrome.proxy.settings.get(
-    {'incognito': false},
+    {'incognito': true},
     (config) => {
       const proxy = config?.value?.rules?.singleProxy;
       if (proxy)

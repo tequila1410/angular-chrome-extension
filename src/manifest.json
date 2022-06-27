@@ -5,18 +5,9 @@
   "manifest_version": 2,
   "permissions": [
     "<all_urls>",
-    "contextMenus",
-    "management",
-    "notifications",
-    "privacy",
     "proxy",
-    "storage",
-    "unlimitedStorage",
     "webRequest",
-    "webRequestBlocking",
     "cookies",
-    "activeTab",
-    "webNavigation",
     "browsingData"
   ],
   "background": {

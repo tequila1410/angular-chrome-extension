@@ -246,6 +246,9 @@ export class VpnEffect {
           newRecentlyUsed.shift();
           newRecentlyUsed.push(action.recentlyUsedProxy);
         }
+
+        newRecentlyUsed = newRecentlyUsed.filter((proxy, index, self) => index === self.findIndex((el) => el.id === proxy.id))
+
         localStorage.setItem('recentlyUsed', JSON.stringify(newRecentlyUsed));
 
         return setRecentlyUsedSuccess({recentlyUsedProxies: newRecentlyUsed});

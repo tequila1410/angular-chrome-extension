@@ -125,10 +125,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
               && res.data.accountDetails.monthlyBandwidthAllowance > 0) {
             this.connectAvailable = false;
           }
+
           this.captchaElement = document.getElementsByClassName('grecaptcha-badge')[0] as HTMLElement;
-          if (this.captchaElement) {
-            this.captchaElement.style.visibility = 'hidden';
-          }
+          this.captchaElement.style.visibility = 'hidden';
+
           return res.data;
         })
       )

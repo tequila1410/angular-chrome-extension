@@ -2,14 +2,14 @@
   <div class="header">
     <div class="navigation">
       <span class="material-icons arrow-back" (click)="goToDashboard()">arrow_back</span>
-      <p>Locations</p>
-    </div>
-    <div class="search">
-      <input [formControl]="formControl" type="text" placeholder="Search location">
+      <h3>Locations</h3>
     </div>
   </div>
 
   <div class="location-section-best">
+    <div class="search">
+      <input [formControl]="formControl" type="text" placeholder="Search location">
+    </div>
     <input type="checkbox" id="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
     <label for="checkbox">Auto-connect to the best VPN server</label>
   </div>

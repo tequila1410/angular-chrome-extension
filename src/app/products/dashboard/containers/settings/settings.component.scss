@@ -3,9 +3,8 @@
 
 .settings {
   @include chbx-rdbt;
-  background-color: #131313;
-  color: #d8d8d8;
-  height: 563px;
+  background-color: #202428;
+  color: #fff;
 
   p {
     margin: 0;
@@ -13,11 +12,11 @@
 
   &-header {
     padding: 16px;
+    background-color: #3c4246;
   }
 
   &-navigation {
     text-align: center;
-    padding-bottom: 10px;
     font-size: 16px;
     position: relative;
 
@@ -27,9 +26,16 @@
       left: 0;
       cursor: pointer;
     }
+
+    h3 {
+      font-weight: 100;
+      font-size: 18px;
+      margin: 0;
+    }
   }
 
   &-content {
+    margin-top: 10px;
     display: flex;
     
     &-left {
@@ -37,7 +43,7 @@
       height: 480px;
       margin: 6px 0 0 0;
       padding: 0 8px;
-      border-right: 1px solid #8f8f8f;
+      border-right: 1px solid #373a3e;
 
       li {
         padding: 6px 0;

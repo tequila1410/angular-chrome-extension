@@ -2,19 +2,19 @@
 
 .vpn-list {
   @include chbx-rdbt;
-  background-color: #131313;
-  color: #d8d8d8;
+  background-color: #202428;
+  color: #fff;
 
   p {
     margin: 0;
   }
 
   .header {
+    background-color: #3c4246;
     padding: 16px;
 
     .navigation {
       text-align: center;
-      padding-bottom: 10px;
       font-size: 16px;
       position: relative;
 
@@ -24,24 +24,15 @@
         left: 0;
         cursor: pointer;
       }
-    }
 
-    .search {
-      input {
-        background-color: #4d4d4d;
-        padding: 9px;
-        border: none;
-        border-radius: 4px;
-        caret-color: #888888;
-        color: white;
-        width: 100%;
-        box-sizing: border-box;
-
-        &:focus-visible {
-          outline: 3px solid #343434;
-        }
+      h3 {
+        font-weight: 100;
+        font-size: 18px;
+        margin: 0;
       }
     }
+
+    
   }
 
   ::-webkit-scrollbar {
@@ -65,6 +56,26 @@
 
   .location-section-best {
     padding: 16px;
+    border-bottom: 1px solid #373a3e;
+
+    .search {
+      padding-bottom: 10px;
+      
+      input {
+        background-color: #3c4246;
+        padding: 9px;
+        border: none;
+        border-radius: 4px;
+        caret-color: #d8d8d8;
+        color: #fff;
+        width: 100%;
+        box-sizing: border-box;
+
+        &:focus-visible {
+          outline: 3px solid #6b6b6b;
+        }
+      }
+    }
   }
 
   .list {

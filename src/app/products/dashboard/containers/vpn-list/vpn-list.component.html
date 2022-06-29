@@ -19,7 +19,7 @@
       <h3 class="label">
         Recently Used
       </h3>
-      <div *ngFor="let proxy of proxyDataUsed" class="location" (click)="selectLocation(proxy)">
+      <div *ngFor="let proxy of proxyDataUsed; trackBy: trackByProxyId" class="location" (click)="selectLocation(proxy)">
         <div class="label">
           <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>
@@ -35,7 +35,7 @@
       <h3 class="label">
         All locations ({{proxyDataFilter.length}})
       </h3>
-      <div *ngFor="let proxy of proxyDataFilter" class="location" (click)="selectLocation(proxy)">
+      <div *ngFor="let proxy of proxyDataFilter; trackBy: trackByProxyId" class="location" (click)="selectLocation(proxy)">
         <div class="label">
           <div class="vpn-logo"><img [src]="proxy.host !== 'locked' ? proxy.image : '../../../../../assets/images/icons/19x19-grey.png'" alt=""></div>
           <div class="vpn-name">{{proxy.locationName}}</div>

@@ -44,13 +44,13 @@
                 <label for="webSite" *ngIf="webSiteForm.controls['webSite'].errors?.pattern">Please provide valid url</label>
               </form>
             </li>
-            <li *ngFor="let website of websiteList; let itemIndex = index" class="exclusions-controls-list-item">
+            <li *ngFor="let website of websiteList; trackBy: trackByWebsiteLink; let itemIndex = index" class="exclusions-controls-list-item">
               <span>
                 <span>
                   <input type="checkbox" [id]="'checkbox' + itemIndex" [checked]="website.enabled" (change)="enableChange($event, website)">
                   <label [for]="'checkbox' + itemIndex">{{website.link}}</label>
-                </span> 
-                
+                </span>
+
                 <button (click)="deleteWebsite(website.link, itemIndex)" class="exclusions-controls-list-btn">
                   <span class="material-icons close">close</span>
                 </button>

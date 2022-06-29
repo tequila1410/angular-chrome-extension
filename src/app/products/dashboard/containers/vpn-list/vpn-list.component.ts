@@ -87,13 +87,17 @@ export class VpnListComponent implements OnInit, OnDestroy {
     if (proxy.host !== 'locked') {
       this.store.dispatch(setRecentlyUsed({recentlyUsedProxy: proxy}));
       this.store.dispatch(setSelectedServer({selectedServer: proxy}));
-  
+
       this.router.navigate(['dashboard', 'connect']);
     }
   }
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  trackByProxyId(index: number, proxy: ProxyModel) {
+    return proxy.id;
   }
 
   ngOnDestroy(): void {

@@ -18,7 +18,7 @@ import {
   setExclusionsMode,
   addRegularExclusion, addSelectiveExclusion,
   deleteRegularExclusion, deleteSelectiveExclusion,
-  clearChosenExclusions, 
+  clearChosenExclusions,
   changeRegularExclusion,
   changeSelectiveExclusion,
   closeConnection} from 'src/app/core/store/vpn/vpn.actions';
@@ -41,7 +41,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   inputVisible: boolean = false;
 
   websiteList!: ExclusionLink[];
-  
+
   /**
    * Check if proxy is connected
    * @type {boolean}
@@ -186,6 +186,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.store.dispatch(changeSelectiveExclusion({selectiveExclusion: newLinkObject}));
     }
     exclusion.enabled = event.target.checked;
+  }
+
+  trackByWebsiteLink(index: number, website: ExclusionLink) {
+    return website.link;
   }
 
   ngOnDestroy(): void {

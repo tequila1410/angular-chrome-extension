@@ -85,6 +85,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   currentUser!: User | undefined;
 
+  currentUserName!: string | undefined;
+
   overviewData$!: Observable<DashboardOverview>;
 
   connectAvailable: boolean = true;
@@ -116,7 +118,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.store
       .select(getUserData)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => (this.currentUser = user));
+      .subscribe((user) => {
+        this.currentUser = user
+        this.currentUserName = user?.email;
+      });
 
     this.overviewData$ = this.dashboardApi.getOverViewData()
       .pipe(

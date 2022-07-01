@@ -1,7 +1,8 @@
 <section class="dashboard" [@fadeIn]="'in'">
   <app-dashboard-header
     (signOut)="signOut()"
-    (goToSettings)="goToSettings()">
+    (goToSettings)="goToSettings()"
+    [currentUserName]="currentUser?.email">
   </app-dashboard-header>
 
   <app-server-selector

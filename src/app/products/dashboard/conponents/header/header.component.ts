@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import { User } from 'src/app/core/models/user.model';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -19,6 +20,10 @@ import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/co
 })
 export class HeaderComponent implements OnInit {
 
+  @Input() currentUserName: string | undefined;
+
+  // currentUserName!: string | undefined;
+  
   /**
    * Check if menu is visible
    * @type {boolean}
@@ -31,6 +36,9 @@ export class HeaderComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    if (this.currentUserName?.endsWith('@zoogvpn.com')) {
+      this.currentUserName = 'Anonym';
+    }
   }
 
   @HostListener('document:click', ['$event'])

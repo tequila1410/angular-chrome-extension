@@ -29,6 +29,26 @@
     width: 200px;
     text-align: left;
 
+    h4 {
+      width: 200px;
+      font-size: 14px;
+      font-weight: 400;
+      margin: 0 0 4px 0;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid silver;
+
+      span {
+        &:last-child {
+          margin-left: 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
     ul {
       margin: 0;
       padding: 0;

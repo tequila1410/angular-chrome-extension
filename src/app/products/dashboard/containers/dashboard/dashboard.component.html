@@ -2,7 +2,7 @@
   <app-dashboard-header
     (signOut)="signOut()"
     (goToSettings)="goToSettings()"
-    [currentUserName]="currentUserName">
+    [currentUserName]="currentUser?.email">
   </app-dashboard-header>
 
   <app-server-selector

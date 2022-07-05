@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit {
   @Output() signOut: EventEmitter<void> = new EventEmitter<void>();
 
   /**
-   * Emmit event for open settings component
+   * Emmit event for open settings page
    * @type {EventEmitter<void>}
    */
   @Output() goToSettings: EventEmitter<void> = new EventEmitter<void>();

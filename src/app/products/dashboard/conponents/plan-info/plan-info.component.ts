@@ -46,4 +46,5 @@ export class PlanInfoComponent implements OnInit {
     this.extendPlanLink = this.currentUser?.email.endsWith('@zoogvpn.com') ?
       'https://zoogvpn.com/pricing/' : 'https://app.zoogvpn.com/plans';
   }
+
 }

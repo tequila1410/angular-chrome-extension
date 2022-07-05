@@ -156,13 +156,17 @@ export class VpnEffect {
             }
           })
         }
-        console.log('effect set proxy')
+        console.log('effect set proxy');
         return from(setProxy(proxy, exclusions, inverted));
       }),
       mergeMap((proxy) => {
         return this.api.testNetwork(proxy);
       }),
       map(proxy => {
+        let msg = {
+          type: 'startCheck'
+        };
+        chrome.runtime.sendMessage('', msg);
         setIcon();
         setBadge(proxy.locationCode);
         return connectingSuccess(proxy);
@@ -184,6 +188,10 @@ export class VpnEffect {
         removeOnAuthRequiredHandler();
         handlerBehaviorChanged();
         checkListener();
+        let msg = {
+          type: 'stopCheck'
+        };
+        chrome.runtime.sendMessage('', msg);
         return closeConnectionSuccess();
       })
     )

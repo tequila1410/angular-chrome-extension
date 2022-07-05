@@ -1,16 +1,19 @@
 <div class="plan-info">
   <div class="plan-name">
-    <p>{{subscriptionData?.tariffName}}</p>
+    {{subscriptionData?.tariffName}}
   </div>
+
   <div class="expiration">
     <div>
       <span class="date-title">VPN plan ends: </span>
-      <span class="date">{{subscriptionData?.expiresDate | date:"longDate"}}</span>
+      <span>{{subscriptionData?.expiresDate | date:"longDate"}}</span>
     </div>
+
     <div>
       <a target="_blank" [href]="extendPlanLink" class="btn">Extend</a>
     </div>
   </div>
+  
   <div *ngIf="overviewData?.accountDetails as det" class="bandwidth">
     Bandwidth: {{det.monthlyBandwidthAllowance === 0 ? 'Unlimited' : (det.monthlyUsedBandwidth | bytes:1:'B':'GB':false) + '/' + (det.monthlyBandwidthAllowance | bytes)}}
   </div>

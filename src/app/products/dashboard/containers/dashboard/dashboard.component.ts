@@ -1,5 +1,4 @@
 import {
-    ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
@@ -7,15 +6,13 @@ import {
 } from '@angular/core';
 import {ProxyModel} from '../../../../auth/models/proxy.model';
 import {Observable, Subject} from 'rxjs';
-import {MockDataApi} from '../../../../core/api/mock-data.api';
-import {map, takeUntil, tap} from 'rxjs/operators';
-import {FormControl, FormGroup} from '@angular/forms';
+import {map, takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
-  connectingSuccess, setRegularExclusions, setSelectiveExclusions, setServers,
+  setRegularExclusions
 } from '../../../../core/store/vpn/vpn.actions';
 import {
   getSelectedVpnServer,
@@ -42,7 +39,7 @@ import {DashboardApi} from 'src/app/core/api/dashboard.api';
 import {DashboardOverview} from 'src/app/core/models/dashboard-overview.model';
 import {UserCred} from "../../../../core/models/user-cred.enum";
 import {PassPopupService} from 'src/app/core/components/pass-popup/pass-popup.service';
-import { SnackbarService } from 'src/app/core/components/snackbar/snackbar.service';
+import {SnackbarService} from 'src/app/core/components/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,14 +51,8 @@ import { SnackbarService } from 'src/app/core/components/snackbar/snackbar.servi
       transition(':enter', [style({opacity: 0}), animate(300)]),
     ]),
   ],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  /**
-   * Form group for proxy selector
-   * @type {FormGroup}
-   */
-  form: FormGroup;
 
   /**
    * Check if proxy is connected
@@ -69,26 +60,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   isConnected: boolean = false;
 
+  /**
+   * Check if proxy is connecting
+   * @type {boolean}
+   */
   isConnecting: boolean = false;
 
+  /**
+   * Check if proxy have connection error
+   * @type {boolean}
+   */
   isConnectionError!: boolean;
 
   /**
    * Selected proxy server
-   * @type {ProxyModel}
+   * @type {ProxyModel | undefined}
    */
   selectedServer: ProxyModel | undefined;
 
   /**
    * Current user data
-   * @type {User}
+   * @type {User | undefined}
    */
   currentUser!: User | undefined;
 
+  /**
+   * Current user dashboard overview data
+   * @type {Observable<DashboardOverview>}
+   */
   overviewData$!: Observable<DashboardOverview>;
 
+  /**
+   * Variable that checks if it`s possible to connect
+   * @type {boolean}
+   */
   connectAvailable: boolean = true;
 
+  /**
+   * Variable to assign captcha HTML element
+   * @type {HTMLElement}
+   */
   captchaElement!: HTMLElement;
 
   /**
@@ -97,8 +108,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   destroy$: Subject<void> = new Subject<void>();
 
+  /**
+   * Constructor for DashboardComponent
+   * @param {DashboardApi} dashboardApi
+   * @param {Router} router 
+   * @param {ActivatedRoute} route 
+   * @param {Store<AppState>} store 
+   * @param {PassPopupService} passPopupService 
+   * @param {SnackbarService} snackbarService 
+   * @param {ChangeDetectorRef} cdr 
+   */
   constructor(
-    private serverService: MockDataApi,
     private dashboardApi: DashboardApi,
     private router: Router,
     private route: ActivatedRoute,
@@ -108,10 +128,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {
     this.store.dispatch(setRegularExclusions());
-
-    this.form = new FormGroup({
-      proxy: new FormControl(),
-    });
 
     this.store
       .select(getUserData)
@@ -134,6 +150,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       )
   }
 
+  /**
+   * Call on component init
+   * @return {void}
+   */
   ngOnInit(): void {
     onProxyErrorHandler().then((details) => {
       this.store.dispatch(closeConnection());
@@ -185,6 +205,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   /**
    * Toggle to connect and disconnect proxy
+   * @param {boolean} force
    * @return {void}
    */
   vpnConnectToggle(force?: boolean): void {
@@ -218,11 +239,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Redirect to page with proxy list
    * @return {void}
    */
-  openVpnList() {
+  openVpnList(): void {
     this.router.navigate(['/dashboard/vpn-list']);
   }
 
-  goToSettings() {
+  /**
+   * Redirect to settings page
+   * @return {void}
+   */
+  goToSettings(): void {
     this.router.navigate(['/dashboard/settings'])
   }
 

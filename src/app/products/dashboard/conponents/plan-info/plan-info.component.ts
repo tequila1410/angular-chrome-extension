@@ -16,7 +16,7 @@ export class PlanInfoComponent implements OnInit {
   @Input() subscriptionData!: SubscriptionData | undefined;
 
   /**
-   * Current user dashboard input data
+   * Current user dashboard overview input data
    * @type {DashboardOverview | undefined | null}
    */
   @Input() overviewData!: DashboardOverview | undefined | null;

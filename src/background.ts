@@ -1,3 +1,4 @@
+import { onAuthRequiredHandler } from "./app/core/utils/chrome-backgroud";
 
 chrome.runtime.onInstalled.addListener(() => {
   // chrome.webNavigation.onCompleted.addListener(() => {
@@ -17,6 +18,14 @@ chrome.runtime.onInstalled.addListener(() => {
   );
 });
 
+window.addEventListener('load', (event) => {
+  const username = localStorage.getItem('lg');
+  const password = localStorage.getItem('ps');
+
+  if (username && password) {
+    onAuthRequiredHandler(username, password)
+  }
+});
 
 let size = 0;
 let timeoutId: any;

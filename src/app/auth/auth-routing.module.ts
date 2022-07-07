@@ -1,15 +1,12 @@
 import { NgModule } from '@angular/core';
 import {Route, RouterModule} from "@angular/router";
-import {SignInComponent, SignUpComponent} from "./components";
+import {SignInComponent} from "./components";
 
 const routes: Route[] = [{
   path: '',
   children: [{
     path: 'sign-in',
     component: SignInComponent
-  }, {
-    path: 'sign-up',
-    component: SignUpComponent
   }, {
     path: '',
     redirectTo: 'sign-in',

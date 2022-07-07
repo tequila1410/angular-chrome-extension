@@ -1,18 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {AuthGuard} from "./auth/guards/auth.guard";
-import {OnlyGuestGuard} from "./auth/guards/only-guest.guard";
 
 const routes: Routes = [{
   path: 'auth',
-  loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
-  // canLoad: [OnlyGuestGuard],
-  // canActivate: [OnlyGuestGuard]
+  loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 }, {
   path: 'dashboard',
-  loadChildren: () => import('./products/dashboard/dashboard.module').then(m => m.DashboardModule),
-  // canLoad: [AuthGuard],
-  // canActivate: [AuthGuard]
+  loadChildren: () => import('./products/dashboard/dashboard.module').then(m => m.DashboardModule)
 }, {
   path: 'user-auth-handler',
   loadChildren: () => import('./core/modules/user-auth-handler/user-auth-handler.module').then(m => m.AuthUserHandlerModule),

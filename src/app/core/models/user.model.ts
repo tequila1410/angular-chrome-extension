@@ -8,7 +8,6 @@ export interface SubscriptionData {
 }
 
 export interface User {
-  // name: string;
   accountStatus: string;
   email: string;
   firstName: string;

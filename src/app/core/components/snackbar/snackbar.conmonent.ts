@@ -1,8 +1,8 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { SnackbarService } from './snackbar.service';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {SnackbarService} from './snackbar.service';
 
 @Component({
   selector: 'app-snackbar',
@@ -47,10 +47,18 @@ export class SnackbarComponent implements OnInit, OnDestroy {
    */
   destroy$: Subject<void>;
 
+  /**
+   * Constructor for SnackbarComponent
+   * @param {SnackbarService} snackbarService
+   */
   constructor(private snackbarService: SnackbarService) {
     this.destroy$ = new Subject<void>();
   }
 
+  /**
+   * Call on component init
+   * @return {void}
+   */
   ngOnInit(): void {
     this.snackbarService.snackbarState
       .pipe(takeUntil(this.destroy$))
@@ -77,6 +85,10 @@ export class SnackbarComponent implements OnInit, OnDestroy {
       })
   }
 
+  /**
+   * Call on component destroy
+   * @return {void}
+   */
   ngOnDestroy(): void {
     this.destroy$.next();
   }

@@ -31,7 +31,6 @@ import {
   setIcon,
   setProxy
 } from "../../utils/chrome-backgroud";
-import {MockDataApi} from "../../api/mock-data.api";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";

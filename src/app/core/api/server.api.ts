@@ -3,16 +3,24 @@ import {HttpClient} from "@angular/common/http";
 import {ServerApiModel} from "./server-api.model";
 import {Observable} from "rxjs";
 import {ProxyModel} from "../../auth/models/proxy.model";
-import {catchError, delay, map, timeout} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
 })
 export class ServerApi implements ServerApiModel {
-  constructor(private httpClient: HttpClient) {
 
+  /**
+   * Constructor for ServerApi
+   * @param {HttpClient} httpClient 
+   */
+  constructor(private httpClient: HttpClient) {
   }
 
+  /**
+   * Get servers data
+   * @return {Observable<{data: {serverList: ProxyModel[], tariffName: string}}>}
+   */
   getServersData(): Observable<{data: {serverList: ProxyModel[], tariffName: string}}> {
 
     return this.httpClient.get<{
@@ -60,7 +68,12 @@ export class ServerApi implements ServerApiModel {
       )
   }
 
-  testNetwork(proxy: any) {
+  /**
+   * Test network request for connecting to proxy
+   * @param {any} proxy 
+   * @return {Observable<any>}
+   */
+  testNetwork(proxy: any): Observable<any> {
     return this.httpClient.get('https://api.ipify.org?format=json', )
       .pipe(
         map((response) => {

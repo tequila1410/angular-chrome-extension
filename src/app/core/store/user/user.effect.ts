@@ -14,7 +14,6 @@ import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { SnackbarService } from "../../components/snackbar/snackbar.service";
 import { Respose } from "../../models/response.model";
-import { MockDataApi } from "../../api/mock-data.api";
 import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
 import {closeConnection, setServers} from "../vpn/vpn.actions";
@@ -217,7 +216,6 @@ export class UserEffects {
     private router: Router,
     private store: Store<AppState>,
     private snackbarService: SnackbarService,
-    private mockDataApi: MockDataApi,
     private recaptchaV3Service: ReCaptchaV3Service
   ) {
   }

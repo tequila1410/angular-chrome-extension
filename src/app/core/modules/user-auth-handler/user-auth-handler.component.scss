@@ -37,12 +37,6 @@
       }
     }
   }
-
-  h4 {
-    margin-top: 16px;
-    color: #85a832;
-    font-size: 14px;
-  }
   
   .lds-dual-ring:after {
     content: " ";
@@ -63,5 +57,11 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  h4 {
+    margin-top: 16px;
+    color: #85a832;
+    font-size: 14px;
   }
 }

@@ -73,10 +73,10 @@ export class PassPopupComponent implements OnInit, OnDestroy {
    
   /**
    * Constructor for PassPopupComponent
-   * @param {} popupService
-   * @param {} store 
+   * @param {PassPopupService} popupService
+   * @param {Store<AppState>} store 
    */
-  constructor(private popupService: PassPopupService, private store: Store<AppState>,) {
+  constructor(private popupService: PassPopupService, private store: Store<AppState>) {
     this.destroy$ = new Subject<void>();
     
     this.popupService.passPopupState
@@ -98,7 +98,7 @@ export class PassPopupComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Function for aplly password entered in popup
+   * Aplly password entered in popup
    * @return {void}
    */
   passApply(): void {

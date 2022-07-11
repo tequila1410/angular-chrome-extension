@@ -1,8 +1,12 @@
 import {Injectable} from "@angular/core";
-import {HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from "@angular/common/http";
+import {
+  HttpErrorResponse, HttpEvent,
+  HttpHandler, HttpInterceptor,
+  HttpRequest, HttpResponse
+} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {catchError, map} from "rxjs/operators";
-import {throwError} from "rxjs";
+import {Observable, throwError} from "rxjs";
 import {Store} from "@ngrx/store";
 import {AppState} from "../store/app.reducer";
 import {signOut} from "../store/user/user.actions";
@@ -10,11 +14,20 @@ import {signOut} from "../store/user/user.actions";
 @Injectable()
 export class RequestInterceptorService implements HttpInterceptor {
 
+  /**
+   * Constructor for RequestInterceptorService
+   * @param {Store<AppState>} store
+   */
   constructor(private store: Store<AppState>) {
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-
+  /**
+   * Intercepts & handle Http events
+   * @param {HttpRequest<any>} req 
+   * @param {HttpHandler} next 
+   * @return {Observable<HttpEvent<any>>}
+   */
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (req.url.includes('zoog_api')) {
       req = req.clone({url: req.url.replace('zoog_api', `${environment.zoogApiUrl}`)});
     }
@@ -22,9 +35,9 @@ export class RequestInterceptorService implements HttpInterceptor {
     return next.handle(this.addToken(req))
       .pipe(
         map(response => {
-
           if (response instanceof HttpResponse) {
             const newToken = response.headers.get('Authorization')?.split('Bearer ')[1];
+
             if (newToken)
               localStorage.setItem('token', newToken)
           }
@@ -47,20 +60,33 @@ export class RequestInterceptorService implements HttpInterceptor {
       );
   }
 
+  /**
+   * Adds bearer token
+   * @param {HttpRequest<any>} req
+   * @return {HttpRequest<any>}
+   */
   private addToken(req: HttpRequest<any>): HttpRequest<any> {
-
     const token = localStorage.getItem('token');
 
     return req.clone({setHeaders: {Authorization: 'Bearer ' + token}});
   }
 
-  private handle401Error(error: HttpErrorResponse) {
+  /**
+   * Handle 401 type error
+   * @param {HttpErrorResponse} error
+   * @return {Observable<never>}
+   */
+  private handle401Error(error: HttpErrorResponse): Observable<never> {
     this.store.dispatch(signOut());
     return throwError(error)
   }
 
-  private handle422Error(error: HttpErrorResponse) {
-    // this.snackBar.open(error.error.message, 'Close', {duration: 5000, panelClass: ['snack-bar-error']});
+  /**
+   * Handle 422 type error
+   * @param {HttpErrorResponse} error
+   * @return {Observable<never>}
+   */
+  private handle422Error(error: HttpErrorResponse): Observable<never> {
     return throwError(error);
   }
 }

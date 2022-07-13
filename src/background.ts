@@ -1,55 +1,56 @@
-import { onAuthRequiredHandler } from "./app/core/utils/chrome-backgroud";
-
-chrome.runtime.onInstalled.addListener(() => {
-  // chrome.webNavigation.onCompleted.addListener(() => {
-  //   chrome.tabs.query({ active: true, currentWindow: true }, ([{ id }]) => {
-  //     if (id) {
-  //       chrome.pageAction.show(id);
-  //     }
-  //   });
-  // }, { url: [{ urlMatches: 'google.com' }] });
-  chrome.proxy.settings.get(
-    {'incognito': true},
-    (config) => {
-      const proxy = config?.value?.rules?.singleProxy;
-      if (proxy)
-        chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-green.png')}`});
-    }
-  );
-});
-
-window.addEventListener('load', (event) => {
-  const username = localStorage.getItem('lg');
-  const password = localStorage.getItem('ps');
-
-  if (username && password) {
-    onAuthRequiredHandler(username, password)
-  }
-});
+import {clearProxy, onAuthRequiredHandler} from "./app/core/utils/chrome-backgroud";
+import {Observable} from "rxjs";
 
 let size = 0;
 let timeoutId: any;
-console.log('background.js');
+let setIntervalId: any;
+let startTrackDate: Date;
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('onMessage');
+  const n = 10000;
+
   if (message.type === 'startCheck') {
     chrome.webRequest.onCompleted.addListener(onCompletedListener, {urls: ['<all_urls>']}, ['responseHeaders']);
     chrome.webRequest.onBeforeRequest.addListener(onBeforeRequestListener, {urls: ['<all_urls>']}, ['requestBody'])
     chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeadersListener, {urls: ['<all_urls>']}, ['requestHeaders']);
-    timeoutId = setInterval(() => {
-      console.log((size / 1000000).toFixed(2) + ' Mb');
-    }, 3000);
+
+    chrome.storage.local.get(['startTrackDate'], (result) => {
+      startTrackDate = result.startTrackDate || new Date();
+      let s = startTrackDate.getTime() - (new Date()).getTime() + n;
+      timeoutId = setInterval(() => {
+        sendData(size).then(res => {
+          if(res.data.isLimit) {
+            clearProxy();
+          }
+          size = 0;
+        });
+      }, s);
+      setIntervalId = setInterval(() => {
+        console.log((size / 1000000).toFixed(2) + ' Mb');
+      }, 2000)
+    });
+
     console.log('start check');
   } else if (message.type === 'stopCheck') {
     chrome.webRequest.onCompleted.removeListener(onCompletedListener);
     chrome.webRequest.onBeforeRequest.removeListener(onBeforeRequestListener);
     chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeadersListener);
 
-    console.log((size / 1000000).toFixed(2) + ' Mb');
-    clearInterval(timeoutId);
-    sendData(size);
-    console.log('stop check');
-    size = 0;
+    chrome.storage.local.get(['nwUsage'], (result) => {
+      if (result.nwUsage) {
+        size += result.nwUsage;
+        localStorage.removeItem('nwUsage');
+        chrome.storage.local.remove('nwUsage');
+      }
+      console.log((size / 1000000).toFixed(2) + ' Mb');
+      clearInterval(timeoutId);
+      clearInterval(setIntervalId);
+      sendData(size).then((res) => {
+        const responseSend = size;
+        size -= responseSend;
+      });
+      console.log('stop check');
+    });
   }
 
   return Promise.resolve();
@@ -92,17 +93,50 @@ const onBeforeSendHeadersListener = (details: any) => {
   }
 }
 
-const sendData = (bytes: number) => {
-  fetch('http://localhost:3001/setSize', {
+const sendData = async (bytes: number): Promise<{data: {status: number, isLimit: boolean}}> => {
+  const user = localStorage.getItem('lg');
+  const response = await fetch('http://localhost:3001/setSize', {
     method: 'POST',
     body: JSON.stringify({
-      size: bytes
+      size: bytes,
+      user
     }),
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then(res => console.log('response: ', res))
-    .catch(error => {
-      console.log(error);
-    });
+  });
+
+  return response.json();
 }
+
+chrome.runtime.onInstalled.addListener(() => {
+  // chrome.webNavigation.onCompleted.addListener(() => {
+  //   chrome.tabs.query({ active: true, currentWindow: true }, ([{ id }]) => {
+  //     if (id) {
+  //       chrome.pageAction.show(id);
+  //     }
+  //   });
+  // }, { url: [{ urlMatches: 'google.com' }] });
+  chrome.proxy.settings.get(
+    {'incognito': true},
+    (config) => {
+      const proxy = config?.value?.rules?.singleProxy;
+      if (proxy) {
+        chrome.browserAction.setIcon({path: `${chrome.runtime.getURL('assets/images/icons/19x19-green.png')}`});
+        let msg = {
+          type: 'startCheck'
+        };
+        chrome.runtime.sendMessage('', msg);
+      }
+    }
+  );
+});
+
+window.addEventListener('load', (event) => {
+  const username = localStorage.getItem('lg');
+  const password = localStorage.getItem('ps');
+
+  if (username && password) {
+    onAuthRequiredHandler(username, password)
+  }
+});

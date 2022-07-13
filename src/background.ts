@@ -1,5 +1,5 @@
-import {clearProxy, onAuthRequiredHandler} from "./app/core/utils/chrome-backgroud";
-import {Observable} from "rxjs";
+import {clearBudge, clearProxy, onAuthRequiredHandler} from "./app/core/utils/chrome-backgroud";
+import {nanoid} from "nanoid";
 
 let size = 0;
 let timeoutId: any;
@@ -20,7 +20,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       timeoutId = setInterval(() => {
         sendData(size).then(res => {
           if(res.data.isLimit) {
-            clearProxy();
+            const notificationOptions = {
+              type: 'basic',
+              title: 'Zoog VPN',
+              iconUrl: 'assets/images/icons/19x19-green.png',
+              message: 'Limit reached!',
+            };
+            chrome.notifications.create(nanoid(), notificationOptions);
+            let msg = {
+              type: 'stopCheck'
+            };
+            chrome.runtime.sendMessage('', msg);
           }
           size = 0;
         });

@@ -9,7 +9,9 @@
     "webRequest",
     "webRequestBlocking",
     "cookies",
-    "browsingData"
+    "browsingData",
+    "storage",
+    "notifications"
   ],
   "background": {
     "scripts": [

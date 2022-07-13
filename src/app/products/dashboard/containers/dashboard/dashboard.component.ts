@@ -146,6 +146,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((isVPNConnected) => {
         this.isConnected = isVPNConnected;
         console.log('is vpn connected: ', this.isConnected);
+        this.cdr.detectChanges();
       });
 
     this.store
@@ -153,6 +154,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isConnecting) => {
         this.isConnecting = isConnecting;
+        this.cdr.detectChanges();
       });
 
     this.store

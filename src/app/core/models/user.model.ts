@@ -16,3 +16,10 @@ export interface User {
   subscriptionData: SubscriptionData;
   verified: number;
 }
+
+export interface AuthCred {
+  authCredentials: {
+    username: string | null;
+    password: string | null;
+  }
+}

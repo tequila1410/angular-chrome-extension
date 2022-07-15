@@ -4,15 +4,24 @@ import {Observable, of} from "rxjs";
 import {ProxyModel} from "../../auth/models/proxy.model";
 import {HttpClient} from "@angular/common/http";
 import {catchError, delay, map} from "rxjs/operators";
-import { User } from "../models/user.model";
+import {User} from "../models/user.model";
 
 @Injectable({
   providedIn: "root"
 })
 export class MockDataApi implements ServerApiModel {
+
+  /**
+   * Constructor for MockDataApi
+   * @param {HttpClient} httpClient
+   */
   constructor(private httpClient: HttpClient) {
   }
 
+  /**
+   * Get test servers data
+   * @return {Observable<{data: {serverList: ProxyModel[], tariffName: string}}>}
+   */
   getServersData(): Observable<{data: {serverList: ProxyModel[], tariffName: string}}> {
     const testServers = [
       '45.90.249.65',
@@ -65,7 +74,12 @@ export class MockDataApi implements ServerApiModel {
     }).pipe(delay(1000))
   }
 
-  testNetwork(proxy: any) {
+  /**
+   * Test network request for connecting to proxy
+   * @param {any} proxy
+   * @return {Observable<any>}
+   */
+  testNetwork(proxy: any): Observable<any> {
     return this.httpClient.get('https://api.ipify.org?format=json', )
       .pipe(
         map((response) => {
@@ -79,6 +93,12 @@ export class MockDataApi implements ServerApiModel {
       )
   }
 
+  /**
+   * Get test user data by fingerprint
+   * @param {string} fingerprint
+   * @param {string} token
+   * @return {Observable<{data: {token: string, user: User}}>}
+   */
   getTestUserData(fingerprint: string, token: string): Observable<{data: {token: string, user: User}}> {
     //Test user: setrarorto@vusra.com / password: setrarorto@vusra.com
     return of({

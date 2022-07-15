@@ -6,7 +6,7 @@ import {getCookie} from '../../utils/chrome-backgroud';
 import {authenticateSuccess, signUpFP} from '../../store/user/user.actions';
 import {getFingerPrint} from '../../utils/fingerprint';
 import {ReCaptchaV3Service} from 'ng-recaptcha';
-import { catchError, tap } from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {environment} from "../../../../environments/environment";
 
 @Component({
@@ -18,16 +18,30 @@ export class AuthUserHandlerComponent implements OnInit {
 
   readonly APP_URL: string = environment.zoogAppUrl;
 
-  constructor(private router: Router,
-              private store: Store<AppState>,
-              private recaptchaV3Service: ReCaptchaV3Service) {
-
+  /**
+   * Constructor for AuthUserHandlerComponent
+   * @param {Router} router
+   * @param {Store<AppState>} store
+   * @param {ReCaptchaV3Service} recaptchaV3Service
+   */
+  constructor(
+    private router: Router,
+    private store: Store<AppState>,
+    private recaptchaV3Service: ReCaptchaV3Service) {
   }
 
-  ngOnInit() {
+  /**
+   * Call on component init
+   * @return {void}
+   */
+  ngOnInit(): void {
     this.authenticateUserHandler();
   }
 
+  /**
+   * Handler for user authentication
+   * @return {void}
+   */
   private authenticateUserHandler(): void {
     const user = localStorage.getItem('user');
     const token = localStorage.getItem('token');
@@ -57,6 +71,10 @@ export class AuthUserHandlerComponent implements OnInit {
     }
   }
 
+  /**
+   * Function for sing up with fingerprint
+   * @param {string} fingerprint 
+   */
   private signUpFP(fingerprint: string): void {
     this.recaptchaV3Service.execute('signUpFPAction')
       .pipe(

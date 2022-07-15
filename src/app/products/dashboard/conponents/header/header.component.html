@@ -1,46 +1,49 @@
-<div class="dashboard__header">
+<div class="dashboard-header">
   <span class="material-icons burger" id="burger">menu</span>
+  
   <div *ngIf="isMenuVisible" [@fadeIn]="'in'" [class.show]="isMenuVisible" class="menu-content" id="menu-content">
-
     <h4 title="{{currentUserName}}">
       <span class="material-icons">person</span>
       <span>{{currentUserName}}</span>
     </h4>
+
     <ul>
       <li (click)="goToSettings.emit()">
         <div class="li-with-icon">
           <span class="material-icons">settings</span>
-          Settings
+          <span>Settings</span>
         </div>
       </li>
+
       <li>
         <a href="https://zoogvpn.com/privacy/" target="_blank" class="li-with-icon">
           <span class="material-icons">privacy_tip</span>
-          <span>Privacy</span>&nbsp;
-<!--          <span class="material-icons">output</span>-->
+          <span>Privacy</span>
         </a>
       </li>
+
       <li>
         <a href="https://zoogvpn.com/contact/" target="_blank" class="li-with-icon">
           <span class="material-icons">contact_support</span>
-          <span>Contact Support</span>&nbsp;
-<!--          <span class="material-icons">output</span>-->
+          <span>Contact Support</span>
         </a>
       </li>
+
       <li>
         <a href="https://app.zoogvpn.com/plans" target="_blank" class="li-with-icon">
           <span class="material-icons">sell</span>
-          <span>Pricing</span>&nbsp;
-<!--          <span class="material-icons">output</span>-->
+          <span>Pricing</span>
         </a>
       </li>
+
       <li (click)="signOut.emit()">
         <div class="li-with-icon">
           <span class="material-icons">logout</span>
-          Sign out
+          <span>Sign out</span>
         </div>
       </li>
     </ul>
   </div>
+
   <h3>ZoogVPN</h3>
 </div>

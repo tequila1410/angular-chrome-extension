@@ -1,6 +1,6 @@
 import {createAction, props} from "@ngrx/store";
 import {ProxyModel} from "../../../auth/models/proxy.model";
-import { ExclusionLink } from "../../models/exclusion-link.model";
+import {ExclusionLink} from "../../models/exclusion-link.model";
 
 export const connecting = createAction(
   '[VPN Connecting]',

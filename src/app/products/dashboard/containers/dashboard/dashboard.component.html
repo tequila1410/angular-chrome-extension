@@ -1,4 +1,4 @@
-<section class="dashboard" [@fadeIn]="'in'">
+<section [@fadeIn]="'in'">
   <app-dashboard-header
     (signOut)="signOut()"
     (goToSettings)="goToSettings()"
@@ -16,9 +16,6 @@
     [currentUser]="currentUser">
   </app-plan-info>
 
-<!--  <app-timer>-->
-<!--  </app-timer>-->
-
   <app-vpn-toggle
     [isConnected]="isConnected"
     [isConnecting]="isConnecting"
@@ -29,5 +26,4 @@
   </app-vpn-toggle>
 
   <app-pass-popup></app-pass-popup>
-
 </section>

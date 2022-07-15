@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
 import {Route, RouterModule} from "@angular/router";
-import { AuthUserHandlerComponent } from "./user-auth-handler.component";
+import {AuthUserHandlerComponent} from "./user-auth-handler.component";
 
 const routes: Route[] = [{
   path: '',

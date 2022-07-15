@@ -1,8 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExclusionDbService } from 'src/app/core/utils/indexedDB/exclusion-db.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
+import {Router} from '@angular/router';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   animate,
   state,
@@ -10,10 +9,10 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/core/store/app.reducer';
-import { exclusionsMode, getRegularExclusions, getSelectiveExclusions, isVPNConnected } from 'src/app/core/store/vpn/vpn.selector';
-import { take, takeUntil } from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {AppState} from 'src/app/core/store/app.reducer';
+import {exclusionsMode, getRegularExclusions, getSelectiveExclusions, isVPNConnected} from 'src/app/core/store/vpn/vpn.selector';
+import {take, takeUntil} from 'rxjs/operators';
 import {
   setExclusionsMode,
   addRegularExclusion, addSelectiveExclusion,
@@ -22,7 +21,7 @@ import {
   changeRegularExclusion,
   changeSelectiveExclusion,
   closeConnection} from 'src/app/core/store/vpn/vpn.actions';
-import { ExclusionLink } from 'src/app/core/models/exclusion-link.model';
+import {ExclusionLink} from 'src/app/core/models/exclusion-link.model';
 
 @Component({
   selector: 'app-settings',
@@ -36,11 +35,30 @@ import { ExclusionLink } from 'src/app/core/models/exclusion-link.model';
   ],
 })
 export class SettingsComponent implements OnInit, OnDestroy {
+
+  /**
+   * Change exclusions mode form
+   * @type {FormGroup}
+   */
   modeForm!: FormGroup;
 
+  /**
+   * Variable for hide/show input
+   * @type {boolean}
+   */
   inputVisible: boolean = false;
 
-  websiteList!: ExclusionLink[];
+  /**
+   * Excluded site form
+   * @type {FormGroup}
+   */
+  excludedSiteForm!: FormGroup;
+
+  /**
+   * List of excluded sites
+   * @type {ExclusionLink[]}
+   */
+  exclusionsList!: ExclusionLink[];
 
   /**
    * Check if proxy is connected
@@ -48,15 +66,25 @@ export class SettingsComponent implements OnInit, OnDestroy {
    */
   isConnected: boolean = false;
 
-  webSiteForm!: FormGroup;
-
+  /**
+   * Subject to destroy all subscriptions on component destroy
+   * @type {Subject<void>}
+   */
   destroy$: Subject<void> = new Subject<void>();
 
-  constructor(private router: Router,
-              private fb: FormBuilder,
-              private store: Store<AppState>) {
-    this.webSiteForm = this.fb.group({
-      webSite: new FormControl('', {
+  /**
+   * Constructor for SettingsComponent
+   * @param {Router} router 
+   * @param {FormBuilder} fb 
+   * @param {Store<AppState>} store 
+   */
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private store: Store<AppState>
+  ) {
+    this.excludedSiteForm = this.fb.group({
+      excludedSite: new FormControl('', {
         validators: [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]
       }),
     });
@@ -71,22 +99,25 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Call on component init
+   * @return {void}
+   */
   ngOnInit(): void {
     if (this.modeForm.value.mode === 'regularMode') {
       this.store
       .select(getRegularExclusions)
       .pipe(take(1))
       .subscribe(regularExclusions => {
-        this.websiteList = regularExclusions;
+        this.exclusionsList = regularExclusions;
       })
-
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
       this.store
       .select(getSelectiveExclusions)
       .pipe(take(1))
       .subscribe(selectiveExclusions => {
-        this.websiteList = selectiveExclusions;
+        this.exclusionsList = selectiveExclusions;
       })
     }
 
@@ -98,11 +129,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Redirect to dashboard page
+   * @return {void}
+   */
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
-  modeChange(event: any): void {
+  /**
+   * Detect current exclusion mode & set chosen exclusions list
+   * @param {any} event
+   * @return {void}
+   */
+  exclusionModeChange(event: any): void {
     if (this.isConnected) {
       this.store.dispatch(closeConnection());
     }
@@ -114,27 +154,35 @@ export class SettingsComponent implements OnInit, OnDestroy {
       .select(getRegularExclusions)
       .pipe(take(1))
       .subscribe(regularExclusions => {
-        this.websiteList = regularExclusions;
+        this.exclusionsList = regularExclusions;
       })
-
     }
     if (event.target.value === 'selectiveMode') {
       this.store
       .select(getSelectiveExclusions)
       .pipe(take(1))
       .subscribe(selectiveExclusions => {
-        this.websiteList = selectiveExclusions;
+        this.exclusionsList = selectiveExclusions;
       })
     }
   }
 
+  /**
+   * Changes input visibility
+   * @return {void}
+   */
   inputVisibility(): void {
     this.inputVisible = !this.inputVisible;
-    this.webSiteForm.reset();
+    this.excludedSiteForm.reset();
   }
 
-  addWebsite(event: any): void {
-    if (this.webSiteForm.valid) {
+  /**
+   * Add excluded site to chosen exclusion list
+   * @param {any} event 
+   * @return {void}
+   */
+  addExcludedSite(event: any): void {
+    if (this.excludedSiteForm.valid) {
       let linkObject: ExclusionLink = {
         link: event.target.value,
         created: new Date(),
@@ -147,22 +195,34 @@ export class SettingsComponent implements OnInit, OnDestroy {
       if (this.modeForm.value.mode === 'selectiveMode') {
         this.store.dispatch(addSelectiveExclusion({selectiveExclusion: linkObject}));
       }
-      this.websiteList.push(linkObject);
+
+      this.exclusionsList.push(linkObject);
       this.inputVisible = false;
-      this.webSiteForm.reset();
+      this.excludedSiteForm.reset();
     }
   }
 
-  deleteWebsite(linkName: string, itemIndex: number): void {
+  /**
+   * Delete excluded site from chosen exclusion list
+   * @param {string} linkName 
+   * @param {itemIndex} itemIndex
+   * @return {void}
+   */
+  deleteExcludedSite(linkName: string, itemIndex: number): void {
     if (this.modeForm.value.mode === 'regularMode') {
       this.store.dispatch(deleteRegularExclusion({linkName}));
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
       this.store.dispatch(deleteSelectiveExclusion({linkName}));
     }
-    this.websiteList.splice(itemIndex, 1)
+
+    this.exclusionsList.splice(itemIndex, 1)
   }
 
+  /**
+   * Clear chosen exclusion list
+   * @return {void}
+   */
   clearChosenList(): void {
     if (this.modeForm.value.mode === 'regularMode') {
       this.store.dispatch(clearChosenExclusions({chosenMode: 'regularMode'}));
@@ -170,28 +230,47 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.modeForm.value.mode === 'selectiveMode') {
       this.store.dispatch(clearChosenExclusions({chosenMode: 'selectiveMode'}));
     }
-    this.websiteList = [];
+    
+    this.exclusionsList = [];
   }
 
+  /**
+   * Changes the state of the exclusion
+   * @param {any} event 
+   * @param {ExclusionLink} exclusion
+   * @return {void} 
+   */
   enableChange(event: any, exclusion: ExclusionLink): void {
-    let newLinkObject: ExclusionLink = {
+    let newExclusionObject: ExclusionLink = {
       link: exclusion.link,
       created: exclusion.created,
       enabled: event.target.checked
     }
+
     if (this.modeForm.value.mode === 'regularMode') {
-      this.store.dispatch(changeRegularExclusion({regularExclusion: newLinkObject}));
+      this.store.dispatch(changeRegularExclusion({regularExclusion: newExclusionObject}));
     }
     if (this.modeForm.value.mode === 'selectiveMode') {
-      this.store.dispatch(changeSelectiveExclusion({selectiveExclusion: newLinkObject}));
+      this.store.dispatch(changeSelectiveExclusion({selectiveExclusion: newExclusionObject}));
     }
+
     exclusion.enabled = event.target.checked;
   }
 
-  trackByWebsiteLink(index: number, website: ExclusionLink) {
+  /**
+   * Used to change only chosen exclusion
+   * @param {number} index 
+   * @param {ExclusionLink} website 
+   * @return {string}
+   */
+  trackByWebsiteLink(index: number, website: ExclusionLink): string {
     return website.link;
   }
 
+  /**
+   * Call on component destroy
+   * @return {void}
+   */
   ngOnDestroy(): void {
     this.destroy$.next();
   }

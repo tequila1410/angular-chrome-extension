@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../core/store/app.reducer";
@@ -14,36 +14,56 @@ import {getFingerPrint} from "../../../core/utils/fingerprint";
 })
 export class SignInComponent implements OnInit {
 
-  form: FormGroup;
+  /**
+   * Form group for sign in inputs
+   * @type {FormGroup}
+   */
+  signInForm: FormGroup;
 
-  constructor(private store: Store<AppState>,
-              private recaptchaV3Service: ReCaptchaV3Service) {
-    this.form = new FormGroup({
+  /**
+   * Constructor for SignInComponent
+   * @param {Store<AppState>} store 
+   * @param {ReCaptchaV3Service} recaptchaV3Service 
+   */
+  constructor(private store: Store<AppState>, private recaptchaV3Service: ReCaptchaV3Service) {
+    this.signInForm = new FormGroup({
       email: new FormControl(''),
       password: new FormControl('')
     })
   }
 
+  /**
+   * Call on component init
+   * @return {void}
+   */
   ngOnInit(): void {
   }
 
-  loginUser() {
+  /**
+   * Function for standard user login
+   * @return {void}
+   */
+  loginUser(): void {
     this.recaptchaV3Service.execute('signInAction')
       .pipe(
         take(1),
         tap(token => {
-          const {email, password} = this.form.value;
+          const {email, password} = this.signInForm.value;
           this.store.dispatch(authenticate({email, password, token}));
         }),
         catchError((err, caught) => {
-          this.form.enable();
+          this.signInForm.enable();
           return caught;
         })
       )
       .subscribe();
   }
 
-  loginByFingerPrint() {
+  /**
+   * Function for user login by fingerprint
+   * @return {void}
+   */
+  loginByFingerPrint(): void {
     this.recaptchaV3Service.execute('signUpFPAction')
       .pipe(
         tap(token => {

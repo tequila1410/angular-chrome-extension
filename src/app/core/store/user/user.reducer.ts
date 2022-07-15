@@ -8,7 +8,6 @@ import {
   signOutSuccess,
   signUpFP,
   signUpFPSuccess,
-  updateUserDataSuccess,
   signInFPError
 } from "./user.actions";
 
@@ -31,32 +30,8 @@ const _userReducer = createReducer(
   on(signOutSuccess, state => ({...state, authenticated: false, user: undefined})),
   on(signUpFP, state => ({...state, loading: true})),
   on(signUpFPSuccess, (state, userData: {token: string, user: User}) => ({loading: false, authenticated: true, user: userData.user})),
-  on(signInFPError, state => ({...state, loading: false})),
-  // on(verifyUserActionSuccess, state => {
-  //   if (state.user)
-  //     state = {...state, user: {...state.user, verified: 1}};
-  //   return state;
-  // }),
-  // on(setUserSubscriptionStatus, (state, data) => {
-  //   if (state.user) {
-  //     state = {...state, user: {...state.user, accountStatus: data.status}}
-  //     renewLocalStorage(state.user);
-  //   }
-  //   return state;
-  // }),
-  // on(setNewName, (state, data) => {
-  //   if (state.user) {
-  //     state = {...state, user: {...state.user, firstName: data.firstName}}
-  //     renewLocalStorage(state.user);
-  //   }
-  //   return state;
-  // }),
-  on(updateUserDataSuccess, (state, userData) => state = {...state, user: userData.data, authenticated: true})
+  on(signInFPError, state => ({...state, loading: false}))
 )
-
-function renewLocalStorage(user: User | undefined) {
-  localStorage.setItem('user', JSON.stringify(user));
-}
 
 export function userReducer(state: UserState | undefined, action: Action) {
   return _userReducer(state, action)

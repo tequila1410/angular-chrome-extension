@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {isInteger, isNumberFinite, isPositive, toDecimal} from "../utils/utils";
 
 export type ByteUnit = 'B' | 'kB' | 'KB' | 'MB' | 'GB' | 'TB';
@@ -8,6 +8,10 @@ export type ByteUnit = 'B' | 'kB' | 'KB' | 'MB' | 'GB' | 'TB';
 })
 export class BytesPipe implements PipeTransform {
 
+  /**
+   * Input format options
+   * @type {{ [key: string]: { max: number; prev?: ByteUnit } }}
+   */
   static formats: { [key: string]: { max: number; prev?: ByteUnit } } = {
     B: { max: 1024 },
     kB: { max: Math.pow(1024, 2), prev: 'B' },
@@ -17,7 +21,16 @@ export class BytesPipe implements PipeTransform {
     TB: { max: Number.MAX_SAFE_INTEGER, prev: 'GB' },
   };
 
-  transform(input: any, decimal: number = 0, from: ByteUnit = 'B', to?: ByteUnit, useUtilsTitle: boolean = true): any {
+  /**
+   * Transforms incoming data to display the final result on the screen
+   * @param {number} input 
+   * @param {number} decimal 
+   * @param {ByteUnit} from 
+   * @param {ByteUnit} to 
+   * @param {boolean} useUtilsTitle 
+   * @return {any}
+   */
+  transform(input: number, decimal: number = 0, from: ByteUnit = 'B', to?: ByteUnit, useUtilsTitle: boolean = true): any {
     if (!(isNumberFinite(input) && isNumberFinite(decimal) && isInteger(decimal) && isPositive(decimal))) {
       return input;
     }
@@ -49,11 +62,24 @@ export class BytesPipe implements PipeTransform {
     }
   }
 
+  /**
+   * Returns the final result of the format
+   * @param {number} result 
+   * @param {string} unit 
+   * @param {boolean} useUtilsTitle 
+   * @return {string}
+   */
   static formatResult(result: number, unit: string, useUtilsTitle: boolean): string {
     return useUtilsTitle ? `${result}${unit}` : `${result}`;
   }
 
-  static calculateResult(format: { max: number; prev?: ByteUnit }, bytes: number) {
+  /**
+   * Returns the end result of the calculations
+   * @param {{ max: number; prev?: ByteUnit }} format 
+   * @param {number} bytes 
+   * @return {number}
+   */
+  static calculateResult(format: { max: number; prev?: ByteUnit }, bytes: number): number {
     const prev = format.prev ? BytesPipe.formats[format.prev] : undefined;
     return prev ? bytes / prev.max : bytes;
   }

@@ -14,13 +14,16 @@
     <div class="settings-content-main">
       <div class="exclusions">
         <h2 class="exclusions-title">Exclusions</h2>
-        <form class="exclusions-modes" [formGroup]="modeForm" (change)="modeChange($event)">
+      
+        <form class="exclusions-modes" [formGroup]="modeForm" (change)="exclusionModeChange($event)">
           <h3>Operating Mode</h3>
+       
           <div class="exclusions-modes-item">
             <input type="radio" id="regularMode" value="regularMode" formControlName="mode">
             <label for="regularMode">Regular mode</label>
             <p>ZoogVPN won't work on websites from the list below</p>
           </div>
+       
           <div class="exclusions-modes-item">
             <input type="radio" id="selectiveMode" value="selectiveMode" formControlName="mode">
             <label for="selectiveMode">Selective mode</label>
@@ -29,29 +32,31 @@
         </form>
 
         <div class="exclusions-controls">
-
           <button (click)="inputVisibility()" class="exclusions-controls-add">+ ADD A WEBSITE</button>
-
           <button (click)="clearChosenList()" class="exclusions-controls-delete">DELETE ALL</button>
 
           <ul class="exclusions-controls-list">
             <li *ngIf="inputVisible" class="exclusions-controls-list-input">
-              <form [formGroup]="webSiteForm">
-                <input id="webSite" formControlName="webSite" type="url"
+              <form [formGroup]="excludedSiteForm">
+                <input id="excludedSite" formControlName="excludedSite" type="url"
                   (blur)="inputVisibility()"
-                  (change)="addWebsite($event)"
-                  (click)="addWebsite($event)">
-                <label for="webSite" *ngIf="webSiteForm.controls['webSite'].errors?.pattern">Please provide valid url</label>
+                  (change)="addExcludedSite($event)"
+                  (click)="addExcludedSite($event)">
+                <label for="excludedSite" *ngIf="excludedSiteForm.controls['excludedSite'].errors?.pattern">
+                  Please provide valid url
+                </label>
               </form>
             </li>
-            <li *ngFor="let website of websiteList; trackBy: trackByWebsiteLink; let itemIndex = index" class="exclusions-controls-list-item">
+            
+            <li *ngFor="let excludedSite of exclusionsList; trackBy: trackByWebsiteLink; let itemIndex = index" class="exclusions-controls-list-item">
               <span>
                 <span>
-                  <input type="checkbox" [id]="'checkbox' + itemIndex" [checked]="website.enabled" (change)="enableChange($event, website)">
-                  <label [for]="'checkbox' + itemIndex">{{website.link}}</label>
+                  <input type="checkbox" [id]="'checkbox' + itemIndex"
+                        [checked]="excludedSite.enabled" (change)="enableChange($event, excludedSite)">
+                  <label [for]="'checkbox' + itemIndex">{{excludedSite.link}}</label>
                 </span>
 
-                <button (click)="deleteWebsite(website.link, itemIndex)" class="exclusions-controls-list-btn">
+                <button (click)="deleteExcludedSite(excludedSite.link, itemIndex)" class="exclusions-controls-list-btn">
                   <span class="material-icons close">close</span>
                 </button>
               </span>

@@ -8,7 +8,6 @@ export interface SubscriptionData {
 }
 
 export interface User {
-  // name: string;
   accountStatus: string;
   email: string;
   firstName: string;
@@ -16,4 +15,11 @@ export interface User {
   secondName: string;
   subscriptionData: SubscriptionData;
   verified: number;
+}
+
+export interface AuthCred {
+  authCredentials: {
+    username: string | null;
+    password: string | null;
+  }
 }

@@ -1,15 +1,19 @@
 <div class="vpn-toggle">
   <h4>Selected server IP: {{selectedServer?.id}}</h4>
-  <span class="toggle-btn" [class]="!connectAvailable ? 'connectionError' : isConnected ? 'connected' : isConnecting ? 'connecting' : isConnectionError ? 'connectionError' : ''"
-        (click)="vpnConnectToggle.emit()">
+  
+  <div class="toggle-btn" [class]="!connectAvailable ? 'connectionError' : isConnected ? 'connected' : isConnecting ? 'connecting' : isConnectionError ? 'connectionError' : ''"
+      (click)="vpnConnectToggle.emit()">
     <span class="material-icons">power_settings_new</span>
-  </span>
+  </div>
+
   <span class="lds-dual-ring" [class]="isConnected ? 'connected' : isConnecting ? 'connecting' : isConnectionError ? 'connectionError' : ''"></span>
+  
   <div class="label">
-    <span *ngIf="connectAvailable; else limit" class="label-text">
+    <div *ngIf="connectAvailable; else limit" class="label-text">
       <span>{{isConnected ? 'Connected' : isConnecting ? 'Connecting' : isConnectionError ? 'Connection Error' : 'Disconnected'}}</span>
       <span>{{isConnecting ? '' : isConnectionError ? 'Try another server' : ''}}</span>
-    </span>
+    </div>
+    
     <ng-template #limit>Limit is reached</ng-template>
   </div>
 </div>

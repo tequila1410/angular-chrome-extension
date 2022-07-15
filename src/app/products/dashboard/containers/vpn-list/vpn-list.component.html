@@ -8,8 +8,9 @@
 
   <div class="location-section-best">
     <div class="search">
-      <input [formControl]="formControl" type="text" placeholder="Search location">
+      <input [formControl]="searchLocation" type="text" placeholder="Search location">
     </div>
+
     <input type="checkbox" id="checkbox" name="Best Location" [formControl]="bestPingCheckbox">
     <label for="checkbox">Auto-connect to the best VPN server</label>
   </div>
@@ -19,15 +20,18 @@
       <h3 class="label">
         Recently Used
       </h3>
+
       <div *ngFor="let proxy of proxyDataUsed; trackBy: trackByProxyId" class="location" (click)="selectLocation(proxy)">
         <div class="label">
-          <div class="vpn-logo"><img [src]="proxy.image" alt=""></div>
-          <div class="vpn-name">{{proxy.locationName}}</div>
+          <span class="vpn-logo"><img [src]="proxy.image" alt="vpn logo"></span>
+          <span class="vpn-name">{{proxy.locationName}}</span>
         </div>
+
         <span class="icon icon-play" [class]="proxy.isAllowedStream ? 'icon-green' : 'icon-gray'"></span>
         <span class="icon icon-p2p" [class]="proxy.isAllowedP2P ? 'icon-green' : 'icon-gray'"></span>
-        <div class="host">{{proxy.id}}</div>
-        <div class="ping">{{proxy.ping}} ms</div>
+        
+        <span class="host">{{proxy.id}}</span>
+        <span class="ping">{{proxy.ping}} ms</span>
       </div>
     </div>
 
@@ -35,15 +39,18 @@
       <h3 class="label">
         All locations ({{proxyDataFilter.length}})
       </h3>
+
       <div *ngFor="let proxy of proxyDataFilter; trackBy: trackByProxyId" class="location" (click)="selectLocation(proxy)">
         <div class="label">
-          <div class="vpn-logo"><img [src]="proxy.host !== 'locked' ? proxy.image : '../../../../../assets/images/icons/19x19-grey.png'" alt=""></div>
-          <div class="vpn-name">{{proxy.locationName}}</div>
+          <span class="vpn-logo"><img [src]="proxy.host !== 'locked' ? proxy.image : '../../../../../assets/images/icons/19x19-grey.png'" alt=""></span>
+          <span class="vpn-name">{{proxy.locationName}}</span>
         </div>
+
         <span class="icon icon-play" [class]="proxy.isAllowedStream ? 'icon-green' : 'icon-gray'"></span>
         <span class="icon icon-p2p" [class]="proxy.isAllowedP2P ? 'icon-green' : 'icon-gray'"></span>
-        <div class="host" [class.blur]="proxy.host === 'locked'">{{proxy.host !== 'locked' ? proxy.id : '0.0.0.0'}}</div>
-        <div class="ping" [class.blur]="proxy.host === 'locked'">{{proxy.ping}} ms</div>
+        
+        <span class="host" [class.blur]="proxy.host === 'locked'">{{proxy.host !== 'locked' ? proxy.id : '0.0.0.0'}}</span>
+        <span class="ping" [class.blur]="proxy.host === 'locked'">{{proxy.ping}} ms</span>
       </div>
     </div>
   </div>

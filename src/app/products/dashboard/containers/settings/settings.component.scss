@@ -6,9 +6,9 @@
   background-color: #202428;
   color: #fff;
 
-  p {
-    margin: 0;
-  }
+  // p {
+  //   margin: 0;
+  // }
 
   &-header {
     padding: 16px;
@@ -49,11 +49,6 @@
         padding: 6px 0;
         font-size: 14px;
         list-style-type: none;
-        cursor: pointer;
-
-        &:hover {
-          text-decoration: underline;
-        }
       }
     }
 
@@ -90,6 +85,19 @@
         }
 
         &-controls {
+          &-add {
+            background-color: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: $accent-color;
+            transition: 0.3s;
+
+            &:hover {
+              color: #9bd802;
+            }
+          }
+          
           &-delete {
             border: none;
             background-color: transparent;
@@ -102,19 +110,6 @@
 
             &:hover {
               color: #fff;
-            }
-          }
-
-          &-add {
-            background-color: transparent;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            color: $accent-color;
-            transition: 0.3s;
-
-            &:hover {
-              color: #9bd802;
             }
           }
 

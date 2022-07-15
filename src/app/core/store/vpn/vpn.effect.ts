@@ -2,13 +2,10 @@ import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {
   bestServerSelect, bestServerSelectSuccess,
-  closeConnection,
-  closeConnectionSuccess,
-  connecting, connectingError,
-  connectingSuccess,
+  closeConnection, closeConnectionSuccess,
+  connecting, connectingSuccess, connectingError,
   setRecentlyUsed, setRecentlyUsedSuccess,
-  setServers,
-  setServersSuccess,
+  setServers, setServersSuccess,
   setExclusionsMode, setExclusionsModeSuccess,
   setRegularExclusionsSuccess, setSelectiveExclusionsSuccess,
   setSelectiveExclusions, setRegularExclusions,
@@ -20,22 +17,19 @@ import {
   changeRegularExclusion, changeSelectiveExclusion,
   changeRegularExclusionSuccess, changeSelectiveExclusionSuccess,
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap, switchMap, tap, timeout, withLatestFrom} from "rxjs/operators";
-import {from, of} from "rxjs";
-import pacGenerator from "../../utils/pacGenerator";
+import {catchError, exhaustMap, map, mergeMap, switchMap, withLatestFrom} from "rxjs/operators";
+import {from} from "rxjs";
 import {
   checkListener, clearBudge,
-  clearProxy, getProxy, getProxyObservable, handlerBehaviorChanged,
+  clearProxy, getProxyObservable, handlerBehaviorChanged,
   removeOnAuthRequiredHandler,
-  sendMessage, setBadge,
+  setBadge,
   setIcon,
   setProxy
 } from "../../utils/chrome-backgroud";
-import {MockDataApi} from "../../api/mock-data.api";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";
-import { ExclusionLink } from "../../models/exclusion-link.model";
 import {ServerApi} from "../../api/server.api";
 
 @Injectable()
@@ -46,6 +40,7 @@ export class VpnEffect {
               private api: ServerApi,
               private exclusionDB: ExclusionDbService) {
   }
+  
   $setExclusionsMode = createEffect(() =>
     this.actions$.pipe(
       ofType(setExclusionsMode),

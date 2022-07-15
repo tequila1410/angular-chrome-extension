@@ -4,17 +4,16 @@ import {
   authenticate,
   authenticateError,
   authenticateSuccess, signInFPError,
-  signOut, signOutSuccess, signUpFP, signUpFPSuccess,
+  signOut, signOutSuccess, signUpFP
 } from "./user.actions";
-import {catchError, exhaustMap, map, mergeMap, tap, withLatestFrom} from "rxjs/operators";
+import {catchError, exhaustMap, map, mergeMap, withLatestFrom} from "rxjs/operators";
 import {User} from "../../models/user.model";
 import {AuthApi} from "../../../auth/api/auth.api";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
-import { SnackbarService } from "../../components/snackbar/snackbar.service";
-import { Respose } from "../../models/response.model";
-import { MockDataApi } from "../../api/mock-data.api";
+import {SnackbarService} from "../../components/snackbar/snackbar.service";
+import {Respose} from "../../models/response.model";
 import {UserCred} from "../../models/user-cred.enum";
 import {ReCaptchaV3Service} from "ng-recaptcha";
 import {closeConnection, setServers} from "../vpn/vpn.actions";
@@ -30,7 +29,6 @@ export class UserEffects {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('tariffName');
-    localStorage.removeItem('vrfshwn');
     localStorage.removeItem('isBestServerSelected');
     localStorage.removeItem('recentlyUsed');
     localStorage.removeItem(UserCred.userLogin);
@@ -83,8 +81,6 @@ export class UserEffects {
         ofType(signOut),
         withLatestFrom(this.store),
         map(([data, storeState]) => {
-          // update client limits
-          // maybe routing somewhere
           storeState.vpn.serverList.forEach(server => {
             clearProxyCookie(server.host);
           });
@@ -120,19 +116,7 @@ export class UserEffects {
               return of(signInFPError({fingerprint: this.actionTmp.fingerprint}))
             })
           );
-      }),
-      // map(response => {
-      //   this.router.navigate(['/dashboard']);
-      //   this.setUserToLocalStorage(response.data.token, response.data.user);
-      //   this.setUserCredsToLocalStorage(response.data.user.email, this.actionTmp.fingerprint);
-      //
-      //   return authenticateSuccess({...response.data})
-      // }),
-      // catchError((error, caught) => {
-      //   signInFPError({fingerprint: this.actionTmp.fingerprint});
-      //   console.log('errrooooooooooooor', this.actionTmp.fingerprint)
-      //   return caught;
-      // })
+      })
     )
   )
 
@@ -184,30 +168,7 @@ export class UserEffects {
               return of(authenticateError(error));
             })
           )
-      }),
-      // map(response => {
-      //   const responseNew = {
-      //     data: {
-      //       token: response.data.token,
-      //       user: {
-      //         accountStatus: '',
-      //         email: response.data.email,
-      //         firstName: response.data.firstName,
-      //         id: response.data.id,
-      //         secondName: response.data.secondName,
-      //         subscriptionData: response.data.subscriptionData,
-      //         verified: response.data.verified
-      //       }
-      //     }
-      //   }
-      //
-      //   this.setUserToLocalStorage(responseNew.data.token, responseNew.data.user);
-      //   return signUpFPSuccess({...responseNew.data})
-      // }),
-      // catchError((error, caught) => {
-      //   authenticateError(error);
-      //   return caught;
-      // })
+      })
     )
   })
 
@@ -217,7 +178,6 @@ export class UserEffects {
     private router: Router,
     private store: Store<AppState>,
     private snackbarService: SnackbarService,
-    private mockDataApi: MockDataApi,
     private recaptchaV3Service: ReCaptchaV3Service
   ) {
   }

@@ -10,14 +10,15 @@ import {
   connectingSuccess,
   setRegularExclusionsSuccess,
   setExclusionsModeSuccess,
-  setRecentlyUsedSuccess, setSelectedServer,
+  setRecentlyUsedSuccess, 
+  setSelectedServer,
   setServersSuccess,
   setSelectiveExclusionsSuccess,
   clearRegularExclusions,
   clearSelectedExclusions
 } from "./vpn.actions";
 import {signOutSuccess} from "../user/user.actions";
-import { ExclusionLink } from "../../models/exclusion-link.model";
+import {ExclusionLink} from "../../models/exclusion-link.model";
 
 export interface VPNState {
   connected: boolean;
@@ -67,7 +68,6 @@ const _vpnReducer = createReducer(
   on(clearRegularExclusions, (state) => ({...state, regularExclusions: []})),
   on(clearSelectedExclusions, (state) => ({...state, selectiveExclusions: []}))
 )
-
 
 export function vpnReducer(state: VPNState | undefined, action: Action) {
   return _vpnReducer(state, action);

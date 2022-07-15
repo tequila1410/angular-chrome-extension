@@ -1,16 +1,14 @@
-// import {convertCidrToNet} from "./util";
-// import {IPV4_REGEX} from "./constans";
-
 /**
- * Returns pac script text
+ * Returns PAC script text
  * We use pacScriptTimeToLiveMs in order to make pac script file inactive if
  * it remained in the proxy setting after browser restart
- * @param proxy
- * @param exclusionsList
- * @param inverted
- * @returns {string}
+ * @param {string} scheme
+ * @param {string} proxy
+ * @param {string[]} exclusionsList
+ * @param {boolean} inverted
+ * @return {string}
  */
-function proxyPacScript(scheme: string, proxy: string, exclusionsList: string[], inverted: boolean) {
+function proxyPacScript(scheme: string, proxy: string, exclusionsList: string[], inverted: boolean): string {
   // Used to adjust pacscript after application or browser restart
   const pacScriptTimeToLiveMs = 200;
   // Used to adjust pacscript lifetime after internet reconnection
@@ -71,6 +69,7 @@ function directPacScript() {
 }
 
 /**
+ * Generate PAC script depending on the presence of a proxy
  * @param {string} scheme
  * @param {string} proxy
  * @param {string[]} exclusionsList
@@ -82,11 +81,7 @@ const generate = (scheme: string, proxy: string, exclusionsList: string[], inver
     return directPacScript();
   }
 
-  // const nonRoutableNets = nonRoutableCidrNets.map((net) => {
-  //   return convertCidrToNet(net);
-  // });
-
   return proxyPacScript(scheme, proxy, exclusionsList, inverted);
 };
 
-export default { generate };
+export default {generate};

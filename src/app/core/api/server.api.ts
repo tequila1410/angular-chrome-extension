@@ -36,7 +36,7 @@ export class ServerApi implements ServerApiModel {
           const newServers: ProxyModel[] = [];
           const serverList = response.data.serverList;
           for (let i = 0; i < serverList.length; i++) {
-            if (response.data.serverList[i].isAvailableHttpProxy)
+            // if (response.data.serverList[i].isAvailableHttpProxy)
               newServers.push({
                 host: serverList[i].domain,
                 id: serverList[i].ipv4,
@@ -60,18 +60,8 @@ export class ServerApi implements ServerApiModel {
       )
   }
 
-  testNetwork(proxy: any) {
-    return this.httpClient.get('https://api.ipify.org?format=json', )
-      .pipe(
-        map((response) => {
-          console.log('ipify: ', response);
-          return proxy;
-        }),
-        catchError(error => {
-          console.log('VPN connect error: ', error);
-          return proxy;
-        })
-      )
+  testNetwork() {
+    return this.httpClient.get('https://api.ipify.org?format=json');
   }
 
 }

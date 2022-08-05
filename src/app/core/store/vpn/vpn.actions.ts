@@ -17,6 +17,11 @@ export const connectingError = createAction(
   props<{ message: string }>()
 )
 
+export const connectingRetry = createAction(
+  '[VPN Connecting retry]',
+  props<ProxyModel>()
+)
+
 export const closeConnection = createAction(
   '[VPN Connection close]'
 )

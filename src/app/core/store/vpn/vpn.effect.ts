@@ -19,23 +19,20 @@ import {
   clearChosenExclusions, clearRegularExclusions, clearSelectedExclusions,
   changeRegularExclusion, changeSelectiveExclusion,
   changeRegularExclusionSuccess, changeSelectiveExclusionSuccess,
+  connectingRetry
 } from "./vpn.actions";
-import {catchError, exhaustMap, map, mergeMap, switchMap, tap, timeout, withLatestFrom} from "rxjs/operators";
+import {catchError, delay, exhaustMap, map, mergeMap, switchMap, withLatestFrom} from "rxjs/operators";
 import {from, of} from "rxjs";
-import pacGenerator from "../../utils/pacGenerator";
 import {
   checkListener, clearBudge,
-  clearProxy, getProxy, getProxyObservable, handlerBehaviorChanged,
-  removeOnAuthRequiredHandler,
-  sendMessage, setBadge,
-  setIcon,
-  setProxy
+  clearProxy, getProxyObservable, 
+  handlerBehaviorChanged, removeOnAuthRequiredHandler,
+  setBadge, setIcon, setProxy
 } from "../../utils/chrome-backgroud";
-import {MockDataApi} from "../../api/mock-data.api";
+
 import {Store} from "@ngrx/store";
 import {AppState} from "../app.reducer";
 import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";
-import { ExclusionLink } from "../../models/exclusion-link.model";
 import {ServerApi} from "../../api/server.api";
 
 @Injectable()
@@ -160,18 +157,63 @@ export class VpnEffect {
         return from(setProxy(proxy, exclusions, inverted));
       }),
       mergeMap((proxy) => {
-        return this.api.testNetwork(proxy);
+        return this.api.testNetwork()
+          .pipe(
+            map(response => {
+              console.log('ipify: ', response);
+              return {proxy, status: true};
+            }),
+            catchError(error => {
+              console.log('VPN connect error: ', error);
+              return of({proxy, status: false});
+            })
+          );
       }),
       map(proxy => {
-        setIcon();
-        setBadge(proxy.locationCode);
-        return connectingSuccess(proxy);
+        if (proxy.status) {
+          setIcon();
+          setBadge(proxy.proxy.locationCode);
+          return connectingSuccess(proxy.proxy);
+        } else {
+          return connectingRetry(proxy.proxy);
+        }
       }),
-      catchError((error, caught) => {
-        connectingError({message: 'connection error'});
-        return caught;
+      catchError(error => {
+        console.log('VPN connect error: ', error);
+        throw 'error in source. Details: ' + error;
       })
     )
+  )
+
+  $connectingRetry = createEffect(() =>
+      this.actions$.pipe(
+        ofType(connectingRetry),
+        delay(1000),
+        mergeMap(proxy => {
+          return this.api.testNetwork()
+          .pipe(
+            map(response => {
+              console.log('proxy: ', proxy);
+              console.log('ipify: ', response);
+              return {proxy, status: true};
+            }),
+            catchError(error => {
+              console.log('VPN connect error: ', error);
+              return of({proxy, status: false});
+            })
+          );
+        }),
+        map(proxy => {
+          console.log('proxy.status', proxy.status)
+          if (proxy.status) {
+            setIcon();
+            setBadge(proxy.proxy.locationCode);
+            return connectingSuccess(proxy.proxy);
+          } else {
+            return connectingError({message: 'connection error'});
+          }
+        }),
+      )
   )
 
   $connectionClose = createEffect(() =>

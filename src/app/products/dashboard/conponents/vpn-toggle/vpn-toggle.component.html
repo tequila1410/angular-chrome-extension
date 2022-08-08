@@ -7,7 +7,7 @@
   <span class="lds-dual-ring" [class]="isConnected ? 'connected' : isConnecting ? 'connecting' : isConnectionError ? 'connectionError' : ''"></span>
   <div class="label">
     <span *ngIf="connectAvailable; else limit" class="label-text">
-      <span>{{isConnected ? 'Connected' : isConnecting ? 'Connecting' : isConnectionError ? 'Connection Error' : 'Disconnected'}}</span>
+      <span>{{connectToggleText}}</span>
       <span>{{isConnecting ? '' : isConnectionError ? 'Try another server' : ''}}</span>
     </span>
     <ng-template #limit>Limit is reached</ng-template>

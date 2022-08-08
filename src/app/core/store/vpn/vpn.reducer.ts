@@ -14,7 +14,8 @@ import {
   setServersSuccess,
   setSelectiveExclusionsSuccess,
   clearRegularExclusions,
-  clearSelectedExclusions
+  clearSelectedExclusions,
+  connectingRetry
 } from "./vpn.actions";
 import {signOutSuccess} from "../user/user.actions";
 import { ExclusionLink } from "../../models/exclusion-link.model";
@@ -22,6 +23,7 @@ import { ExclusionLink } from "../../models/exclusion-link.model";
 export interface VPNState {
   connected: boolean;
   connecting: boolean;
+  connectingRetry: boolean;
   serverList: ProxyModel[];
   recentlyUsed: ProxyModel[];
   bestServerSelected: boolean;
@@ -35,6 +37,7 @@ export interface VPNState {
 const initialState: VPNState = {
   connected: false,
   connecting: false,
+  connectingRetry: false,
   serverList: [],
   recentlyUsed: [],
   bestServerSelected: JSON.parse(localStorage.getItem('isBestServerSelected') || 'true'),
@@ -50,8 +53,10 @@ const _vpnReducer = createReducer(
     ...state,
     connecting: false,
     connected: true,
-    selectedServer: proxyData
+    selectedServer: proxyData,
+    connectingRetry: false,
   })),
+  on(connectingRetry, (state) => ({...state, connecting: true, connected: false, connectingRetry: true})),
   on(connectingError, (state, error) => ({...state, connecting: false, connected: false, error: error.message})),
   on(closeConnection, (state,) => ({...state, connecting: true})),
   on(closeConnectionSuccess, (state,) => ({...state, connecting: false, connected: false})),

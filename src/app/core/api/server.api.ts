@@ -60,18 +60,8 @@ export class ServerApi implements ServerApiModel {
       )
   }
 
-  testNetwork(proxy: any) {
-    return this.httpClient.get('https://api.ipify.org?format=json', )
-      .pipe(
-        map((response) => {
-          console.log('ipify: ', response);
-          return proxy;
-        }),
-        catchError(error => {
-          console.log('VPN connect error: ', error);
-          return proxy;
-        })
-      )
+  testNetwork() {
+    return this.httpClient.get('https://api.ipify.org?format=json', {responseType: 'text'});
   }
 
 }

@@ -24,6 +24,11 @@ export const getServerList = createSelector(
   (state: VPNState) => state.serverList
 );
 
+export const isConnectionRetry = createSelector(
+  selectVPN,
+  (state: VPNState) => state.connectingRetry
+)
+
 export const isConnectionError = createSelector(
   selectVPN,
   (state: VPNState) => state.error

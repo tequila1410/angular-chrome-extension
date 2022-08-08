@@ -15,6 +15,7 @@ import {AppState} from '../../../../core/store/app.reducer';
 import {
   closeConnection,
   connecting,
+  connectingError,
   connectingSuccess, setRegularExclusions, setSelectiveExclusions, setServers,
 } from '../../../../core/store/vpn/vpn.actions';
 import {
@@ -139,7 +140,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     onProxyErrorHandler().then((details) => {
-      this.store.dispatch(closeConnection());
+      this.store.dispatch(connectingError({message: 'connection error'}));
       console.error('onProxyErrorHandler: ', details.error);
     });
 
@@ -162,7 +163,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .select(isConnectionRetry)
       .pipe(takeUntil(this.destroy$))
       .subscribe((isConnectionRetry) => {
-        console.log('isConnectionRetry', isConnectionRetry)
+        console.log('isConnectionRetry', isConnectionRetry);
         this.isConnectionRetry = isConnectionRetry;
       });
 

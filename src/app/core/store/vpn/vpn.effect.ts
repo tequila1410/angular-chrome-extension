@@ -160,8 +160,13 @@ export class VpnEffect {
         return this.api.testNetwork()
           .pipe(
             map(response => {
-              console.log('ipify: ', response);
-              return {proxy, status: true};
+              console.log('ipify: ', JSON.parse(response).ip);
+              if (JSON.parse(response).ip === proxy.id) {
+                return {proxy, status: true};
+              }
+              else {
+                return {proxy, status: false};
+              }
             }),
             catchError(error => {
               console.log('VPN connect error: ', error);
@@ -193,9 +198,13 @@ export class VpnEffect {
           return this.api.testNetwork()
           .pipe(
             map(response => {
-              console.log('proxy: ', proxy);
-              console.log('ipify: ', response);
-              return {proxy, status: true};
+              console.log('ipify: ', JSON.parse(response).ip);
+              if (JSON.parse(response).ip === proxy.id) {
+                return {proxy, status: true};
+              }
+              else {
+                return {proxy, status: false};
+              }
             }),
             catchError(error => {
               console.log('VPN connect error: ', error);
@@ -204,7 +213,6 @@ export class VpnEffect {
           );
         }),
         map(proxy => {
-          console.log('proxy.status', proxy.status)
           if (proxy.status) {
             setIcon();
             setBadge(proxy.proxy.locationCode);

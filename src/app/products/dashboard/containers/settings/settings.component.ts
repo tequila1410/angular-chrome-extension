@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExclusionDbService } from 'src/app/core/utils/indexedDB/exclusion-db.service';
 import {
   animate,
   state,
@@ -38,9 +37,15 @@ import { ExclusionLink } from 'src/app/core/models/exclusion-link.model';
 export class SettingsComponent implements OnInit, OnDestroy {
   modeForm!: FormGroup;
 
-  inputVisible: boolean = false;
+  regularInput: boolean = false;
 
-  websiteList!: ExclusionLink[];
+  selectiveInput: boolean = false;
+
+  regularExclusions!: ExclusionLink[];
+
+  selectiveExclusions!: ExclusionLink[];
+
+  needAddSelective: boolean = false;
 
   /**
    * Check if proxy is connected
@@ -72,23 +77,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.modeForm.value.mode === 'regularMode') {
-      this.store
+    this.store
       .select(getRegularExclusions)
       .pipe(take(1))
       .subscribe(regularExclusions => {
-        this.websiteList = regularExclusions;
+        this.regularExclusions = regularExclusions;
       })
 
-    }
-    if (this.modeForm.value.mode === 'selectiveMode') {
-      this.store
+    this.store
       .select(getSelectiveExclusions)
       .pipe(take(1))
       .subscribe(selectiveExclusions => {
-        this.websiteList = selectiveExclusions;
+        this.selectiveExclusions = selectiveExclusions;
+        this.checkSelecExclList();
       })
-    }
 
     this.store
       .select(isVPNConnected)
@@ -107,33 +109,28 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.store.dispatch(closeConnection());
     }
 
-    this.store.dispatch(setExclusionsMode({exclusionsMode: event.target.value}));
-
-    if (event.target.value === 'regularMode') {
-      this.store
-      .select(getRegularExclusions)
-      .pipe(take(1))
-      .subscribe(regularExclusions => {
-        this.websiteList = regularExclusions;
-      })
-
+    if (event.target.value === 'selectiveMode' && this.selectiveExclusions.length === 0) {
+      this.store.dispatch(setExclusionsMode({exclusionsMode: event.target.value, selectiveLength: this.selectiveExclusions.length}));
+      this.needAddSelective = true;
     }
-    if (event.target.value === 'selectiveMode') {
-      this.store
-      .select(getSelectiveExclusions)
-      .pipe(take(1))
-      .subscribe(selectiveExclusions => {
-        this.websiteList = selectiveExclusions;
-      })
+    else {
+      this.store.dispatch(setExclusionsMode({exclusionsMode: event.target.value}));
+      this.needAddSelective = false;
     }
   }
 
-  inputVisibility(): void {
-    this.inputVisible = !this.inputVisible;
+  inputVisibility(mode: string): void {
+    if (mode === 'regular') {
+      this.regularInput = !this.regularInput;
+    }
+    if (mode === 'selective') {
+      this.selectiveInput = !this.selectiveInput;
+    }
+    
     this.webSiteForm.reset();
   }
 
-  addWebsite(event: any): void {
+  addWebsite(event: any, mode: string): void {
     if (this.webSiteForm.valid) {
       let linkObject: ExclusionLink = {
         link: event.target.value,
@@ -141,51 +138,67 @@ export class SettingsComponent implements OnInit, OnDestroy {
         enabled: true
       };
 
-      if (this.modeForm.value.mode === 'regularMode') {
+      if (mode === 'regular') {
         this.store.dispatch(addRegularExclusion({regularExclusion: linkObject}));
+        this.regularInput = false;
+        this.regularExclusions.push(linkObject)
       }
-      if (this.modeForm.value.mode === 'selectiveMode') {
+      if (mode === 'selective') {
         this.store.dispatch(addSelectiveExclusion({selectiveExclusion: linkObject}));
+        this.selectiveInput = false;
+        this.selectiveExclusions.push(linkObject)
       }
-      this.websiteList.push(linkObject);
-      this.inputVisible = false;
+
       this.webSiteForm.reset();
     }
   }
 
-  deleteWebsite(linkName: string, itemIndex: number): void {
-    if (this.modeForm.value.mode === 'regularMode') {
+  deleteWebsite(linkName: string, itemIndex: number, mode: string): void {
+    if (mode === 'regular') {
       this.store.dispatch(deleteRegularExclusion({linkName}));
+      this.regularExclusions.splice(itemIndex, 1);
     }
-    if (this.modeForm.value.mode === 'selectiveMode') {
+    if (mode === 'selective') {
       this.store.dispatch(deleteSelectiveExclusion({linkName}));
+      this.selectiveExclusions.splice(itemIndex, 1);
+      this.checkSelecExclList();
     }
-    this.websiteList.splice(itemIndex, 1)
   }
 
-  clearChosenList(): void {
-    if (this.modeForm.value.mode === 'regularMode') {
+  clearChosenList(mode: string): void {
+    if (mode === 'regular') {
       this.store.dispatch(clearChosenExclusions({chosenMode: 'regularMode'}));
+      this.regularExclusions = [];
     }
-    if (this.modeForm.value.mode === 'selectiveMode') {
+    if (mode === 'selective') {
       this.store.dispatch(clearChosenExclusions({chosenMode: 'selectiveMode'}));
+      this.selectiveExclusions = [];
+      this.checkSelecExclList();
     }
-    this.websiteList = [];
   }
 
-  enableChange(event: any, exclusion: ExclusionLink): void {
+  enableChange(event: any, exclusion: ExclusionLink, mode: string): void {
     let newLinkObject: ExclusionLink = {
       link: exclusion.link,
       created: exclusion.created,
       enabled: event.target.checked
     }
-    if (this.modeForm.value.mode === 'regularMode') {
+    
+    if (mode === 'regular') {
       this.store.dispatch(changeRegularExclusion({regularExclusion: newLinkObject}));
     }
-    if (this.modeForm.value.mode === 'selectiveMode') {
+    if (mode === 'selective') {
       this.store.dispatch(changeSelectiveExclusion({selectiveExclusion: newLinkObject}));
     }
+
     exclusion.enabled = event.target.checked;
+  }
+
+  checkSelecExclList(): void {
+    if (this.selectiveExclusions.length === 0) {
+      this.modeForm.controls['mode'].setValue('regularMode');
+      this.store.dispatch(setExclusionsMode({exclusionsMode: 'regularMode'}));
+    }   
   }
 
   trackByWebsiteLink(index: number, website: ExclusionLink) {

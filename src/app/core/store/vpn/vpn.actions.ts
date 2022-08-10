@@ -65,7 +65,7 @@ export const bestServerSelectSuccess = createAction(
 
 export const setExclusionsMode = createAction(
   '[VPN exclusions mode set]',
-  props<{exclusionsMode: string}>()
+  props<{exclusionsMode: string, selectiveLength?: number}>()
 )
 
 export const setExclusionsModeSuccess = createAction(

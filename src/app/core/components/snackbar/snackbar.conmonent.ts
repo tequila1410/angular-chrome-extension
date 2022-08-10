@@ -55,17 +55,23 @@ export class SnackbarComponent implements OnInit, OnDestroy {
     this.snackbarService.snackbarState
       .pipe(takeUntil(this.destroy$))
       .subscribe(state => {
-        if (state.responseContent.errors) {
+        if (state.warning) {
           this.type = 'danger';
-        
-          for (let error in state.responseContent.errors) {
-            this.message += `${state.responseContent.errors[error]} `
-          }
+          this.message += `${state.warning} `
         }
         else {
-          this.type = 'danger';
-
-          this.message = state.responseContent.message;
+          if (state.responseContent.errors) {
+            this.type = 'danger';
+          
+            for (let error in state.responseContent.errors) {
+              this.message += `${state.responseContent.errors[error]} `
+            }
+          }
+          else {
+            this.type = 'danger';
+  
+            this.message = state.responseContent.message;
+          }
         }
 
         this.show = state.show;

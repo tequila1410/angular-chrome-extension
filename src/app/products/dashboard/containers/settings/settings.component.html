@@ -20,44 +20,75 @@
             <input type="radio" id="regularMode" value="regularMode" formControlName="mode">
             <label for="regularMode">Regular mode</label>
             <p>ZoogVPN won't work on websites from the list below</p>
+
+            <div class="exclusions-controls">
+              <div class="exclusions-controls-btns">
+                <button (click)="inputVisibility('regular')" class="exclusions-controls-add">+ ADD A WEBSITE</button>
+                <button (click)="clearChosenList('regular')" class="exclusions-controls-delete">DELETE ALL</button>
+              </div>
+
+              <div *ngIf="regularInput" class="exclusions-controls-input">
+                <form [formGroup]="webSiteForm">
+                  <input id="webSite" formControlName="webSite" type="url"
+                    (blur)="inputVisibility('regular')"
+                    (change)="addWebsite($event, 'regular')"
+                    (click)="addWebsite($event, 'regular')">
+                  <label for="webSite" *ngIf="webSiteForm.controls['webSite'].errors?.pattern">Please provide valid url</label>
+                </form>
+              </div>
+              <ul class="exclusions-controls-list" [ngClass]="{table: regularExclusions.length > 0}">
+                <li *ngFor="let website of regularExclusions; trackBy: trackByWebsiteLink; let itemIndex = index" class="exclusions-controls-list-item">
+                  <span>
+                    <span>
+                      <input type="checkbox" [id]="'regCheckbox' + itemIndex" [checked]="website.enabled" (change)="enableChange($event, website, 'regular')">
+                      <label [for]="'regCheckbox' + itemIndex">{{website.link}}</label>
+                    </span>
+    
+                    <button (click)="deleteWebsite(website.link, itemIndex, 'regular')" class="exclusions-controls-list-btn">
+                      <span class="material-icons close">close</span>
+                    </button>
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
           <div class="exclusions-modes-item">
             <input type="radio" id="selectiveMode" value="selectiveMode" formControlName="mode">
             <label for="selectiveMode">Selective mode</label>
             <p>ZoogVPN will only work on websites from the list below</p>
+
+            <div class="exclusions-controls">
+              <div class="exclusions-controls-btns">
+                <button (click)="inputVisibility('selective')" class="exclusions-controls-add" [ngClass]="{backlight: needAddSelective}">+ ADD A WEBSITE</button>
+                <button (click)="clearChosenList('selective')" class="exclusions-controls-delete">DELETE ALL</button>
+              </div>
+
+              <div *ngIf="selectiveInput" class="exclusions-controls-input">
+                <form [formGroup]="webSiteForm">
+                  <input id="webSite" formControlName="webSite" type="url"
+                    (blur)="inputVisibility('selective')"
+                    (change)="addWebsite($event, 'selective')"
+                    (click)="addWebsite($event, 'selective')">
+                  <label for="webSite" *ngIf="webSiteForm.controls['webSite'].errors?.pattern">Please provide valid url</label>
+                </form>
+              </div>
+              <ul class="exclusions-controls-list" [ngClass]="{table: selectiveExclusions.length > 0}">
+                <li *ngFor="let website of selectiveExclusions; trackBy: trackByWebsiteLink; let itemIndex = index" class="exclusions-controls-list-item">
+                  <span>
+                    <span>
+                      <input type="checkbox" [id]="'selCheckbox' + itemIndex" [checked]="website.enabled" (change)="enableChange($event, website, 'selective')">
+                      <label [for]="'selCheckbox' + itemIndex">{{website.link}}</label>
+                    </span>
+    
+                    <button (click)="deleteWebsite(website.link, itemIndex, 'selective')" class="exclusions-controls-list-btn">
+                      <span class="material-icons close">close</span>
+                    </button>
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </form>
-
-        <div class="exclusions-controls">
-
-          <button (click)="inputVisibility()" class="exclusions-controls-add">+ ADD A WEBSITE</button>
-
-          <button (click)="clearChosenList()" class="exclusions-controls-delete">DELETE ALL</button>
-
-          <ul class="exclusions-controls-list">
-            <li *ngIf="inputVisible" class="exclusions-controls-list-input">
-              <form [formGroup]="webSiteForm">
-                <input id="webSite" formControlName="webSite" type="url"
-                  (blur)="inputVisibility()"
-                  (change)="addWebsite($event)"
-                  (click)="addWebsite($event)">
-                <label for="webSite" *ngIf="webSiteForm.controls['webSite'].errors?.pattern">Please provide valid url</label>
-              </form>
-            </li>
-            <li *ngFor="let website of websiteList; trackBy: trackByWebsiteLink; let itemIndex = index" class="exclusions-controls-list-item">
-              <span>
-                <span>
-                  <input type="checkbox" [id]="'checkbox' + itemIndex" [checked]="website.enabled" (change)="enableChange($event, website)">
-                  <label [for]="'checkbox' + itemIndex">{{website.link}}</label>
-                </span>
-
-                <button (click)="deleteWebsite(website.link, itemIndex)" class="exclusions-controls-list-btn">
-                  <span class="material-icons close">close</span>
-                </button>
-              </span>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>

@@ -90,7 +90,26 @@
         }
 
         &-controls {
+          &-btns {
+            margin-top: 8px;
+          }
+
+          &-add {
+            padding: 6px;
+            background-color: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: $accent-color;
+            transition: 0.3s;
+
+            &:hover {
+              color: #9bd802;
+            }
+          }
+
           &-delete {
+            padding: 6px;
             border: none;
             background-color: transparent;
             margin: 0;
@@ -105,16 +124,16 @@
             }
           }
 
-          &-add {
-            background-color: transparent;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            color: $accent-color;
-            transition: 0.3s;
-
-            &:hover {
-              color: #9bd802;
+          &-input {
+            input {
+              width: 95%;
+              height: 24px;
+              padding-left: 8px;
+              background-color: transparent;
+              border: 1px solid $accent-color;
+              border-radius: 4px;
+              color: #d8d8d8;
+              outline: none;
             }
           }
 
@@ -122,26 +141,13 @@
             padding-inline-start: 0;
             list-style-type: none;
 
-            &-input {
-              input {
-                width: 90%;
-                height: 24px;
-                padding-left: 8px;
-                background-color: transparent;
-                border: 1px solid $accent-color;
-                border-radius: 4px;
-                color: #d8d8d8;
-                outline: none;
-              }
-            }
-
             &-item {
               border: 1px solid transparent;
+              border-radius: 4px;
               transition: 0.3s;
               
               &:hover {
-                border: 1px solid $accent-color;
-                border-radius: 4px;
+                background-color: #3c4246;
               }
 
               span {
@@ -175,4 +181,16 @@
       }
     }
   }
+}
+
+.table {
+  margin-top: 4px;
+  border: 1px solid $accent-color;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.backlight {
+  background-color: #3c4246 !important;
+  border-radius: 4px;
 }

@@ -37,6 +37,7 @@ import {AppState} from "../app.reducer";
 import { ExclusionDbService } from "../../utils/indexedDB/exclusion-db.service";
 import { ExclusionLink } from "../../models/exclusion-link.model";
 import {ServerApi} from "../../api/server.api";
+import { SnackbarService } from "../../components/snackbar/snackbar.service";
 
 @Injectable()
 export class VpnEffect {
@@ -44,12 +45,17 @@ export class VpnEffect {
   constructor(private actions$: Actions,
               private store$: Store<AppState>,
               private api: ServerApi,
-              private exclusionDB: ExclusionDbService) {
+              private exclusionDB: ExclusionDbService,
+              private snackbarService: SnackbarService,) {
   }
   $setExclusionsMode = createEffect(() =>
     this.actions$.pipe(
       ofType(setExclusionsMode),
       map((action) => {
+        if (action.selectiveLength === 0) {
+          this.showSnackBar('Add at least one domain to the list. Otherwise, Selective mode will not work properly.');
+        }
+
         localStorage.setItem('exclusionsMode', action.exclusionsMode)
         return setExclusionsModeSuccess({exclusionsMode: action.exclusionsMode})
       })
@@ -255,5 +261,9 @@ export class VpnEffect {
       })
     )
   )
+
+  private showSnackBar(warning: string) {
+    this.snackbarService.show2(warning);
+  }
 
 }

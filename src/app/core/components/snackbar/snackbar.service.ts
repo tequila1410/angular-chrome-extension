@@ -20,4 +20,11 @@ export class SnackbarService {
       responseContent,
     });
   }
+
+  show2(warning: string): void {
+    this.snackbarSubject.next({
+      show: true,
+      warning,
+    });
+  }
 }
